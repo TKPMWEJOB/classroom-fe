@@ -7,9 +7,24 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import SigninDialog from './authentication/SigninDialog'
+
 export default function ButtonAppBar() {
+  const [open, setOpen] = React.useState(false);
+
+  const handleCreate = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <SigninDialog open={open} handleClose={handleClose}
+        dialogTitle="Login"
+      />
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -24,7 +39,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Class Room
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={handleCreate}>Login</Button>
         </Toolbar>
       </AppBar>
     </Box>
