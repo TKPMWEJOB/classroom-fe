@@ -35,9 +35,9 @@ const styles = {
     textOverflow: "ellipsis",
     fontWeight: "Bold",
     fontSize: "20px",
-    color: "text.primary"
+    color: "white"
   },
-  instructor: {
+  section: {
     display: "-webkit-box",
     maxWidth: "100%",
     textAlign: "left",
@@ -48,28 +48,27 @@ const styles = {
     textOverflow: "ellipsis",
     fontWeight: "lighter",
     fontSize: "16px",
-    color: "text.primary"
+    color: "white"
   }
 };
 
 export default function CourseCard({ setIsLoaded, setCourses, setError, course, courses }) {
   return (
     <Card sx={{ width: 300 }} href={course.id}>
-      <div style={styles.paperContainer}></div>
-
+      <div style={styles.paperContainer}>
       <CardContent>
         <Typography style={styles.courseTitle} variant="Headline">
           {course.name}
         </Typography>
-        <Typography style={styles.instructor} variant="Headline">
+        <Typography style={styles.section} variant="Headline">
+          {course.section ? course.section : <br/>}
+        </Typography>
+        <Typography style={styles.section} variant="Headline">
           by {course.instructor ? course.instructor : "Anonymous"}
         </Typography>
-
-        <Typography style={styles.description2lines} minHeight="34px">
-          {course.description}
-        </Typography>
       </CardContent>
-
+      </div>
+      
       <CardActions disableSpacing>
         <IconButton aria-label="view" href={course.id}>
           <FolderIcon />

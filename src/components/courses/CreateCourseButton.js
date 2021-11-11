@@ -21,8 +21,9 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
       method: 'POST',
       body: JSON.stringify({
         name: e.target.course.value,
-        instructor: e.target.instructor.value,
-        description: e.target.description.value
+        section: e.target.section.value,
+        subject: e.target.subject.value,
+        room: e.target.room.value
       }),
       accept: '*/*',
       headers: {

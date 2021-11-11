@@ -1,5 +1,6 @@
 import './App.css';
 import Home from './pages/Home'
+import CourseDetail from './pages/CourseDetail'
 import {
   BrowserRouter as Router,
   Route,
@@ -10,7 +11,7 @@ function App() {
     <Router>
       <div className="App">
         <Route exact path="/" component={Home}></Route>
-        <Route exact path="/:id" component={Home}></Route>
+        <Route exact path="/:id" component={CourseDetail}></Route>
       </div>
     </Router>
 
