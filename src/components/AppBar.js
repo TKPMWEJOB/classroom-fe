@@ -8,23 +8,42 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import SigninDialog from './authentication/SigninDialog'
+import SignupDialog from './authentication/SignupDialog';
 
 export default function ButtonAppBar() {
-  const [open, setOpen] = React.useState(false);
+  const [openSignin, setOpenSignin] = React.useState(false);
+  const [openSignup, setOpenSignup] = React.useState(false);
 
-  const handleCreate = () => {
-    setOpen(true);
+  const handleCreateSignin = () => {
+    setOpenSignin(true);
+    setOpenSignup(false);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseSignin = () => {
+    setOpenSignin(false);
+  };
+
+  const handleCreateSignup = () => {
+    setOpenSignup(true);
+    setOpenSignin(false);
+  };
+
+  const handleCloseSignup = () => {
+    setOpenSignup(false);
   };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <SigninDialog open={open} handleClose={handleClose}
-        dialogTitle="Login"
+      <SigninDialog open={openSignin} 
+        handleClose={handleCloseSignin}
+        handleCreateSignup={handleCreateSignup}
+        dialogTitle="Sign In"
       />
+      <SignupDialog open={openSignup} 
+        handleClose={handleCloseSignup}
+        dialogTitle="Sign Up"
+      />
+
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -39,7 +58,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Class Room
           </Typography>
-          <Button color="inherit" onClick={handleCreate}>Login</Button>
+          <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
         </Toolbar>
       </AppBar>
     </Box>
