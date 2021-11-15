@@ -23,8 +23,9 @@ export default function EditButton({ setIsLoaded, setCourses, setError, course, 
       accept: '*/*',
       body: JSON.stringify({
         name: e.target.course.value,
-        instructor: e.target.instructor.value,
-        description: e.target.description.value
+        section: e.target.section.value,
+        subject: e.target.subject.value,
+        room: e.target.room.value
       }),
       headers: {
         'Content-Type': 'application/json'

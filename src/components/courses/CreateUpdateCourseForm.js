@@ -29,24 +29,35 @@ export default function FormDialog({ open, dialogTitle, handleClose, handleSubmi
 
           <TextField
             margin="dense"
-            id="instructor"
-            label="Instructor's name"
+            id="section"
+            label="Section"
             type="text"
             fullWidth
             variant="standard"
-            defaultValue={course ? course.instructor : ""}
+            defaultValue={course ? course.section : ""}
             inputProps={{ maxLength: 50 }}
           />
 
           <TextField
             margin="dense"
-            id="description"
-            label="description"
+            id="subject"
+            label="Subject"
             type="text"
             fullWidth
             variant="standard"
             multiline
-            defaultValue={course ? course.description : ""}
+            defaultValue={course ? course.subject : ""}
+          />
+
+          <TextField
+            margin="dense"
+            id="room"
+            label="Room"
+            type="text"
+            fullWidth
+            variant="standard"
+            multiline
+            defaultValue={course ? course.room : ""}
           />
 
         </DialogContent>
