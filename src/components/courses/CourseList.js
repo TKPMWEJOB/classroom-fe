@@ -8,12 +8,16 @@ function Courses() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [courses, setCourses] = useState([]);
-
+  const tokenLocal = JSON.parse(localStorage.getItem("token"));
   // Note: the empty deps array [] means
   // this useEffect will run once
   // similar to componentDidMount()
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/courses/`)
+    fetch(`${process.env.REACT_APP_API_URL}/courses/`, {
+      headers: {
+        "authorization": tokenLocal.token,
+      }
+    })
       .then(res => {
         if (res.status === 200) {
           return res.json();

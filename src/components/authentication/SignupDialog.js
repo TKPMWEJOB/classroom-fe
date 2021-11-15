@@ -17,7 +17,7 @@ export default function SignupDialog({ open, dialogTitle, handleClose}) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch(`${process.env.REACT_APP_API_URL}/auth/`, {
+        fetch(`${process.env.REACT_APP_API_URL}/auth/signup`, {
             method: 'POST',
             body: JSON.stringify({
             email: e.target.email.value,

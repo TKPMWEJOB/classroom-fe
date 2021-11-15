@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Avatar from '@mui/material/Avatar';
 
 import SigninDialog from './authentication/SigninDialog'
 import SignupDialog from './authentication/SignupDialog';
@@ -31,6 +32,13 @@ export default function ButtonAppBar() {
   const handleCloseSignup = () => {
     setOpenSignup(false);
   };
+
+  const handleSignout = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
+  const token = JSON.parse(localStorage.getItem("token"));
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -58,7 +66,13 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Class Room
           </Typography>
-          <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
+          {token ? 
+            <>
+              <Avatar alt={token.body.email} src="./user.png" />
+              <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
+            </> :
+            <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
+          }
         </Toolbar>
       </AppBar>
     </Box>

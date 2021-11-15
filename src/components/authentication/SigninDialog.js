@@ -11,7 +11,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`${process.env.REACT_APP_API_URL}/auth/`, {
+    fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
       method: 'POST',
       body: JSON.stringify({
         email: e.target.email.value,
@@ -33,6 +33,8 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
       .then(
         (result) => {
           console.log(result);
+          localStorage.setItem('token', JSON.stringify(result));
+          window.location.reload();
           handleClose();
         },
         // Note: it's important to handle errors here
