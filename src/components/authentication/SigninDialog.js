@@ -1,16 +1,44 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { FormControlLabel, Checkbox, Typography, Grid} from '@mui/material';
 
 export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup}) {
-  
+  const [loading, setLoading] = React.useState(false);
+  const [openErrorSnack, setOpenErrorSnack] = useState(false);
+  const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
+  const [SnackMsg, setSnackMsg] = useState("");
+
+  function handleClickLoading() {
+    setLoading(true);
+  }
+  const handleCloseErrorSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+
+    setOpenErrorSnack(false);
+  };
+
+  const handleCloseSuccessSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+
+    setOpenSuccessSnack(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    handleClickLoading();
     fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
       method: 'POST',
       body: JSON.stringify({
@@ -32,20 +60,32 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
     })
       .then(
         (result) => {
-          console.log(result);
-          localStorage.setItem('token', JSON.stringify(result));
-          window.location.reload();
-          handleClose();
+          setSnackMsg(result.msg);
+          setOpenSuccessSnack(true);
+          setLoading(false);
+          setTimeout(() => {  
+            console.log(result);
+            localStorage.setItem('token', JSON.stringify({
+              user: result.body,
+              jwtToken: result.jwtToken
+            }));
+            window.location.reload();
+            handleClose();
+          }, 2000);
+          
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
           console.log(error);
+          setSnackMsg(JSON.parse(error.message).msg);
+          setOpenErrorSnack(true);
+          setLoading(false);
         }
       );
   }
-  
+
   return (
     <Dialog open={open} onClose={handleClose} onSubmit={handleSubmit}>
       <form action="/" method="POST" onSubmit={(e) => handleClose}>
@@ -113,6 +153,18 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           >
             Cancel
           </Button>
+          <LoadingButton
+            loading={loading}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{margin: 3}}
+          >
+            Sign in
+          </LoadingButton>
+          {/*
           <Button 
             type="submit"
             fullWidth
@@ -124,8 +176,23 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           >
             Sign in
           </Button>
+          */}
         </DialogActions>
       </form>
+      <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
+          <MuiAlert 
+              elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
+          > 
+              {SnackMsg}
+          </MuiAlert>
+      </Snackbar>
+      <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
+          <MuiAlert 
+              elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
+          > 
+              {SnackMsg}
+          </MuiAlert>
+      </Snackbar>
     </Dialog>
   );
 }

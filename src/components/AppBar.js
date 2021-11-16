@@ -68,7 +68,7 @@ export default function ButtonAppBar() {
           </Typography>
           {token ? 
             <>
-              <Avatar alt={token.body.email} src="./user.png" />
+              <Avatar alt={token.user.email} src="./user.png" />
               <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>

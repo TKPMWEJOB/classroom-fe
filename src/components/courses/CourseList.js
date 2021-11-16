@@ -15,7 +15,7 @@ function Courses() {
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/courses/`, {
       headers: {
-        "authorization": tokenLocal.token,
+        "authorization": tokenLocal.jwtToken,
       }
     })
       .then(res => {
