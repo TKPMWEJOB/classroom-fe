@@ -1,4 +1,4 @@
-import AppBar from '../components/AppBar'
+import AppBar from '../components/courses/detail/DetailAppBar'
 import Content from '../components/courses/detail/Content'
 export default function CourseDetail() {
   return (

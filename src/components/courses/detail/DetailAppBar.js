@@ -8,8 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 
-import SigninDialog from './authentication/SigninDialog'
-import SignupDialog from './authentication/SignupDialog';
+import SigninDialog from '../../authentication/SigninDialog'
+import SignupDialog from '../../authentication/SignupDialog';
 
 export default function ButtonAppBar() {
   const [openSignin, setOpenSignin] = React.useState(false);

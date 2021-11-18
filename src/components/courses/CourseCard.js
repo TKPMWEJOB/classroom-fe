@@ -51,8 +51,9 @@ const styles = {
     color: "white"
   }
 };
-
 export default function CourseCard({ setIsLoaded, setCourses, setError, course, courses }) {
+console.log(course);
+
   return (
     <Card sx={{ width: 300 }} href={course.id}>
       <div style={styles.paperContainer}>
@@ -64,7 +65,7 @@ export default function CourseCard({ setIsLoaded, setCourses, setError, course, 
           {course.section ? course.section : <br/>}
         </Typography>
         <Typography style={styles.section} variant="Headline">
-          by {course.instructor ? course.instructor : "Anonymous"}
+          by {course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous"}
         </Typography>
       </CardContent>
       </div>

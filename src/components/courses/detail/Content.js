@@ -23,6 +23,7 @@ export default function Content() {
 			.then(
 				(result) => {
 					setIsLoaded(true);
+					console.log(result);
 					setCourse(result);
 				},
 				// Note: it's important to handle errors here

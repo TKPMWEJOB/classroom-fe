@@ -2,10 +2,11 @@ import React from 'react';
 import Button from '@mui/material/Button'
 import AddIcon from '@mui/icons-material/Add'
 import CreateCourseDialog from './CreateUpdateCourseForm';
+import { Redirect } from 'react-router';
 
 export default function CreateButton({ setError, setIsLoaded, setCourses, courses }) {
   const [open, setOpen] = React.useState(false);
-
+  const [redirect, setRedirect] = React.useState(null);
   const handleCreate = () => {
     setOpen(true);
   };
@@ -13,7 +14,8 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
   const handleClose = () => {
     setOpen(false);
   };
-
+  const token = JSON.parse(localStorage.getItem("token"));
+  console.log(token);
   const handleSubmit = (e) => {
     e.preventDefault();
     setOpen(false);
@@ -27,7 +29,8 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
       }),
       accept: '*/*',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'authorization': token.jwtToken,
       }
     }).then(res => {
       if (res.status === 200) {
@@ -39,11 +42,7 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
     })
       .then(
         (result) => {
-          console.log(courses);
-          const newList = courses.concat([result]);
-          console.log(newList);
-          setIsLoaded(true);
-          setCourses(newList);
+          setRedirect(result.id)
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -54,15 +53,19 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
         }
       );
   };
-
-  return (
-    <div style={{ padding: "12px" }}>
-      <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit}
-        dialogTitle="Create course"
-      />
-      <Button variant="outlined" startIcon={<AddIcon />} onClick={handleCreate}>
-        Add New Course
-      </Button>
-    </div>
-  );
+  if (redirect) {
+    const redirectURL = `/${redirect}`
+    return (<Redirect push to={redirectURL} />)
+  }
+  else
+    return (
+      <div style={{ padding: "12px" }}>
+        <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit}
+          dialogTitle="Create course"
+        />
+        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleCreate}>
+          Add New Course
+        </Button>
+      </div>
+    );
 }
