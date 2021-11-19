@@ -42,17 +42,17 @@ export default function ButtonAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <SigninDialog open={openSignin} 
+      <SigninDialog open={openSignin}
         handleClose={handleCloseSignin}
         handleCreateSignup={handleCreateSignup}
         dialogTitle="Sign In"
       />
-      <SignupDialog open={openSignup} 
+      <SignupDialog open={openSignup}
         handleClose={handleCloseSignup}
         dialogTitle="Sign Up"
       />
 
-      <AppBar position="static">
+      <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -66,10 +66,10 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Class Room
           </Typography>
-          {token ? 
+          {token ?
             <>
               <Avatar alt={token.user?.email} src="./user.png" />
-              <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
+              <Button color="inherit" onClick={handleSignout}>Sign out</Button>
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
           }
