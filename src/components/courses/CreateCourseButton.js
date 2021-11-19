@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import CreateCourseDialog from './CreateUpdateCourseForm';
 import { Redirect } from 'react-router';
 
-export default function CreateButton({ setError, setIsLoaded, setCourses, courses }) {
+export default function CreateButton({ setError }) {
   const [open, setOpen] = React.useState(false);
   const [redirect, setRedirect] = React.useState(null);
   const handleCreate = () => {
@@ -48,7 +48,7 @@ export default function CreateButton({ setError, setIsLoaded, setCourses, course
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-          setIsLoaded(true);
+          //setIsLoaded(true);
           setError(error);
         }
       );

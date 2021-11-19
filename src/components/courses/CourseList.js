@@ -48,14 +48,14 @@ function Courses() {
   } else {
     return (
       <div>
-        <CreateCourseButton setCourses={setCourses} setIsLoaded={setIsLoaded} setError={setError} courses={courses}/>
+        <CreateCourseButton setCourses={setCourses} setError={setError} courses={courses}/>
         <Grid container spacing="24px" padding="24px">
           {courses.map((course,index, courses) => (
             <Grid item key={course.id}>
               <CourseCard
                 course={course}
                 courses={courses}
-                setCourses={setCourses} setIsLoaded={setIsLoaded} setError={setError}
+                setCourses={setCourses} setError={setError}
               />
             </Grid>
           ))}

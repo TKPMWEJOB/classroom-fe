@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
@@ -7,9 +7,16 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-export default function DeleteCourseButton({ course, setIsLoaded, setCourses, setError, courses }) {
-  const [open, setOpen] = React.useState(false);
+export default function DeleteCourseButton({ course, setCourses, courses }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openErrorSnack, setOpenErrorSnack] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
+  const token = JSON.parse(localStorage.getItem("token"));
 
   const handleClickDelete = () => {
     setOpen(true);
@@ -17,14 +24,32 @@ export default function DeleteCourseButton({ course, setIsLoaded, setCourses, se
 
   const handleClose = () => {
     setOpen(false);
+    setOpenErrorSnack(false);
   };
+
+
+
+  function handleClickLoading() {
+    setLoading(true);
+  }
+
+  const handleCloseErrorSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenErrorSnack(false);
+  };
+
   const handleDelete = (e) => {
-    setOpen(false);
+    //setOpen(false);
+    handleClickLoading();
     fetch(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, {
       method: 'DELETE',
       accept: '*/*',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'authorization': token.jwtToken,
       }
     }).then(res => {
       if (res.status === 200) {
@@ -36,16 +61,21 @@ export default function DeleteCourseButton({ course, setIsLoaded, setCourses, se
     })
       .then(
         (result) => {
+          setSnackMsg("Deleted ");
+          setLoading(false);
           const newList = courses.filter((item) => parseInt(item.id) !== parseInt(course.id));
-          setIsLoaded(true);
           setCourses(newList);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-          setIsLoaded(true);
-          setError(error);
+          //setIsLoaded(true);
+          console.log(error);
+          setSnackMsg(JSON.parse(error.message).message);
+          setOpenErrorSnack(true);
+          setLoading(false);
+          setOpen(false);
         }
       );
   }
@@ -71,12 +101,25 @@ export default function DeleteCourseButton({ course, setIsLoaded, setCourses, se
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDelete} color="error">Delete</Button>
+          <LoadingButton
+            onClick={handleDelete} color="error"
+            loading={loading}
+          >
+            Delete
+          </LoadingButton>
+
           <Button onClick={handleClose} autoFocus>
             Close
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
+          <MuiAlert
+            elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
+          >
+            {snackMsg}
+          </MuiAlert>
+        </Snackbar>
     </div>
   )
 }

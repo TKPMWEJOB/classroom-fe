@@ -7,11 +7,13 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
+import TabList from '@mui/lab/TabList';
+import Tab from '@mui/material/Tab';
 
 import SigninDialog from '../../authentication/SigninDialog'
 import SignupDialog from '../../authentication/SignupDialog';
 
-export default function ButtonAppBar() {
+export default function ButtonAppBar({course, handleChangeTab }) {
   const [openSignin, setOpenSignin] = React.useState(false);
   const [openSignup, setOpenSignup] = React.useState(false);
 
@@ -42,17 +44,17 @@ export default function ButtonAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <SigninDialog open={openSignin} 
+      <SigninDialog open={openSignin}
         handleClose={handleCloseSignin}
         handleCreateSignup={handleCreateSignup}
         dialogTitle="Sign In"
       />
-      <SignupDialog open={openSignup} 
+      <SignupDialog open={openSignup}
         handleClose={handleCloseSignup}
         dialogTitle="Sign Up"
       />
 
-      <AppBar position="static">
+      <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -63,13 +65,28 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Class Room
+          <Typography variant="h6" component="div">
+            {course.name}
           </Typography>
-          {token ? 
+
+          <TabList onChange={handleChangeTab} aria-label="lab API tabs example" variant="scrollable"
+            TabIndicatorProps={{ sx: { display: 'none' } }}
+            sx={{
+              '& .MuiTabs-flexContainer': {
+                flexWrap: 'wrap',
+              },
+            }}
+            style={{ margin: "auto" }}
+          >
+            <Tab label="Stream" value="1" style={{ textTransform: 'none' }} />
+            <Tab label="Classwork" value="2" style={{ textTransform: 'none' }} />
+            <Tab label="People" value="3" style={{ textTransform: 'none' }} />
+            <Tab label="Grades" value="4" style={{ textTransform: 'none' }} />
+          </TabList>
+          {token ?
             <>
               <Avatar alt={token.user?.email} src="./user.png" />
-              <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
+              <Button color="inherit" onClick={handleSignout}>Sign out</Button>
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
           }

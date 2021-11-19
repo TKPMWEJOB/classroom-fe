@@ -3,10 +3,9 @@ import Banner from "./Banner";
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-export default function Content() {
+export default function Content({ course, setCourse }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
-	const [course, setCourse] = useState([]);
 
 	const { id } = useParams();
 
