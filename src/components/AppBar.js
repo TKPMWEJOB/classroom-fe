@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,6 +15,7 @@ import SignupDialog from './authentication/SignupDialog';
 export default function ButtonAppBar() {
   const [openSignin, setOpenSignin] = React.useState(false);
   const [openSignup, setOpenSignup] = React.useState(false);
+  const history = useHistory();
 
   const handleCreateSignin = () => {
     setOpenSignin(true);
@@ -37,6 +39,12 @@ export default function ButtonAppBar() {
     localStorage.removeItem("token");
     window.location.reload();
   };
+
+  const handleGoUserProfile = () => {
+    const href = '/users/';
+    href = href + token.user.id;
+    history.push(href);
+  }
 
   const token = JSON.parse(localStorage.getItem("token"));
 
@@ -68,7 +76,7 @@ export default function ButtonAppBar() {
           </Typography>
           {token ? 
             <>
-              <Avatar alt={token.user?.email} src="./user.png" />
+              <Avatar alt={token.user?.email} src="./user.png" onClick={handleGoUserProfile}/>
               <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
