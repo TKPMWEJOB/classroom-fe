@@ -8,9 +8,14 @@ export default function Content({ course, setCourse }) {
 	const [isLoaded, setIsLoaded] = useState(false);
 
 	const { id } = useParams();
+	const token = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
 	useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}/courses/${id}`)
+		fetch(`${process.env.REACT_APP_API_URL}/courses/${id}`, {
+			headers: {
+				"authorization": token,
+			}
+		})
 			.then(res => {
 				if (res.status === 200) {
 					return res.json();
