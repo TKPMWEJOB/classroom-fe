@@ -3,19 +3,20 @@ import Home from './pages/Home'
 import CourseDetail from './pages/CourseDetail'
 import UserPage from './pages/UserPage'
 import {
-  BrowserRouter as Router,
   Route,
+  Switch
 } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <div className="App">
+    <main>
+      <Switch>
         <Route exact path="/" component={Home}></Route>
-        <Route exact path="/:id" component={CourseDetail}></Route>
-        <Route exact path="/users/:id" component={UserPage}></Route>
-      </div>
-    </Router>
+        <Route exact path="/courses" component={Home}></Route>
+        <Route exact path="/courses/:id" component={CourseDetail}></Route>
+        <Route exact path="/user" component={UserPage}></Route>
+      </Switch>
+    </main>
 
   );
 }

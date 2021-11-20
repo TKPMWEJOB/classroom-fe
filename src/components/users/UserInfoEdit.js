@@ -35,15 +35,14 @@ function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
 
 
   const initialValues = {
-    date: userInfo.birthday,
-    gender: userInfo.gender,
-    address: userInfo.address,
-    phone: userInfo.phone,
-    school: userInfo.school
+    date: userInfo.UserInfo.birthday,
+    gender: userInfo.UserInfo.gender,
+    address: userInfo.UserInfo.address,
+    phone: userInfo.UserInfo.phone,
+    school: userInfo.UserInfo.school
   }
     
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Enter valid email"),
     phone:Yup.string().matches(phoneRegExp,"Enter valid Phone number"),
     birthday: Yup.date()
   });  
@@ -57,32 +56,8 @@ function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
   };
 
   const handleSubmit = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/users/profile`, e)
-      .then(() => {
-        setIsLoaded(true);
-      })
-      .catch(error => {
-        setIsLoaded(true);
-        setError(error);
-    });
-    setOpen(false);
-    /*e.preventDefault();
-    setOpen(false);
-    fetch(`${process.env.REACT_APP_API_URL}/users/profile`, {
-      method: 'PUT',
-      accept: '*//**',
-      body: JSON.stringify({
-        birthday: e.target.birthday.value,
-        gender: e.target.gender.value,
-        address: e.target.address.value,
-        phone: e.target.phone.value,
-        email: e.target.email.value,
-        school: e.target.school.value
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => {
+    axios.put(`${process.env.REACT_APP_API_URL}/user/info/${userInfo.id}`, e)
+    .then(res => {
       if (res.status === 200) {
         return res.json();
       }
@@ -92,14 +67,10 @@ function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
     })
     .then(
       (result) => {
-        const newUser = userInfo.map((item) => {
-          if (parseInt(item.id) === parseInt(result.id)) {
-            item = result;
-          }
-          return item;
-        }); 
+        if(parseInt(userInfo.id) === parseInt(result.id)) {
+          setUserInfo(result);
+        }
         setIsLoaded(true);
-        setUserInfo(newUser);
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
@@ -108,7 +79,8 @@ function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
         setIsLoaded(true);
         setError(error);
       }
-    );*/
+    );
+    setOpen(false);
   }
 
   return (

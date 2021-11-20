@@ -52,10 +52,15 @@ function UserProfile() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState([]);
+  const token = JSON.parse(localStorage.getItem("token"));
+
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/users`)
-      .then(res => {
+    fetch(`${process.env.REACT_APP_API_URL}/user`,{
+      headers: {
+        'authorization': token.jwtToken
+      }
+    }).then(res => {
         if (res.status === 200) {
           return res.json();
         }
@@ -78,19 +83,21 @@ function UserProfile() {
       )
   }, []);
 
-  let date_ob = new Date(user.birthday);
-  let date = ("0" + date_ob.getDate()).slice(-2);
-  let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-  let year = date_ob.getFullYear();
-  let birthday = date + '/' + month + '/' + year;
-
-  let fullname = user.lastname + ' ' + user.firstname;
+  
 
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
   } else {
+    let date_ob = new Date(user.UserInfo.birthday);
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+    let birthday = date + '/' + month + '/' + year;
+
+    let fullname = user.lastName + ' ' + user.firstName;
+
     return (
       <ThemeProvider theme={theme}>
         <Box sx={{ height: '100vh', m: 8 }}>
@@ -110,7 +117,7 @@ function UserProfile() {
                           {fullname}
                         </b>
                         <span className='font-size-m color-text-black-50'>
-                          {user.studentid}
+                          {user.UserInfo.studentID}
                         </span>
                       </Grid>
                     </Item>
@@ -177,19 +184,19 @@ function UserProfile() {
                     {birthday}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.gender}
+                    {user.UserInfo.gender}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.address}
+                    {user.UserInfo.address}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.phone}
+                    {user.UserInfo.phone}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
                     {user.email}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.school}
+                    {user.UserInfo.school}
                     </span>
                   </Grid>
                   <InfoEditBtn setUserInfo={setUser} setIsLoaded={setIsLoaded} setError={setError} userInfo={user}/>

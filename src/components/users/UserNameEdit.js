@@ -33,30 +33,8 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
   };
 
   const handleSubmit = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/users/profile`, e)
-      .then(() => {
-        setIsLoaded(true);
-      })
-      .catch(error => {
-        setIsLoaded(true);
-        setError(error);
-    });
-    setOpen(false);
-
-    /*e.preventDefault();
-    setOpen(false);
-    fetch(`${process.env.REACT_APP_API_URL}/users/profile`, {
-      method: 'PUT',
-      accept: '*//**',
-      body: JSON.stringify({
-        firstname: e.target.firstname.value,
-        lastname: e.target.lastname.value,
-        studentid: e.target.studentid.value
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => {
+    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid/${userInfo.id}`, e)
+    .then(res => {
       if (res.status === 200) {
         return res.json();
       }
@@ -66,14 +44,10 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
     })
     .then(
       (result) => {
-        const newUser = userInfo.map((item) => {
-          if (parseInt(item.id) === parseInt(result.id)) {
-            item = result;
-          }
-          return item;
-        }); 
+        if(parseInt(userInfo.id) === parseInt(result.id)) {
+          setUserInfo(result);
+        }
         setIsLoaded(true);
-        setUserInfo(newUser);
       },
       // Note: it's important to handle errors here
       // instead of a catch() block so that we don't swallow
@@ -82,13 +56,14 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
         setIsLoaded(true);
         setError(error);
       }
-    );*/
+    );
+    setOpen(false);
   }
 
   const initialValues = {
     firstname: userInfo.firstname,
     lastname: userInfo.lastname,
-    studentid: userInfo.studentid
+    studentid: userInfo.UserInfo.studentid
   }
     
   const validationSchema = Yup.object().shape({

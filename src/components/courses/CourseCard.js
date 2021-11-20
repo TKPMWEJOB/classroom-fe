@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
@@ -51,8 +52,15 @@ const styles = {
     color: "white"
   }
 };
+
 export default function CourseCard({ setIsLoaded, setCourses, setError, course, courses }) {
-console.log(course);
+  const history = useHistory();
+
+  const handleGoDetail = () => {
+    let temp = '/courses/';
+    let href = temp.concat(course.id);
+    history.push(href);
+  }
 
   return (
     <Card sx={{ width: 300 }} href={course.id}>
@@ -71,7 +79,7 @@ console.log(course);
       </div>
       
       <CardActions disableSpacing>
-        <IconButton aria-label="view" href={course.id}>
+        <IconButton aria-label="view" onClick={handleGoDetail}>
           <FolderIcon />
         </IconButton>
 
