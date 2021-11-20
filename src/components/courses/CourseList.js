@@ -55,6 +55,7 @@ function Courses() {
               <CourseCard
                 course={course}
                 courses={courses}
+                setIsLoaded={setIsLoaded}
                 setCourses={setCourses} setError={setError}
               />
             </Grid>

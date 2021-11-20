@@ -6,7 +6,7 @@ import UpdateCourseDialog from './CreateUpdateCourseForm';
 
 export default function EditButton({ setIsLoaded, setCourses, setError, course, courses }) {
   const [open, setOpen] = React.useState(false);
-
+  const token = JSON.parse(localStorage.getItem("token"));
   const handleClickEdit = () => {
     setOpen(true);
   };
@@ -28,7 +28,8 @@ export default function EditButton({ setIsLoaded, setCourses, setError, course, 
         room: e.target.room.value
       }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'authorization': token.jwtToken,
       }
     }).then(res => {
       if (res.status === 200) {
