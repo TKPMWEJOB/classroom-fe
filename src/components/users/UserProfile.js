@@ -54,7 +54,7 @@ function UserProfile() {
   const [user, setUser] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/profile`)
+    fetch(`${process.env.REACT_APP_API_URL}/users`)
       .then(res => {
         if (res.status === 200) {
           return res.json();
@@ -77,6 +77,7 @@ function UserProfile() {
         }
       )
   }, []);
+
   let date_ob = new Date(user.birthday);
   let date = ("0" + date_ob.getDate()).slice(-2);
   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);

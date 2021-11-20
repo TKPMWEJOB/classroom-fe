@@ -41,8 +41,7 @@ export default function ButtonAppBar() {
   };
 
   const handleGoUserProfile = () => {
-    const href = '/users/';
-    href = href + token.user.id;
+    const href = '/users';
     history.push(href);
   }
 
