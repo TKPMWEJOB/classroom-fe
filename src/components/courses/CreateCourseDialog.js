@@ -4,8 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import CreateCourseDialog from './CreateUpdateCourseForm';
 import { Redirect } from 'react-router';
 
-export default function CreateButton({ setError }) {
-  const [open, setOpen] = React.useState(false);
+export default function CreateButton({ open, setOpen }) {
   const [redirect, setRedirect] = React.useState(null);
   const handleCreate = () => {
     setOpen(true);
@@ -49,7 +48,7 @@ export default function CreateButton({ setError }) {
         // exceptions from actual bugs in components.
         (error) => {
           //setIsLoaded(true);
-          setError(error);
+          //setError(error);
         }
       );
   };
@@ -59,13 +58,8 @@ export default function CreateButton({ setError }) {
   }
   else
     return (
-      <div style={{ padding: "12px" }}>
-        <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit}
-          dialogTitle="Create course"
-        />
-        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleCreate}>
-          Add New Course
-        </Button>
-      </div>
+      <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit}
+        dialogTitle="Create course"
+      />
     );
 }

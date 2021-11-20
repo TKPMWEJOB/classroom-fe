@@ -7,13 +7,20 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
+import AddIcon from '@mui/icons-material/Add';
 
-import SigninDialog from './authentication/SigninDialog'
+import CreateCourseDialog from './courses/CreateCourseDialog';
+import SigninDialog from './authentication/SigninDialog';
 import SignupDialog from './authentication/SignupDialog';
 
 export default function ButtonAppBar() {
   const [openSignin, setOpenSignin] = React.useState(false);
   const [openSignup, setOpenSignup] = React.useState(false);
+  const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
+
+  const handleCreateCourse = () => {
+    setOpenCreateCourse(true);
+  };
 
   const handleCreateSignin = () => {
     setOpenSignin(true);
@@ -42,6 +49,10 @@ export default function ButtonAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <CreateCourseDialog
+        open={openCreateCourse}
+        setOpen={setOpenCreateCourse}
+      />
       <SigninDialog open={openSignin}
         handleClose={handleCloseSignin}
         handleCreateSignup={handleCreateSignup}
@@ -66,6 +77,16 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Class Room
           </Typography>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={handleCreateCourse}
+          >
+            <AddIcon />
+          </IconButton>
           {token ?
             <>
               <Avatar alt={token.user?.email} src="./user.png" />

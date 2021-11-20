@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,8 +9,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-export default function DeleteCourseButton({ course, setCourses, courses }) {
-  const [open, setOpen] = useState(false);
+export default function DeleteCourseButton({ open, setOpen, course, setCourses, courses }) {
+  //const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
@@ -82,9 +80,9 @@ export default function DeleteCourseButton({ course, setCourses, courses }) {
 
   return (
     <div>
-      <IconButton aria-label="delete" onClick={handleClickDelete}>
+      {/* <IconButton aria-label="delete" onClick={handleClickDelete}>
         <DeleteIcon />
-      </IconButton>
+      </IconButton> */}
       <Dialog
         open={open}
         onClose={handleClose}

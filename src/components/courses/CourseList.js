@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import { useState, useEffect } from 'react';
-import CreateCourseButton from './CreateCourseButton'
 import CourseCard from './CourseCard'
 import React from 'react'
 
@@ -48,7 +47,7 @@ function Courses() {
   } else {
     return (
       <div>
-        <CreateCourseButton setCourses={setCourses} setError={setError} courses={courses}/>
+        {/* <CreateCourseButton setCourses={setCourses} setError={setError} courses={courses}/> */}
         <Grid container spacing="24px" padding="24px">
           {courses.map((course,index, courses) => (
             <Grid item key={course.id}>

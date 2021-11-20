@@ -1,15 +1,9 @@
 
 import React from 'react';
-import IconButton from '@mui/material/IconButton'
-import EditIcon from '@mui/icons-material/Edit'
 import UpdateCourseDialog from './CreateUpdateCourseForm';
 
-export default function EditButton({ setIsLoaded, setCourses, setError, course, courses }) {
-  const [open, setOpen] = React.useState(false);
+export default function EditButton({ setIsLoaded, open, setOpen, setCourses, setError, course, courses }) {
   const token = JSON.parse(localStorage.getItem("token"));
-  const handleClickEdit = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -46,7 +40,7 @@ export default function EditButton({ setIsLoaded, setCourses, setError, course, 
               item = result;
             }
             return item;
-          }); 
+          });
           setIsLoaded(true);
           setCourses(newList);
         },
@@ -66,10 +60,6 @@ export default function EditButton({ setIsLoaded, setCourses, setError, course, 
         dialogTitle="Update course"
         course={course}
       />
-
-      <IconButton aria-label="delete" onClick={handleClickEdit}>
-        <EditIcon />
-      </IconButton>
     </div>
   );
 }

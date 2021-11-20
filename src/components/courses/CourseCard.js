@@ -1,12 +1,14 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/FolderOpen';
-import EditCourseButton from './EditCourseButton';
-import DeleteCourseButton from './DeleteCourseButton';
+import EditCourseDialog from './EditCourseDialog';
+import DeleteCourseDialog from './DeleteCourseDialog';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit'
 
 const styles = {
   paperContainer: {
@@ -52,37 +54,57 @@ const styles = {
   }
 };
 export default function CourseCard({ setIsLoaded, setCourses, setError, course, courses }) {
-console.log(course);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const handleClickDelete = () => {
+    setOpenDeleteDialog(true);
+  };
+  const handleClickEdit = () => {
+    setOpenEditDialog(true);
+  };
+
 
   return (
     <Card sx={{ width: 300 }} href={course.id}>
       <div style={styles.paperContainer}>
-      <CardContent>
-        <Typography style={styles.courseTitle} variant="Headline">
-          {course.name}
-        </Typography>
-        <Typography style={styles.section} variant="Headline">
-          {course.section ? course.section : <br/>}
-        </Typography>
-        <Typography style={styles.section} variant="Headline">
-          by {course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous"}
-        </Typography>
-      </CardContent>
+        <CardContent>
+          <Typography style={styles.courseTitle} variant="Headline">
+            {course.name}
+          </Typography>
+          <Typography style={styles.section} variant="Headline">
+            {course.section ? course.section : <br />}
+          </Typography>
+          <Typography style={styles.section} variant="Headline">
+            by {course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous"}
+          </Typography>
+        </CardContent>
       </div>
-      
+
       <CardActions disableSpacing>
         <IconButton aria-label="view" href={course.id}>
           <FolderIcon />
         </IconButton>
 
-        <EditCourseButton
+        <IconButton aria-label="delete" onClick={handleClickEdit}>
+          <EditIcon />
+        </IconButton>
+        <EditCourseDialog
+          open={openEditDialog}
+          setOpen={setOpenEditDialog}
           course={course}
           courses={courses}
           setCourses={setCourses}
           setError={setError}
           setIsLoaded={setIsLoaded}
         />
-        <DeleteCourseButton
+
+        <IconButton aria-label="delete" onClick={handleClickDelete}>
+          <DeleteIcon />
+        </IconButton>
+        <DeleteCourseDialog
+          open={openDeleteDialog}
+          setOpen={setOpenDeleteDialog}
           course={course}
           courses={courses}
           setCourses={setCourses}
