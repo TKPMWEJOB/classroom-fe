@@ -28,18 +28,19 @@ const Item = styled('div')({
 
 const RadioOptions=['Male', 'Female', 'Other']
 
-function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
+function UserInfoEdit({ setError, setIsLoaded, setUser, user }) {
   const [open, setOpen] = React.useState(false);
 
   const phoneRegExp=/^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
 
 
   const initialValues = {
-    date: userInfo.UserInfo.birthday,
-    gender: userInfo.UserInfo.gender,
-    address: userInfo.UserInfo.address,
-    phone: userInfo.UserInfo.phone,
-    school: userInfo.UserInfo.school
+    id: user.id,
+    date: user.birthday,
+    gender: user.gender,
+    address: user.address,
+    phone: user.phone,
+    school: user.school
   }
     
   const validationSchema = Yup.object().shape({
@@ -56,29 +57,18 @@ function UserInfoEdit({ setError, setIsLoaded, setUserInfo, userInfo }) {
   };
 
   const handleSubmit = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/user/info/${userInfo.id}`, e)
+    axios.put(`${process.env.REACT_APP_API_URL}/user/info`, e)
     .then(res => {
-      if (res.status === 200) {
-        return res.json();
+      if(parseInt(user.id) === parseInt(res.data.id)) {          
+        setUser(res.data);
       }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
+      setIsLoaded(true);
     })
-    .then(
-      (result) => {
-        if(parseInt(userInfo.id) === parseInt(result.id)) {
-          setUserInfo(result);
-        }
-        setIsLoaded(true);
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
+    .catch( 
+      error => {
         setIsLoaded(true);
         setError(error);
-      }
+      }      
     );
     setOpen(false);
   }

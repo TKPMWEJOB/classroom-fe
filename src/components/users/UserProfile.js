@@ -51,7 +51,7 @@ const Avatar = styled('img')({
 function UserProfile() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
   const token = JSON.parse(localStorage.getItem("token"));
 
 
@@ -70,8 +70,8 @@ function UserProfile() {
       })
       .then(
         (result) => {
-          setIsLoaded(true);
           setUser(result);
+          setIsLoaded(true);          
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -83,18 +83,21 @@ function UserProfile() {
       )
   }, []);
 
-  
-
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
   } else {
-    let date_ob = new Date(user.UserInfo.birthday);
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let birthday = date + '/' + month + '/' + year;
+
+    let birthday = '';
+    if (user.birthday !== null) {
+      let date_ob = new Date(user.birthday);
+      let date = ("0" + date_ob.getDate()).slice(-2);
+      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+      let year = date_ob.getFullYear();
+      birthday = date + '/' + month + '/' + year;
+    }
+    
 
     let fullname = user.lastName + ' ' + user.firstName;
 
@@ -117,12 +120,12 @@ function UserProfile() {
                           {fullname}
                         </b>
                         <span className='font-size-m color-text-black-50'>
-                          {user.UserInfo.studentID}
+                          {user.studentID}
                         </span>
                       </Grid>
                     </Item>
                   </Grid>
-                  <NameEditBtn setUserInfo={setUser} setIsLoaded={setIsLoaded} setError={setError} userInfo={user}/>
+                  <NameEditBtn setUser={setUser} setIsLoaded={setIsLoaded} setError={setError} user={user}/>
                 </Grid>
               </Grid>
             </Grid>
@@ -181,25 +184,25 @@ function UserProfile() {
                 <Grid item xs container direction="row" spacing={2}>
                   <Grid item container direction="column"  xs={5} md={9}>
                     <span className='font-size-m ml-20 mb-40 mt-5'>
-                    {birthday}
+                    {birthday? birthday : 'Not set'}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.UserInfo.gender}
+                    {user.gender? user.gender : 'Not set'}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.UserInfo.address}
+                    {user.address? user.address : 'Not set'}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.UserInfo.phone}
+                    {user.phone? user.phone : 'Not set'}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.email}
+                    {user.email? user.email : 'Not set'}
                     </span>
                     <span className='font-size-m ml-20 mb-40'>
-                    {user.UserInfo.school}
+                    {user.school? user.school : 'Not set'}
                     </span>
                   </Grid>
-                  <InfoEditBtn setUserInfo={setUser} setIsLoaded={setIsLoaded} setError={setError} userInfo={user}/>
+                  <InfoEditBtn setUser={setUser} setIsLoaded={setIsLoaded} setError={setError} user={user}/>
                 </Grid>
               </Grid>
             </Grid>

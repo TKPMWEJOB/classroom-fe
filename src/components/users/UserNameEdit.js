@@ -21,7 +21,7 @@ const Item = styled('div')({
   display: 'block',
 });
 
-function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
+function UserNameEditForm({ setError, setIsLoaded, setUser, user }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -33,41 +33,31 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
   };
 
   const handleSubmit = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid/${userInfo.id}`, e)
+    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid`, e)
     .then(res => {
-      if (res.status === 200) {
-        return res.json();
+      if(parseInt(user.id) === parseInt(res.data.id)) {          
+        setUser(res.data);
       }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
+      setIsLoaded(true);
     })
-    .then(
-      (result) => {
-        if(parseInt(userInfo.id) === parseInt(result.id)) {
-          setUserInfo(result);
-        }
-        setIsLoaded(true);
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
+    .catch( 
+      error => {
         setIsLoaded(true);
         setError(error);
-      }
+      }      
     );
     setOpen(false);
   }
 
   const initialValues = {
-    firstname: userInfo.firstname,
-    lastname: userInfo.lastname,
-    studentid: userInfo.UserInfo.studentid
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    studentID: user.studentID
   }
     
   const validationSchema = Yup.object().shape({
-    studentid: Yup.string().min(3, "It's too short")
+    studentID: Yup.string().min(3, "It's too short")
   });
 
 
@@ -98,8 +88,8 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
                   <Grid item xs={6} style={{ marginTop: 10 }}>
                       <Field as={TextField}
                       required
-                      id="firstname"
-                      name="firstname"
+                      id="firstName"
+                      name="firstName"
                       fullWidth
                       label="First Name"
                       autoComplete="firstname"
@@ -109,8 +99,8 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
                   <Grid item xs={6} style={{ marginTop: 10 }}>
                       <Field as={TextField}
                       required
-                      id="lastname"
-                      name="lastname"
+                      id="lastName"
+                      name="lastName"
                       fullWidth
                       label="Last Name"
                       autoComplete="lastname"
@@ -119,12 +109,12 @@ function UserNameEditForm({ setError, setIsLoaded, setUserInfo, userInfo }) {
                   </Grid>
                   <Grid item xs={12}>
                       <Field as={TextField}
-                      id="studentid"
-                      name="studentid"
+                      id="studentID"
+                      name="studentID"
                       fullWidth
-                      error={props.errors.studentid && props.touched.studentid}
-                      label="Student Id"
-                      autoComplete="12345"
+                      error={props.errors.studentID && props.touched.studentID}
+                      label="Student ID"
+                      autoComplete="studentid"
                       helperText={<ErrorMessage name='studentid' />}
                       />
                   </Grid>
