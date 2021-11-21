@@ -50,6 +50,7 @@ export default function ButtonAppBar() {
   const handleGoUserProfile = () => {
     const href = '/user';
     history.push(href);
+    window.location.reload();
   }
 
   const token = JSON.parse(localStorage.getItem("token"));

@@ -1,6 +1,5 @@
-import * as React from 'react'
 import { Redirect } from "react-router-dom"
-import AppBar from '../components/courses/detail/DetailAppBar'
+import AppBar from '../components/AppBar'
 import UserProfile from '../components/users/UserProfile'
 import { Box } from '@material-ui/core'
 
