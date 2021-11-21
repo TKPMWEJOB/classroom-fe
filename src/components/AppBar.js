@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -21,6 +22,7 @@ export default function ButtonAppBar() {
   const handleCreateCourse = () => {
     setOpenCreateCourse(true);
   };
+  const history = useHistory();
 
   const handleCreateSignin = () => {
     setOpenSignin(true);
@@ -44,6 +46,11 @@ export default function ButtonAppBar() {
     localStorage.removeItem("token");
     window.location.reload();
   };
+
+  const handleGoUserProfile = () => {
+    const href = '/user';
+    history.push(href);
+  }
 
   const token = JSON.parse(localStorage.getItem("token"));
 
@@ -89,8 +96,8 @@ export default function ButtonAppBar() {
           </IconButton>
           {token ?
             <>
-              <Avatar alt={token.user?.email} src="./user.png" />
-              <Button color="inherit" onClick={handleSignout}>Sign out</Button>
+              <Avatar alt={token.user?.email} src="./user.png" onClick={handleGoUserProfile}/>
+              <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
           }

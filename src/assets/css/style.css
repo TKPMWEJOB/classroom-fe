@@ -1,0 +1,100 @@
+.text-center {
+    text-align: center;
+}
+
+.font-size-xxl {
+    font-size: 30px;
+}
+
+.font-size-xl {
+    font-size: 20px;
+}
+
+.font-size-l {
+    font-size: 20px;
+}
+
+.font-size-xl {
+    font-size: 20px;
+}
+
+.font-size-m {
+    font-size: 14px;
+}
+
+.font-size-s {
+    font-size: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mt-5 {
+    margin-top: 5px;
+}
+
+.mc-20 {
+    margin-top: auto;
+    margin-bottom:auto;
+    margin-left: 20px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+.mb-40 {
+    margin-bottom: 36px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.ml-20 {
+    margin-left: 20px;
+}
+
+.ml-60 {
+    margin-left: 60px;
+}
+
+.ml-80 {
+    margin-left: 80px;
+}
+
+.color-text-black-50 {
+    color: #868686;
+}
+
+.bg-black-50 {
+    background: #868686;
+}
+
+.display-block {
+    display: block;
+}
+
+
+.card-box {
+    border-width: 1px;
+    display: flex;
+    background: red;
+}
+
+.card-footer, .card-header {
+      border-width: 1px;
+    }
+  
+.card-header {
+    display: flex;
+    align-items: center;
+}
+
+.mb-4 {
+    padding: 10px;
+    margin: 4px;
+}
+  
+    
