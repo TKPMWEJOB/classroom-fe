@@ -1,20 +1,37 @@
 import { Grid } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useCookies } from 'react-cookie';
 import CourseCard from './CourseCard'
 import React from 'react'
+import axios from 'axios';
+import { UserContext } from '../../contexts/UserContext';
 
 function Courses() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [courses, setCourses] = useState([]);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const { userInfo, updateUser } = useContext(UserContext);
+  
+  //const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   // Note: the empty deps array [] means
   // this useEffect will run once
   // similar to componentDidMount()
-  useEffect(() => {
+  useEffect(async () => {
+    let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
+    if (res.status === 200) {
+      setIsLoaded(true);
+      setCourses(res.data);
+    } else {
+      console.log(res);
+      updateUser(false, null);
+      setIsLoaded(true);
+      setError(res.error);
+    }
+
+    /*
     fetch(`${process.env.REACT_APP_API_URL}/courses/`, {
       headers: {
-        "authorization": tokenLocal,
+        "authorization": cookies.token,
       }
     })
       .then(res => {
@@ -34,10 +51,12 @@ function Courses() {
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
+          console.log(error);
           setIsLoaded(true);
           setError(error);
         }
       )
+      */
   }, [])
 
   if (error) {

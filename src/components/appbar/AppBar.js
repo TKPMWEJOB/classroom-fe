@@ -1,51 +1,28 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import Avatar from '@mui/material/Avatar';
 import AddIcon from '@mui/icons-material/Add';
 
-import CreateCourseDialog from './courses/CreateCourseDialog';
-import SigninDialog from './authentication/SigninDialog';
-import SignupDialog from './authentication/SignupDialog';
+import CreateCourseDialog from '../courses/CreateCourseDialog';
+import SigninButton from './SigninButton';
+import LoggedButtons from './LoggedButtons';
 
 export default function ButtonAppBar() {
-  const [openSignin, setOpenSignin] = React.useState(false);
-  const [openSignup, setOpenSignup] = React.useState(false);
   const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
+  const {userInfo, setUserInfo} = useContext(UserContext);
 
   const handleCreateCourse = () => {
     setOpenCreateCourse(true);
   };
+
   const history = useHistory();
-
-  const handleCreateSignin = () => {
-    setOpenSignin(true);
-    setOpenSignup(false);
-  };
-
-  const handleCloseSignin = () => {
-    setOpenSignin(false);
-  };
-
-  const handleCreateSignup = () => {
-    setOpenSignup(true);
-    setOpenSignin(false);
-  };
-
-  const handleCloseSignup = () => {
-    setOpenSignup(false);
-  };
-
-  const handleSignout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
 
   const handleGoUserProfile = () => {
     const href = '/user';
@@ -59,22 +36,11 @@ export default function ButtonAppBar() {
     window.location.reload();
   }
 
-  const token = JSON.parse(localStorage.getItem("token"));
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <CreateCourseDialog
         open={openCreateCourse}
         setOpen={setOpenCreateCourse}
-      />
-      <SigninDialog open={openSignin}
-        handleClose={handleCloseSignin}
-        handleCreateSignup={handleCreateSignup}
-        dialogTitle="Sign In"
-      />
-      <SignupDialog open={openSignup}
-        handleClose={handleCloseSignup}
-        dialogTitle="Sign Up"
       />
 
       <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
@@ -101,13 +67,7 @@ export default function ButtonAppBar() {
           >
             <AddIcon />
           </IconButton>
-          {token ?
-            <>
-              <Avatar alt={token.user?.email} src="./user.png" onClick={handleGoUserProfile}/>
-              <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
-            </> :
-            <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
-          }
+          { userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile}/> : <SigninButton /> }
         </Toolbar>
       </AppBar>
     </Box>
