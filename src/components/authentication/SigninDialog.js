@@ -12,6 +12,7 @@ import MuiAlert from '@mui/material/Alert';
 import { FormControlLabel, Checkbox, Typography, Grid} from '@mui/material';
 import axios from 'axios';
 import { UserContext } from '../../contexts/UserContext';
+import SigninGoogleButton from './SigninGoogleButton';
 
 axios.defaults.withCredentials = true;
 export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup}) {
@@ -19,11 +20,12 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [SnackMsg, setSnackMsg] = useState("");
-  const {userInfo, updateUser} = useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
 
   function handleClickLoading() {
     setLoading(true);
   }
+
   const handleCloseErrorSnack = (event, reason) => {
     if (reason === 'clickaway') {
         return;
@@ -32,6 +34,14 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
     setOpenErrorSnack(false);
   };
 
+  const handleOpenErrorSnack = () => {
+    setOpenErrorSnack(true);
+  };
+
+  const handleOpenSuccessSnack = () => {
+    setOpenSuccessSnack(true);
+  };
+  
   const handleCloseSuccessSnack = (event, reason) => {
     if (reason === 'clickaway') {
         return;
@@ -39,6 +49,10 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
 
     setOpenSuccessSnack(false);
   };
+
+  const handleSetMsgSnack = (msg) => {
+    setSnackMsg(msg);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,16 +71,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
       
       setTimeout(() => {
         handleClose();
-
         updateUser(true, response.data.body);
-        //window.location.reload();
-        /*
-        //setCookie("token", result.jwtToken, {maxAge: result.maxAge});
-        localStorage.setItem('token', JSON.stringify({
-          user: result.body,
-          jwtToken: result.jwtToken
-        }));
-        */
       }, 1500);
     } catch (error) {
       console.error(error);
@@ -74,55 +79,6 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
       setOpenErrorSnack(true);
       setLoading(false);
     }
-/*
-    fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
-      method: 'POST',
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        email: e.target.email.value,
-        password: e.target.password.value,
-        remember: e.target.remember.checked
-      }),
-      accept: '/*',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json();
-      }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
-    })
-      .then(
-        (result) => {
-          setSnackMsg(result.msg);
-          setOpenSuccessSnack(true);
-          setLoading(false);
-          setTimeout(() => {  
-            console.log(result);
-            setCookie("token", result.jwtToken, {maxAge: result.maxAge});
-            //window.location.reload();
-            localStorage.setItem('token', JSON.stringify({
-              user: result.body,
-              jwtToken: result.jwtToken
-            }));
-            handleClose();
-          }, 2000);
-          
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          console.log(error);
-          setSnackMsg(JSON.parse(error.message).msg);
-          setOpenErrorSnack(true);
-          setLoading(false);
-        }
-      );
-      */
   }
 
   return (
@@ -182,6 +138,13 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           >
             No account? Sign up here.
           </Typography>
+          
+          < SigninGoogleButton 
+            handleSetMsgSnack={handleSetMsgSnack} 
+            handleOpenSuccessSnack={handleOpenSuccessSnack} 
+            handleOpenErrorSnack={handleOpenErrorSnack}
+            handleClose={handleClose}
+          />
         </DialogContent>
         <DialogActions>
           <Button 
@@ -235,3 +198,53 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
     </Dialog>
   );
 }
+
+/*
+    fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        email: e.target.email.value,
+        password: e.target.password.value,
+        remember: e.target.remember.checked
+      }),
+      accept: '/*',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      if (res.status === 200) {
+        return res.json();
+      }
+      else {
+        return res.text().then(text => { throw new Error(text) })
+      }
+    })
+      .then(
+        (result) => {
+          setSnackMsg(result.msg);
+          setOpenSuccessSnack(true);
+          setLoading(false);
+          setTimeout(() => {  
+            console.log(result);
+            setCookie("token", result.jwtToken, {maxAge: result.maxAge});
+            //window.location.reload();
+            localStorage.setItem('token', JSON.stringify({
+              user: result.body,
+              jwtToken: result.jwtToken
+            }));
+            handleClose();
+          }, 2000);
+          
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          console.log(error);
+          setSnackMsg(JSON.parse(error.message).msg);
+          setOpenErrorSnack(true);
+          setLoading(false);
+        }
+      );
+      */

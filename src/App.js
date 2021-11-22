@@ -9,10 +9,10 @@ import { UserContext } from './contexts/UserContext';
 import { useState } from 'react';
 
 function App() {
-  const localUser = localStorage.getItem("user");
+  const localUser = JSON.parse(localStorage.getItem("user"));
   const [userInfo, setUserInfo] = useState({
-    isLogin: localUser ? true : false,
-    info: localUser ? JSON.parse(localUser) : null,
+    isLogin: localUser?.isLogin,
+    info: localUser?.info,
   });
 
   function updateUser(isLogin, info) {
