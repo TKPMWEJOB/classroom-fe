@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -10,12 +10,16 @@ import Dialog from '@mui/material/Dialog';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { FormControlLabel, Checkbox, Typography, Grid} from '@mui/material';
+import axios from 'axios';
+import { UserContext } from '../../contexts/UserContext';
 
+axios.defaults.withCredentials = true;
 export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup}) {
   const [loading, setLoading] = React.useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [SnackMsg, setSnackMsg] = useState("");
+  const {userInfo, updateUser} = useContext(UserContext);
 
   function handleClickLoading() {
     setLoading(true);
@@ -36,17 +40,50 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
     setOpenSuccessSnack(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     handleClickLoading();
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/signin`, {
+        email: e.target.email.value,
+        password: e.target.password.value,
+        remember: e.target.remember.checked
+      });
+      console.log(response);
+      setSnackMsg(response.data.msg);
+      setOpenSuccessSnack(true);
+      setLoading(false);
+      
+      setTimeout(() => {
+        handleClose();
+
+        updateUser(true, response.data.body);
+        //window.location.reload();
+        /*
+        //setCookie("token", result.jwtToken, {maxAge: result.maxAge});
+        localStorage.setItem('token', JSON.stringify({
+          user: result.body,
+          jwtToken: result.jwtToken
+        }));
+        */
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      setSnackMsg(JSON.parse(error.message).msg);
+      setOpenErrorSnack(true);
+      setLoading(false);
+    }
+/*
     fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
       method: 'POST',
+      credentials: 'same-origin',
       body: JSON.stringify({
         email: e.target.email.value,
         password: e.target.password.value,
         remember: e.target.remember.checked
       }),
-      accept: '*/*',
+      accept: '/*',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -65,11 +102,12 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           setLoading(false);
           setTimeout(() => {  
             console.log(result);
+            setCookie("token", result.jwtToken, {maxAge: result.maxAge});
+            //window.location.reload();
             localStorage.setItem('token', JSON.stringify({
               user: result.body,
               jwtToken: result.jwtToken
             }));
-            window.location.reload();
             handleClose();
           }, 2000);
           
@@ -84,6 +122,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           setLoading(false);
         }
       );
+      */
   }
 
   return (
