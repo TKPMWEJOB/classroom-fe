@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 
-export default function LoggedButtons() {
+export default function LoggedButtons({handleAvatarClick}) {
     const { userInfo, updateUser } = useContext(UserContext);
 
     const handleSignout = async () => {
@@ -20,7 +20,7 @@ export default function LoggedButtons() {
 
     return (
     <Box sx={{display: "flex",flexDirection: "row"}}>
-        <Avatar alt={userInfo.info?.email} src="./user.png" />
+        <Avatar alt={userInfo.info?.email} src="./user.png" onClick={handleAvatarClick}/>
         <Button color="inherit" onClick={handleSignout}>Sign out</Button>
     </Box>
     );

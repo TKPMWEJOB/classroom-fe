@@ -1,45 +1,30 @@
 import { Grid, Paper } from "@mui/material";
 import Banner from "./Banner";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
 import invitationButton from '../invitation/intitationButton';
+import { UserContext } from "../../../contexts/UserContext";
+import axios from "axios";
 
 export default function Content({ course, setCourse }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const { userInfo, updateUser } = useContext(UserContext);
 
 	const { id } = useParams();
-	const token = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
-	useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}/courses/${id}`, {
-			headers: {
-				"authorization": token,
-			}
-		})
-			.then(res => {
-				if (res.status === 200) {
-					return res.json();
-				}
-				else {
-					return res.text().then(text => { throw new Error(text) })
-				}
-			})
-			.then(
-				(result) => {
-					setIsLoaded(true);
-					console.log(result);
-					setCourse(result);
-				},
-				// Note: it's important to handle errors here
-				// instead of a catch() block so that we don't swallow
-				// exceptions from actual bugs in components.
-				(error) => {
-					setIsLoaded(true);
-					setError(error);
-				}
-			)
+	useEffect( async () => {
+		try {
+			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
+			setIsLoaded(true);
+			console.log(result);
+			setCourse(result);
+		} catch(error) {
+			setIsLoaded(true);
+			setError(error);
+		}
+		
 	}, [id])
 	if (error) {
 		return <div>Error: {error.message}</div>;
@@ -113,3 +98,33 @@ export default function Content({ course, setCourse }) {
 		);
 	}
 }
+
+/*
+fetch(`${process.env.REACT_APP_API_URL}/courses/${id}`, {
+			headers: {
+				"authorization": token,
+			}
+		})
+			.then(res => {
+				if (res.status === 200) {
+					return res.json();
+				}
+				else {
+					return res.text().then(text => { throw new Error(text) })
+				}
+			})
+			.then(
+				(result) => {
+					setIsLoaded(true);
+					console.log(result);
+					setCourse(result);
+				},
+				// Note: it's important to handle errors here
+				// instead of a catch() block so that we don't swallow
+				// exceptions from actual bugs in components.
+				(error) => {
+					setIsLoaded(true);
+					setError(error);
+				}
+			)
+*/
