@@ -125,7 +125,7 @@ function UserProfile() {
                       </Grid>
                     </Item>
                   </Grid>
-                  <NameEditBtn setUser={setUser} setIsLoaded={setIsLoaded} setError={setError} user={user}/>
+                  <NameEditBtn setUser={setUser} setIsLoaded={setIsLoaded} user={user}/>
                 </Grid>
               </Grid>
             </Grid>
@@ -202,7 +202,7 @@ function UserProfile() {
                     {user.school? user.school : 'Not set'}
                     </span>
                   </Grid>
-                  <InfoEditBtn setUser={setUser} setIsLoaded={setIsLoaded} setError={setError} user={user}/>
+                  <InfoEditBtn setUser={setUser} setIsLoaded={setIsLoaded} user={user}/>
                 </Grid>
               </Grid>
             </Grid>

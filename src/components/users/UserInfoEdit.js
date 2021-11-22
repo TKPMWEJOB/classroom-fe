@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import '../../assets/css/style.css';
 
 import {
@@ -12,7 +13,9 @@ import {
 } from '@material-ui/core';
 
 import FormikRadioGroup from "./FormikRadioGroup";
-
+import LoadingButton from '@mui/lab/LoadingButton';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -28,7 +31,11 @@ const Item = styled('div')({
 
 const RadioOptions=['Male', 'Female', 'Other']
 
-function UserInfoEdit({ setError, setIsLoaded, setUser, user }) {
+function UserInfoEdit({ setIsLoaded, setUser, user }) {
+  const [loading, setLoading] = React.useState(false);
+  const [openErrorSnack, setOpenErrorSnack] = useState(false);
+  const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
   const [open, setOpen] = React.useState(false);
 
   const phoneRegExp=/^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
@@ -48,6 +55,26 @@ function UserInfoEdit({ setError, setIsLoaded, setUser, user }) {
     birthday: Yup.date()
   });  
 
+  function handleClickLoading() {
+    setLoading(true);
+  }
+
+  const handleCloseErrorSnack = (event, reason) => {
+      if (reason === 'clickaway') {
+          return;
+      }
+
+      setOpenErrorSnack(false);
+  };
+
+  const handleCloseSuccessSnack = (event, reason) => {
+      if (reason === 'clickaway') {
+          return;
+      }
+
+      setOpenSuccessSnack(false);
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -57,17 +84,23 @@ function UserInfoEdit({ setError, setIsLoaded, setUser, user }) {
   };
 
   const handleSubmit = (e) => {
+    handleClickLoading();
     axios.put(`${process.env.REACT_APP_API_URL}/user/info`, e)
     .then(res => {
+      setSnackMsg(res.data.msg);
       if(parseInt(user.id) === parseInt(res.data.id)) {          
         setUser(res.data);
-      }
+      }      
+      setOpenSuccessSnack(true);
+      setLoading(false);
       setIsLoaded(true);
     })
     .catch( 
       error => {
         setIsLoaded(true);
-        setError(error);
+        setSnackMsg(error.response.data.msg);
+        setOpenErrorSnack(true);
+        setLoading(false);
       }      
     );
     setOpen(false);
@@ -153,18 +186,37 @@ function UserInfoEdit({ setError, setIsLoaded, setUser, user }) {
                 </Grid>
 
                 <DialogActions>
-                <Button onClick={handleClose} color="primary">
-                    Cancel
-                </Button>
-                <Button type="submit" color="primary">
+                  <Button onClick={handleClose} color="primary">
+                      Cancel
+                  </Button>
+                  <LoadingButton
+                    loading={loading}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
                     Save
-                </Button>
+                  </LoadingButton>
                 </DialogActions>
               </Form>
               )}
           </Formik>
         </DialogContent>
       </Dialog>
+      <Snackbar open={openErrorSnack} autoHideDuration={4000} onClose={handleCloseErrorSnack}>
+          <MuiAlert 
+              elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
+          > 
+              {snackMsg}
+          </MuiAlert>
+      </Snackbar>
+      <Snackbar open={openSuccessSnack} autoHideDuration={4000} onClose={handleCloseSuccessSnack}>
+          <MuiAlert 
+              elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
+          > 
+              {snackMsg}
+          </MuiAlert>
+      </Snackbar>
     </>
   );
 }
