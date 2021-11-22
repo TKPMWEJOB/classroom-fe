@@ -2,6 +2,8 @@ import { Grid, Paper } from "@mui/material";
 import Banner from "./Banner";
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
+import Typography from '@mui/material/Typography';
+import invitationButton from '../invitation/intitationButton';
 
 export default function Content({ course, setCourse }) {
 	const [error, setError] = useState(null);
@@ -62,13 +64,27 @@ export default function Content({ course, setCourse }) {
 						justifyContent="center"
 						alignItems="center"
 					>
-						<Grid item sx={{ display: { xs: 'none', sm: 'block' } }}
-							style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}>
-							<Paper variant='outlined' sx={{ margin: 'auto', overflow: 'hidden' }}>
-								<p>
-									Upcomming!
-								</p>
+						<Grid 
+							item 
+							container 
+							direction="column" 
+							sx={{ display: { xs: 'none', sm: 'block' } }}
+							style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
+						>
+
+							<Paper 
+								variant='outlined' 
+								sx={{ margin: 'auto', overflow: 'hidden'}} 
+								style={{ textAlign: 'center', height: '20%' }}
+							>
+								<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
+								style={{ margin: 5 }}>
+									{course.invitationId? course.invitationId : 'Upcoming!'}
+								</Typography>
 							</Paper>
+
+							<invitationButton />
+
 						</Grid>
 
 						<Grid item lg md xs

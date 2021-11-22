@@ -53,6 +53,12 @@ export default function ButtonAppBar() {
     window.location.reload();
   }
 
+  const handleGoHome = () => {
+    const href = '/';
+    history.push(href);
+    window.location.reload();
+  }
+
   const token = JSON.parse(localStorage.getItem("token"));
 
   return (
@@ -82,7 +88,7 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleGoHome}>
             Class Room
           </Typography>
           <IconButton
