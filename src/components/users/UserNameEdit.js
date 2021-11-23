@@ -30,8 +30,7 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
   const [open, setOpen] = React.useState(false);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
-  
+
   function handleClickLoading() {
       setLoading(true);
   }
@@ -62,10 +61,7 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
 
   const handleSubmit = (e) => {
     handleClickLoading();
-    const config = {
-      headers: { 'authorization': `${tokenLocal}` }
-    };
-    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid`, e, config)
+    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid`, e)
     .then(res => {
       setSnackMsg(res.data.msg);
       if(parseInt(user.id) === parseInt(res.data.id)) {          

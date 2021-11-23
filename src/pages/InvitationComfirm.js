@@ -1,5 +1,5 @@
 import { Redirect } from "react-router-dom"
-import AppBar from '../components/appbar/AppBar'
+import AppBar from '../components/AppBar'
 import ComfirmPage from '../components/invitation/ConfirmPage'
 import { Box } from '@material-ui/core'
 
