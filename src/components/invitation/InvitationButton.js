@@ -1,14 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
-import '../../assets/css/style.css';
 
 import {
-  Grid,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  styled,
+  DialogTitle,
   Button
 } from '@material-ui/core';
 
@@ -19,19 +17,15 @@ import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-const Item = styled('div')({
-  padding: 20,
-  display: 'block',
-});
 
-function UserNameEditForm({ setIsLoaded, setUser, user }) {
+export default function IvitationButton({ course }) {
   const [loading, setLoading] = React.useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
   const [open, setOpen] = React.useState(false);
   const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
-  
+
   function handleClickLoading() {
       setLoading(true);
   }
@@ -65,19 +59,14 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
     const config = {
       headers: { 'authorization': `${tokenLocal}` }
     };
-    axios.put(`${process.env.REACT_APP_API_URL}/user/nameid`, e, config)
+    axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-student`, e, config)
     .then(res => {
-      setSnackMsg(res.data.msg);
-      if(parseInt(user.id) === parseInt(res.data.id)) {          
-        setUser(res.data);
-      }      
+      setSnackMsg(res.data.msg);  
       setOpenSuccessSnack(true);
       setLoading(false);
-      setIsLoaded(true);
     })
     .catch( 
       error => {
-        setIsLoaded(true);
         setSnackMsg(error.response.data.msg);
         setOpenErrorSnack(true);
         setLoading(false);
@@ -86,78 +75,57 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
     setOpen(false);
   }
 
+  
+  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`
+  
   const initialValues = {
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    studentID: user.studentID
+    sender: course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous",
+    invitationLink: invitationLink,
+    courseId: course.id,
+    emailSender: course.User ? course.User.email : '',
+    emailReceiver: ''
   }
     
   const validationSchema = Yup.object().shape({
-    studentID: Yup.string().min(3, "It's too short")
+    emailReceiver: Yup.string().email('Invalid email').required('Required')
   });
 
 
   return (
     <>
-      <Grid item xs={1} md={3}>
-        <Item>
-          <div className='text-right'>
-            <Button
-            className="m-2"
-            variant="outlined"
-            color="primary"
-            onClick={handleClickOpen}>
-            Edit
-            </Button>
-          </div>
-        </Item>
-      </Grid>
+      <Button
+        onClick={handleClickOpen}
+        variant="contained"
+        color="primary"
+        style={{
+          marginTop: 20, height: '20%', 
+          width: '196px',
+          fontSize: "18px"}}
+        >
+        Invite
+      </Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title">
+        <DialogTitle>Invite Member</DialogTitle>
         <DialogContent>
           <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
               {(props) => (
               <Form noValidate>
-                  <Grid container spacing={3} direction="row"> 
-                  <Grid item xs={6} style={{ marginTop: 10 }}>
-                      <Field as={TextField}
+                  <Field as={TextField}
                       required
-                      id="firstName"
-                      name="firstName"
+                      id="emailReceiver"
+                      name="emailReceiver"
                       fullWidth
-                      label="First Name"
-                      autoComplete="firstname"
-                      helperText={<ErrorMessage name='firstname' />}
-                      />
-                  </Grid>
-                  <Grid item xs={6} style={{ marginTop: 10 }}>
-                      <Field as={TextField}
-                      required
-                      id="lastName"
-                      name="lastName"
-                      fullWidth
-                      label="Last Name"
-                      autoComplete="lastname"
-                      helperText={<ErrorMessage name='lastname' />}
-                      />
-                  </Grid>
-                  <Grid item xs={12}>
-                      <Field as={TextField}
-                      id="studentID"
-                      name="studentID"
-                      fullWidth
-                      error={props.errors.studentID && props.touched.studentID}
-                      label="Student ID"
-                      autoComplete="studentid"
-                      helperText={<ErrorMessage name='studentid' />}
-                      />
-                  </Grid>
-                  </Grid>
+                      error={props.errors.emailReceiver && props.touched.emailReceiver}
+                      label="Email"
+                      autoComplete="email"
+                      helperText={<ErrorMessage name='email' />}
+                      style={{ width: '300px' }}
+                    />
 
-                  <DialogActions>
+                  <DialogActions style={{ marginTop: 30 }}>
                   <Button onClick={handleClose} color="primary" sx={{margin: 2}}>
                       Cancel
                   </Button>
@@ -168,7 +136,7 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
                     variant="contained"
                     color="primary"
                   >
-                    Save
+                    Invite
                   </LoadingButton>
 
                   </DialogActions>
@@ -194,5 +162,3 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
     </>
   );
 }
-  
-export default UserNameEditForm;
