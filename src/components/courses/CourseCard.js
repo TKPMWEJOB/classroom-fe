@@ -71,7 +71,7 @@ export default function CourseCard({ setIsLoaded, setCourses, setError, course, 
 
   const handleGoDetail = () => {
     let temp = '/courses/';
-    let href = temp.concat(course.id);
+    let href = temp.concat(course.invitationId);
     history.push(href);
   }
 

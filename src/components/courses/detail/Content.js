@@ -3,7 +3,7 @@ import Banner from "./Banner";
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
-import invitationButton from '../invitation/intitationButton';
+import InvBtn from '../../invitation/InvitationButton';
 
 export default function Content({ course, setCourse }) {
 	const [error, setError] = useState(null);
@@ -11,6 +11,8 @@ export default function Content({ course, setCourse }) {
 
 	const { id } = useParams();
 	const token = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+
+	
 
 	useEffect(() => {
 		fetch(`${process.env.REACT_APP_API_URL}/courses/${id}`, {
@@ -41,6 +43,7 @@ export default function Content({ course, setCourse }) {
 				}
 			)
 	}, [id])
+
 	if (error) {
 		return <div>Error: {error.message}</div>;
 	} else if (!isLoaded) {
@@ -53,6 +56,7 @@ export default function Content({ course, setCourse }) {
 				alignItems: 'center',
 				gridTemplateColumns: '1fr',
 			}}>
+				
 
 				<Grid container style={{ maxWidth: '1000px' }}>
 					<Grid item lg={12} md={12} sm={12} xs={12}>
@@ -82,8 +86,9 @@ export default function Content({ course, setCourse }) {
 									{course.invitationId? course.invitationId : 'Upcoming!'}
 								</Typography>
 							</Paper>
+							<InvBtn course={course}/>
 
-							<invitationButton />
+							
 
 						</Grid>
 

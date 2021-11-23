@@ -1,14 +1,13 @@
 import { Redirect } from "react-router-dom"
 import AppBar from '../components/AppBar'
-import UserProfile from '../components/users/UserProfile'
+import ComfirmPage from '../components/invitation/ConfirmPage'
 import { Box } from '@material-ui/core'
 
-export default function UserProfile() {
-  const token = JSON.parse(localStorage.getItem("token"));
+export default function ComfirmPage() {
   return (    
     <Box sx={{ bgcolor: '#F8F8F8' }}>
       <AppBar></AppBar>
-      {token ? <UserProfile/> : <Redirect to="/" /> }
+      <ComfirmPage/>
     </Box>
   );
 }
