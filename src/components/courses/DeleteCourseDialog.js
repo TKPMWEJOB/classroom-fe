@@ -12,15 +12,9 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 export default function DeleteCourseButton({ open, setOpen, course, setCourses, courses }) {
-  //const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
-  const token = JSON.parse(localStorage.getItem("token"));
-
-  const handleClickDelete = () => {
-    setOpen(true);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -42,7 +36,6 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
   };
 
   const handleDelete = async (e) => {
-    //setOpen(false);
     handleClickLoading();
     try {
       await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`);
@@ -73,7 +66,7 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {course.name} by {course.instructor ? course.instructor : "Anonymous"}
+            Course: {course.name}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
