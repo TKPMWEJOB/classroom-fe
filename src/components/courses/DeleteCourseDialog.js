@@ -8,7 +8,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import axios from 'axios'
 
+axios.defaults.withCredentials = true;
 export default function DeleteCourseButton({ open, setOpen, course, setCourses, courses }) {
   //const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,50 +41,26 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
     setOpenErrorSnack(false);
   };
 
-  const handleDelete = (e) => {
+  const handleDelete = async (e) => {
     //setOpen(false);
     handleClickLoading();
-    fetch(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, {
-      method: 'DELETE',
-      accept: '*/*',
-      headers: {
-        'Content-Type': 'application/json',
-        'authorization': token.jwtToken,
-      }
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json();
-      }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
-    })
-      .then(
-        (result) => {
-          setSnackMsg("Deleted ");
-          setLoading(false);
-          const newList = courses.filter((item) => parseInt(item.id) !== parseInt(course.id));
-          setCourses(newList);
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          //setIsLoaded(true);
-          console.log(error);
-          setSnackMsg(JSON.parse(error.message).message);
-          setOpenErrorSnack(true);
-          setLoading(false);
-          setOpen(false);
-        }
-      );
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`);
+      setLoading(false);
+      const newList = courses.filter((item) => parseInt(item.id) !== parseInt(course.id));
+      setCourses(newList);
+
+    } catch (err) {
+      console.log(err);
+      setSnackMsg(err.response.data.message ? err.response.data.message : "Unknown error");
+      setOpenErrorSnack(true);
+      setLoading(false);
+      setOpen(false);
+    }
   }
 
   return (
     <div>
-      {/* <IconButton aria-label="delete" onClick={handleClickDelete}>
-        <DeleteIcon />
-      </IconButton> */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -112,12 +90,12 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
         </DialogActions>
       </Dialog>
       <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-          <MuiAlert
-            elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
-          >
-            {snackMsg}
-          </MuiAlert>
-        </Snackbar>
+        <MuiAlert
+          elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
+        >
+          {snackMsg}
+        </MuiAlert>
+      </Snackbar>
     </div>
   )
 }

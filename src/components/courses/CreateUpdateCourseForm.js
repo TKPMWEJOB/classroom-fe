@@ -5,8 +5,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-export default function FormDialog({ open, dialogTitle, handleClose, handleSubmit, course }) {
+export default function FormDialog({ open, dialogTitle, handleClose, handleSubmit, course, loading }) {
   return (
     <Dialog open={open} onClose={handleClose} onSubmit={handleSubmit}>
       <form action="/" method="POST" onSubmit={(e) => handleClose}>
@@ -63,7 +64,7 @@ export default function FormDialog({ open, dialogTitle, handleClose, handleSubmi
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Submit</Button>
+          <LoadingButton type="submit" loading={loading}>Submit</LoadingButton>
         </DialogActions>
       </form>
     </Dialog>

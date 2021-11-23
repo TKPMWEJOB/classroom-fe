@@ -74,7 +74,6 @@ export default function CourseCard({ setIsLoaded, setCourses, setError, course, 
     let href = temp.concat(course.id);
     history.push(href);
   }
-  console.log(courses);
 
   return (
     <div>
