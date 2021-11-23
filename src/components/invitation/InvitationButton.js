@@ -18,12 +18,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 
-export default function UserNameEditForm({ course }) {
+export default function IvitationButton({ course }) {
   const [loading, setLoading] = React.useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
   const [open, setOpen] = React.useState(false);
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
   function handleClickLoading() {
       setLoading(true);
@@ -55,7 +56,10 @@ export default function UserNameEditForm({ course }) {
 
   const handleSubmit = (e) => {
     handleClickLoading();
-    axios.put(`${process.env.REACT_APP_API_URL}/send-invitation`, e)
+    const config = {
+      headers: { 'authorization': `${tokenLocal}` }
+    };
+    axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-student`, e, config)
     .then(res => {
       setSnackMsg(res.data.msg);  
       setOpenSuccessSnack(true);
@@ -70,15 +74,20 @@ export default function UserNameEditForm({ course }) {
     );
     setOpen(false);
   }
+
+  
+  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`
   
   const initialValues = {
     sender: course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous",
-    invitationId: course.invitationId,
-    email: ''
+    invitationLink: invitationLink,
+    courseId: course.id,
+    emailSender: course.User ? course.User.email : '',
+    emailReceiver: ''
   }
     
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Required')
+    emailReceiver: Yup.string().email('Invalid email').required('Required')
   });
 
 
@@ -105,10 +114,11 @@ export default function UserNameEditForm({ course }) {
               {(props) => (
               <Form noValidate>
                   <Field as={TextField}
-                      id="email"
-                      name="email"
+                      required
+                      id="emailReceiver"
+                      name="emailReceiver"
                       fullWidth
-                      error={props.errors.email && props.touched.email}
+                      error={props.errors.emailReceiver && props.touched.emailReceiver}
                       label="Email"
                       autoComplete="email"
                       helperText={<ErrorMessage name='email' />}
@@ -126,7 +136,7 @@ export default function UserNameEditForm({ course }) {
                     variant="contained"
                     color="primary"
                   >
-                    Save
+                    Invite
                   </LoadingButton>
 
                   </DialogActions>

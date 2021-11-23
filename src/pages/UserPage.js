@@ -3,7 +3,7 @@ import AppBar from '../components/AppBar'
 import UserProfile from '../components/users/UserProfile'
 import { Box } from '@material-ui/core'
 
-export default function UserProfile() {
+export default function UserPage() {
   const token = JSON.parse(localStorage.getItem("token"));
   return (    
     <Box sx={{ bgcolor: '#F8F8F8' }}>

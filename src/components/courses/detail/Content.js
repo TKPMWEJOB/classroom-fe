@@ -31,7 +31,6 @@ export default function Content({ course, setCourse }) {
 			.then(
 				(result) => {
 					setIsLoaded(true);
-					console.log(result);
 					setCourse(result);
 				},
 				// Note: it's important to handle errors here
@@ -43,6 +42,8 @@ export default function Content({ course, setCourse }) {
 				}
 			)
 	}, [id])
+
+	console.log(course);
 
 	if (error) {
 		return <div>Error: {error.message}</div>;

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Button ,
-  Stack ,
+  Button,
   Typography,
   Container 
 } from '@material-ui/core';
 
+import Stack from '@mui/material/Stack';
 
 export default function PageContent({ content, onClick }) {
     return (
