@@ -7,7 +7,7 @@ import invitationButton from '../invitation/intitationButton';
 import { UserContext } from "../../../contexts/UserContext";
 import axios from "axios";
 
-export default function Content({ course, setCourse }) {
+export default function Stream({ course, setCourse }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const { userInfo, updateUser } = useContext(UserContext);
@@ -19,7 +19,7 @@ export default function Content({ course, setCourse }) {
 			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
 			setIsLoaded(true);
 			console.log(result);
-			setCourse(result);
+			setCourse(result.data);
 		} catch(error) {
 			setIsLoaded(true);
 			setError(error);
@@ -78,14 +78,14 @@ export default function Content({ course, setCourse }) {
 							alignItems="center"
 						>
 							<Grid item lg md xs style={{ margin: '0px 0px 24px 0px' }} >
-								<Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
+								<Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden', padding: '0px 20px' }}>
 									<h1>
 										Hmm............
 									</h1>
 								</Paper>
 							</Grid>
 							<Grid item lg md xs style={{ margin: '0px 0px 24px 0px' }} >
-								<Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
+								<Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden', padding: '0px 20px' }}>
 									<h1>
 										posts here
 									</h1>
