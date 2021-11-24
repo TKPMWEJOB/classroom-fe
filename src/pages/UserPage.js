@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
 export default function UserDetail() {
-  const {userInfo, setUserInfo} = useContext(UserContext);
+  const {userInfo } = useContext(UserContext);
 
   return (    
     <Box sx={{ bgcolor: '#F8F8F8' }}>

@@ -1,51 +1,38 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import CreateCourseDialog from './CreateUpdateCourseForm';
 import { Redirect } from 'react-router';
 import axios from 'axios'
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import { SnackbarContext } from '../../contexts/SnackbarContext';
 
 axios.defaults.withCredentials = true;
 export default function CreateButton({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [openErrorSnack, setOpenErrorSnack] = useState(false);
-  const [snackMsg, setSnackMsg] = useState("");
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
   
   const handleClose = () => {
     setOpen(false);
-    setOpenErrorSnack(false);
-  };
-
-  const handleCloseErrorSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenErrorSnack(false);
+    handleOpenErrorSnack(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    let config = null;
-    if (tokenLocal) {
-      config = {
-        headers: { 'authorization': `${tokenLocal}` }
-      };
-    }
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/`, {
         name: e.target.course.value,
         section: e.target.section.value,
         subject: e.target.subject.value,
         room: e.target.room.value
-      }, config);
+      });
       setRedirect(`courses/${res.data.id}`);
+      handleSetMsgSnack("Classroom created!");
+      handleOpenSuccessSnack(true);
       setLoading(false);
     } catch (err) {
-      setSnackMsg(err.response.data.message ? err.response.data.message : "Unknown error");
-      setOpenErrorSnack(true);
+
+      handleSetMsgSnack(err.response.data.message ? err.response.data.message : "Unknown error");
+      handleOpenErrorSnack(true);
       setLoading(false);
     }
   };
@@ -60,13 +47,6 @@ export default function CreateButton({ open, setOpen }) {
         <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit} loading={loading}
           dialogTitle="Create course"
         />
-        <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-          <MuiAlert
-            elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
-          >
-            {snackMsg}
-          </MuiAlert>
-        </Snackbar>
       </div>
     );
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -7,51 +7,20 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { FormControlLabel, Checkbox, Typography, Grid} from '@mui/material';
 import axios from 'axios';
 import { UserContext } from '../../contexts/UserContext';
+import { SnackbarContext } from '../../contexts/SnackbarContext';
 import SigninGoogleButton from './SigninGoogleButton';
 
 axios.defaults.withCredentials = true;
 export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup}) {
   const [loading, setLoading] = React.useState(false);
-  const [openErrorSnack, setOpenErrorSnack] = useState(false);
-  const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
-  const [SnackMsg, setSnackMsg] = useState("");
   const { updateUser } = useContext(UserContext);
+  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
   function handleClickLoading() {
     setLoading(true);
-  }
-
-  const handleCloseErrorSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
-
-    setOpenErrorSnack(false);
-  };
-
-  const handleOpenErrorSnack = () => {
-    setOpenErrorSnack(true);
-  };
-
-  const handleOpenSuccessSnack = () => {
-    setOpenSuccessSnack(true);
-  };
-  
-  const handleCloseSuccessSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
-
-    setOpenSuccessSnack(false);
-  };
-
-  const handleSetMsgSnack = (msg) => {
-    setSnackMsg(msg);
   }
 
   const handleSubmit = async (e) => {
@@ -65,8 +34,8 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
         remember: e.target.remember.checked
       });
       console.log(response);
-      setSnackMsg(response.data.msg);
-      setOpenSuccessSnack(true);
+      handleSetMsgSnack(response.data.msg);
+      handleOpenSuccessSnack(true);
       setLoading(false);
       
       setTimeout(() => {
@@ -74,9 +43,10 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
         updateUser(true, response.data.body);
       }, 1500);
     } catch (error) {
+      const { response } = error;
       console.error(error);
-      setSnackMsg(JSON.parse(error.message).msg);
-      setOpenErrorSnack(true);
+      handleSetMsgSnack(response.data.msg);
+      handleOpenErrorSnack(true);
       setLoading(false);
     }
   }
@@ -181,20 +151,6 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           */}
         </DialogActions>
       </form>
-      <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-          <MuiAlert 
-              elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
-          > 
-              {SnackMsg}
-          </MuiAlert>
-      </Snackbar>
-      <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
-          <MuiAlert 
-              elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
-          > 
-              {SnackMsg}
-          </MuiAlert>
-      </Snackbar>
     </Dialog>
   );
 }

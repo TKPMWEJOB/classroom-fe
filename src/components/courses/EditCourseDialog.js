@@ -1,25 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import UpdateCourseDialog from './CreateUpdateCourseForm';
 import axios from 'axios'
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { SnackbarContext } from '../../contexts/SnackbarContext';
 
 axios.defaults.withCredentials = true;
 export default function EditButton({ setIsLoaded, open, setOpen, setCourses, setError, course, courses }) {
   const [loading, setLoading] = useState(false);
-  const [openErrorSnack, setOpenErrorSnack] = useState(false);
-  const [snackMsg, setSnackMsg] = useState("");
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleCloseErrorSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenErrorSnack(false);
   };
 
   const handleSubmitEdit = async (e) => {
@@ -27,18 +19,12 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
     setLoading(true);
 
     try {
-      let config = null;
-			if (tokenLocal) {
-				config = {
-					headers: { 'authorization': `${tokenLocal}` }
-				};
-			}
       const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, {
         name: e.target.course.value,
         section: e.target.section.value,
         subject: e.target.subject.value,
         room: e.target.room.value
-      }, config);
+      });
       const newList = courses.map((item) => {
         if (parseInt(item.id) === parseInt(res.data.id)) {
           item = res.data;
@@ -49,10 +35,12 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
       setCourses(newList);
       setOpen(false);
       setLoading(false);
+      handleSetMsgSnack("Classroom updated!");
+      handleOpenSuccessSnack(true);
     } catch (err) {
       console.log(err);
-      setSnackMsg(err.response.data.message ? err.response.data.message : "Unknown error");
-      setOpenErrorSnack(true);
+      handleSetMsgSnack(err.response.data.message ? err.response.data.message : "Unknown error");
+      handleOpenErrorSnack(true);
       setLoading(false);
     }
   }
@@ -63,14 +51,6 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
         dialogTitle="Update course"
         course={course}
       />
-
-      <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-        <MuiAlert
-          elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
-        >
-          {snackMsg}
-        </MuiAlert>
-      </Snackbar>
     </div>
   );
 }

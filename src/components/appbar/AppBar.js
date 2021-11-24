@@ -16,7 +16,7 @@ import LoggedButtons from './LoggedButtons';
 
 export default function ButtonAppBar() {
   const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
 
   const handleCreateCourse = () => {
     setOpenCreateCourse(true);
@@ -54,18 +54,24 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleGoHome}>
-            Class Room
+          <Box>
+            <Typography variant="h6" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={handleGoHome} >
+              Moorssalc Elgoog Classroom
+            </Typography>
+          </Box>
+
+          <Typography variant="h6" sx={{ flexGrow: 1}}>
+            
           </Typography>
 
-
-          {userInfo.isLogin
-            ? <IconButton size="large" edge="start" color="inherit" aria-label="menu"
+          {userInfo.isLogin ? 
+            <IconButton size="large" edge="start" color="inherit" aria-label="menu"
               sx={{ mr: 2 }}
               onClick={handleCreateCourse}>
               <AddIcon />
             </IconButton>
-            : ""}
+            : ""
+          }
 
           {userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile} /> : <SigninButton />}
         </Toolbar>

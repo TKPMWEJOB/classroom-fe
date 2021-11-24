@@ -57,17 +57,10 @@ function UserProfile() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const {userInfo, setUserInfo} = useContext(UserContext);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   
   useEffect( async() => {
     try {
-      let config = null;
-			if (tokenLocal) {
-				config = {
-					headers: { 'authorization': `${tokenLocal}` }
-				};
-			}
-      let result = await axios.get(`${process.env.REACT_APP_API_URL}/user`, config);
+      let result = await axios.get(`${process.env.REACT_APP_API_URL}/user`);
       console.log(result);
       setUser(result.data);
       setIsLoaded(true);

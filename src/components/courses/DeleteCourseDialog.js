@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,54 +6,38 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import axios from 'axios'
+
+import { SnackbarContext } from '../../contexts/SnackbarContext';
 
 axios.defaults.withCredentials = true;
 export default function DeleteCourseButton({ open, setOpen, course, setCourses, courses }) {
   const [loading, setLoading] = useState(false);
-  const [openErrorSnack, setOpenErrorSnack] = useState(false);
-  const [snackMsg, setSnackMsg] = useState("");
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
   const handleClose = () => {
     setOpen(false);
-    setOpenErrorSnack(false);
+    handleOpenErrorSnack(false);
   };
-
-
 
   function handleClickLoading() {
     setLoading(true);
   }
 
-  const handleCloseErrorSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpenErrorSnack(false);
-  };
-
   const handleDelete = async (e) => {
     handleClickLoading();
-    let config = null;
-    if (tokenLocal) {
-        config = {
-            headers: { 'authorization': `${tokenLocal}` }
-        };
-    }
+
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, config);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`);
       setLoading(false);
       const newList = courses.filter((item) => parseInt(item.id) !== parseInt(course.id));
       setCourses(newList);
-
+      handleSetMsgSnack("Classroom deleted!");
+      handleOpenSuccessSnack(true);
     } catch (err) {
       console.log(err);
-      setSnackMsg(err.response.data.message ? err.response.data.message : "Unknown error");
-      setOpenErrorSnack(true);
+      handleSetMsgSnack(err.response.data.message ? err.response.data.message : "Unknown error");
+      handleOpenErrorSnack(true);
       setLoading(false);
       setOpen(false);
     }
@@ -89,13 +73,7 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-        <MuiAlert
-          elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
-        >
-          {snackMsg}
-        </MuiAlert>
-      </Snackbar>
+      
     </div>
   )
 }

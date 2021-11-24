@@ -9,27 +9,18 @@ import axios from 'axios';
 
 export default function LoggedButtons({handleAvatarClick}) {
     const { userInfo, updateUser } = useContext(UserContext);
-    const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
     const history = useHistory();
     
     const handleSignout = async () => {
-    let config = null;
-    if (tokenLocal) {
-        config = {
-            headers: { 'authorization': `${tokenLocal}` }
-        };
-    }
-    let response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/logout`, config);
-    console.log(response);
-    updateUser(false, null);
-    history.push('/');
-    //removeCookie("token");
-    //window.location.reload();
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/logout`);
+        console.log(response);
+        updateUser(false, null);
+        history.push('/');
     };
 
     return (
     <Box sx={{display: "flex",flexDirection: "row"}}>
-        <Avatar alt={userInfo.info?.email} src="./user.png" onClick={handleAvatarClick}/>
+        <Avatar sx={{cursor: 'pointer'}} alt={userInfo.info?.email} src="./user.png" onClick={handleAvatarClick}/>
         <Button color="inherit" onClick={handleSignout}>Sign out</Button>
     </Box>
     );

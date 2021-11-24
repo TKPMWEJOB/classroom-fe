@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -7,16 +7,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { FormControlLabel, Checkbox, Typography, Grid} from '@mui/material';
+import { SnackbarContext } from '../../contexts/SnackbarContext';
+import axios from 'axios';
 
 export default function SignupDialog({ open, dialogTitle, handleClose}) {
     const [loading, setLoading] = React.useState(false);
     const [disabled, setDisabled] = useState(true);
-    const [openErrorSnack, setOpenErrorSnack] = useState(false);
-    const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
-    const [snackMsg, setSnackMsg] = useState("");
+    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
     function handleDisabled() {
         setDisabled(!disabled);
@@ -26,73 +24,40 @@ export default function SignupDialog({ open, dialogTitle, handleClose}) {
         setLoading(true);
     }
 
-    const handleCloseErrorSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpenErrorSnack(false);
-    };
-
-    const handleCloseSuccessSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpenSuccessSnack(false);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         handleClickLoading();
         if (e.target.password.value !== e.target.rePassword.value) {
-            setOpenErrorSnack(true);
-            setSnackMsg("Comfirm password does not match password.");
+            handleOpenErrorSnack(true);
+            handleSetMsgSnack("Comfirm password does not match password.");
             setLoading(false);
             return;
         }
 
-        fetch(`${process.env.REACT_APP_API_URL}/auth/signup`, {
-            method: 'POST',
-            body: JSON.stringify({
+        try {
+            let res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/signup`, {
                 email: e.target.email.value,
                 password: e.target.password.value,
                 firstName: e.target.firstName.value,
                 lastName: e.target.lastName.value,
-            }),
-            accept: '*/*',
-            headers: {
-            'Content-Type': 'application/json'
-            }
-        }).then(res => {
-            if (res.status === 200) {
-            return res.json();
-            }
-            else {
-            return res.text().then(text => { throw new Error(text) })
-            }
-        })
-            .then(
-            (result) => {
-                setSnackMsg(result.msg);
-                setOpenSuccessSnack(true);
+            });
+
+            handleSetMsgSnack(res.msg);
+            handleOpenSuccessSnack(true);
+            setLoading(false);
+            setTimeout(() => {  
+                console.log(res);
                 setLoading(false);
-                setTimeout(() => {  
-                    console.log(result);
-                    setLoading(false);
-                    handleClose();
-                }, 2000);
-            },
-            // Note: it's important to handle errors here
-            // instead of a catch() block so that we don't swallow
-            // exceptions from actual bugs in components.
-            (error) => {
-                console.log(error);
-                setSnackMsg(JSON.parse(error.message).msg);
-                setOpenErrorSnack(true);
-                setLoading(false);
-            }
-        );
+                handleClose();
+            }, 1500);
+        } catch(error) {
+            const { response } = error;
+            console.error(error);
+            handleSetMsgSnack(response.data.msg);
+            handleOpenErrorSnack(true);
+            setLoading(false);
+        }
+
     }
 
     return (
@@ -196,35 +161,33 @@ export default function SignupDialog({ open, dialogTitle, handleClose}) {
                 >
                     Sign up
                 </LoadingButton>
-                {/*}
-                <Button 
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    sx={{margin: 2}}
-                    disabled={disabled}
-                >
-                    Sign up
-                </Button>
-                */}   
             </DialogActions>
             </form>
-            <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
-                <MuiAlert 
-                    elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
-                > 
-                   {snackMsg}
-                </MuiAlert>
-            </Snackbar>
-            <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
-                <MuiAlert 
-                    elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
-                > 
-                    {snackMsg}
-                </MuiAlert>
-            </Snackbar>
         </Dialog>
     );
 }
+
+        /*
+            .then(
+            (result) => {
+                setSnackMsg(result.msg);
+                setOpenSuccessSnack(true);
+                setLoading(false);
+                setTimeout(() => {  
+                    console.log(result);
+                    setLoading(false);
+                    handleClose();
+                }, 2000);
+            },
+            // Note: it's important to handle errors here
+            // instead of a catch() block so that we don't swallow
+            // exceptions from actual bugs in components.
+            (error) => {
+                console.log(error);
+                setSnackMsg(JSON.parse(error.message).msg);
+                setOpenErrorSnack(true);
+                setLoading(false);
+            }
+        );
+    }
+*/

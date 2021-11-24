@@ -17,9 +17,7 @@ import LoggedButtons from '../../appbar/LoggedButtons';
 import SigninButton from '../../appbar/SigninButton';
 
 export default function ButtonAppBar({course, handleChangeTab }) {
-  const [openSignin, setOpenSignin] = React.useState(false);
-  const [openSignup, setOpenSignup] = React.useState(false);
-	const { userInfo, updateUser } = useContext(UserContext);
+	const { userInfo } = useContext(UserContext);
   const history = useHistory();
 
   const handleGoUserProfile = () => {
