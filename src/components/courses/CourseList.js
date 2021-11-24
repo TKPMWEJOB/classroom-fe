@@ -17,13 +17,13 @@ function Courses() {
   // this useEffect will run once
   // similar to componentDidMount()
   useEffect(async () => {
-    let config = null;
+    /*let config = null;
     if (tokenLocal) {
         config = {
             headers: { 'authorization': `${tokenLocal}` }
         };
-    }
-    let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`, config);
+    }*/
+    let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
     if (res.status === 200) {
       setIsLoaded(true);
       setCourses(res.data);

@@ -13,6 +13,9 @@ import { styled } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+import InvitationButton from '../../invitation/InvitationButton';
+
 
 const Demo = styled('div')(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
@@ -24,6 +27,7 @@ export default function People({ course, setCourse }) {
 	const [studentsInfo, setStudentsInfo] = useState([]);
 	const [teachersInfo, setTeachersInfo] = useState([]);
 	const { id } = useParams();
+	
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(async () => {
@@ -33,7 +37,6 @@ export default function People({ course, setCourse }) {
 
 			setStudentsInfo(result.data);
 			setTeachersInfo(result.data);
-			console.log(teachersInfo);
 		} catch (error) {
 			setIsLoaded(true);
 			setError(error);
@@ -55,9 +58,18 @@ export default function People({ course, setCourse }) {
 
 				<Grid container style={{ maxWidth: '750px' }}>
 					<Grid item lg={12} md={12} sm={12} xs={12}>
-						<Typography variant="h4" sx={{ color: (theme) => theme.palette.primary.main}} style={{padding: '0px 2	0px'}}>
-							Teachers
-						</Typography>
+						<ListItem
+							secondaryAction={
+								<InvitationButton course={course} role='teacher' />
+							}
+						>
+							
+							<Typography variant="h4" sx={{ color: (theme) => theme.palette.primary.main}} style={{padding: '0px 2	0px'}}>
+								Teachers
+							</Typography>
+						</ListItem>
+						
+						
 						<Divider
 							sx={{ bgcolor: (theme) => theme.palette.primary.main }}
 							style={{
@@ -84,15 +96,25 @@ export default function People({ course, setCourse }) {
 								</ListItem>
 							))}
 						</List>
-						<Typography variant="h4" sx={{ color: (theme) => theme.palette.primary.main }}>
-							Students
-						</Typography>
+						<ListItem
+							style={{
+								marginTop: 10,
+							}}
+							secondaryAction={
+								<InvitationButton course={course} role='student' />
+							}
+						>
+							
+							<Typography variant="h4" sx={{ color: (theme) => theme.palette.primary.main}} style={{padding: '0px 2	0px'}}>
+								Student
+							</Typography>
+						</ListItem>
 						<Divider
 							sx={{ bgcolor: (theme) => theme.palette.primary.main }}
 							style={{
 								border: "none",
 								height: 2,
-								margin: 0,
+								margin: 10,
 							}}
 						/>
 
