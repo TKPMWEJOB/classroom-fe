@@ -46,6 +46,7 @@ export default function ButtonAppBar() {
       <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
         <Toolbar>
           <IconButton
+            href='/'
             size="large"
             edge="start"
             color="inherit"

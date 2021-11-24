@@ -5,17 +5,17 @@ import { UserContext } from '../../contexts/UserContext';
 import { GoogleLogin } from 'react-google-login'
 
 axios.defaults.withCredentials = true;
-export default function SigninGoogleButton({handleSetMsgSnack, handleOpenSuccessSnack, handleOpenErrorSnack, handleClose}) {
+export default function SigninGoogleButton({ handleSetMsgSnack, handleOpenSuccessSnack, handleOpenErrorSnack, handleClose }) {
     const { updateUser } = useContext(UserContext);
 
     const handleLogin = async (googleData) => {
         try {
             console.log(googleData);
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/google`, { token: googleData.tokenId });
-        
+
             handleSetMsgSnack(response.data.msg);
             handleOpenSuccessSnack();
-            
+
             setTimeout(() => {
                 handleClose();
                 updateUser(true, response.data.body);
@@ -33,16 +33,16 @@ export default function SigninGoogleButton({handleSetMsgSnack, handleOpenSuccess
         handleOpenErrorSnack();
     };
 
-  return (
-    <div>
-        <GoogleLogin
-            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            buttonText="Sign up with Google"
-            onSuccess={handleLogin}
-            onFailure={handleFailure}
-            cookiePolicy={'single_host_origin'}
-            autoLoad={false}
-        />
-    </div>
-  );
+    return (
+        <div style={{ width: '50%', margin: 'auto' }}>
+            <GoogleLogin
+                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                buttonText="Loggin with Google"
+                onSuccess={handleLogin}
+                onFailure={handleFailure}
+                cookiePolicy={'single_host_origin'}
+                autoLoad={false}
+            />
+        </div>
+    );
 }

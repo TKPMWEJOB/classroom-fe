@@ -109,7 +109,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
             No account? Sign up here.
           </Typography>
           
-          < SigninGoogleButton 
+          <SigninGoogleButton 
             handleSetMsgSnack={handleSetMsgSnack} 
             handleOpenSuccessSnack={handleOpenSuccessSnack} 
             handleOpenErrorSnack={handleOpenErrorSnack}

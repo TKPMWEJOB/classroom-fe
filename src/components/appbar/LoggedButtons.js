@@ -20,7 +20,7 @@ export default function LoggedButtons({handleAvatarClick}) {
 
     return (
     <Box sx={{display: "flex",flexDirection: "row"}}>
-        <Avatar sx={{cursor: 'pointer'}} alt={userInfo.info?.email} src="./user.png" onClick={handleAvatarClick}/>
+        <Avatar sx={{cursor: 'pointer'}} src="/user.png" onClick={handleAvatarClick}/>
         <Button color="inherit" onClick={handleSignout}>Sign out</Button>
     </Box>
     );
