@@ -51,6 +51,7 @@ export default function IvitationButton({ course }) {
   };
 
   const handleClose = () => {
+    console.log(invitationLink);
     setOpen(false);
   };
 
@@ -76,7 +77,7 @@ export default function IvitationButton({ course }) {
   }
 
   
-  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`
+  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`;
   
   const initialValues = {
     sender: course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous",
