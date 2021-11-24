@@ -10,6 +10,8 @@ import {
   Button
 } from '@material-ui/core';
 
+import IconButton from '@mui/material/IconButton';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -18,7 +20,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 
-export default function IvitationButton({ course }) {
+export default function IvitationButton({ course, role }) {
   const [loading, setLoading] = React.useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
@@ -51,7 +53,6 @@ export default function IvitationButton({ course }) {
   };
 
   const handleClose = () => {
-    console.log(invitationLink);
     setOpen(false);
   };
 
@@ -60,26 +61,35 @@ export default function IvitationButton({ course }) {
     const config = {
       headers: { 'authorization': `${tokenLocal}` }
     };
-    axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-student`, e, config)
-    .then(res => {
-      setSnackMsg(res.data.msg);  
-      setOpenSuccessSnack(true);
-      setLoading(false);
-    })
-    .catch( 
-      error => {
-        setSnackMsg(error.response.data.msg);
-        setOpenErrorSnack(true);
+    if (role === 'student' || role === 'teacher') {
+      axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-member`, e, config)
+      .then(res => {
+        setSnackMsg(res.data.msg);  
+        setOpenSuccessSnack(true);
         setLoading(false);
-      }      
-    );
+      })
+      .catch( 
+        error => {
+          setSnackMsg(error.response.data.msg);
+          setOpenErrorSnack(true);
+          setLoading(false);
+        }      
+      );
+    }
+    else {
+      setSnackMsg(`Some errors occur while setting role: role ${role} not found`);
+      setOpenErrorSnack(true);
+      setLoading(false);
+    }
     setOpen(false);
   }
 
   
   const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`;
+  const invitationTitle = `Invite ${role}`;
   
   const initialValues = {
+    role: role,
     sender: course.User ? `${course.User.firstName} ${course.User.lastName}` : "Anonymous",
     invitationLink: invitationLink,
     courseId: course.id,
@@ -94,22 +104,14 @@ export default function IvitationButton({ course }) {
 
   return (
     <>
-      <Button
-        onClick={handleClickOpen}
-        variant="contained"
-        color="primary"
-        style={{
-          marginTop: 20, height: '20%', 
-          width: '196px',
-          fontSize: "18px"}}
-        >
-        Invite
-      </Button>
+      <IconButton edge="end" aria-label={`invite-${role}`} onClick={handleClickOpen}>
+        <ContactMailIcon sx={{ color: (theme) => theme.palette.primary.main}} />
+      </IconButton>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title">
-        <DialogTitle>Invite Member</DialogTitle>
+        <DialogTitle>{invitationTitle}</DialogTitle>
         <DialogContent>
           <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
               {(props) => (
@@ -120,7 +122,7 @@ export default function IvitationButton({ course }) {
                       name="emailReceiver"
                       fullWidth
                       error={props.errors.emailReceiver && props.touched.emailReceiver}
-                      label="Email"
+                      label="Enter email"
                       autoComplete="email"
                       helperText={<ErrorMessage name='email' />}
                       style={{ width: '300px' }}
