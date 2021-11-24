@@ -15,7 +15,7 @@ export default function Stream({ course, setCourse, role, setRole }) {
 	const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 	const { id } = useParams();*/
 
-	
+
 	return (
 		<div style={{
 			display: 'flex',
@@ -33,22 +33,33 @@ export default function Stream({ course, setCourse, role, setRole }) {
 					justifyContent="center"
 					alignItems="center"
 				>
-					<Grid 
-						item 
-						container 
-						direction="column" 
+					<Grid
+						item
+						container
+						direction="column"
 						sx={{ display: { xs: 'none', sm: 'block' } }}
 						style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
 					>
 
-						<Paper 
-							variant='outlined' 
-							sx={{ margin: 'auto', overflow: 'hidden'}} 
+						<Paper
+							variant='outlined'
+							sx={{ margin: 'auto', overflow: 'hidden' }}
 							style={{ textAlign: 'center', height: '20%' }}
 						>
 							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
-							style={{ margin: 5 }}>
-								{course.invitationId? course.invitationId : 'Upcoming!'}
+								style={{ margin: 5 }}>
+								Code: {course.invitationId ? course.invitationId : 'Upcoming!'}
+							</Typography>
+						</Paper>
+
+						<Paper
+							variant='outlined'
+							sx={{ margin: '20px 0px 0px 0px', overflow: 'hidden' }}
+							style={{ textAlign: 'center', height: '20%' }}
+						>
+							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
+								style={{ margin: 5 }}>
+								Classwork!
 							</Typography>
 						</Paper>
 					</Grid>
@@ -58,28 +69,6 @@ export default function Stream({ course, setCourse, role, setRole }) {
 						justifyContent="center"
 						alignItems="center"
 					>
-						<Grid
-							item
-							container
-							direction="column"
-							sx={{ display: { xs: 'none', sm: 'block' } }}
-							style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
-						>
-
-							<Paper
-								variant='outlined'
-								sx={{ margin: 'auto', overflow: 'hidden' }}
-								style={{ textAlign: 'center', height: '20%' }}
-							>
-								<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
-									style={{ margin: 5 }}>
-									{course.invitationId ? course.invitationId : 'Upcoming!'}
-								</Typography>
-							</Paper>
-
-
-
-						</Grid>
 
 						<Grid item lg md xs
 							direction="column"
@@ -107,7 +96,7 @@ export default function Stream({ course, setCourse, role, setRole }) {
 			</Grid>
 		</div>
 	);
-	
+
 }
 
 /*
