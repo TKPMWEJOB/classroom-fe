@@ -18,13 +18,16 @@ function Courses() {
     try {
       let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
       // if (res.status === 200) {
+        console.log(res.data[0]);
       setIsLoaded(true);
       setCourses(res.data);
     } catch (err) {
-      console.log(err.response);
-      updateUser(false, null);
-      setIsLoaded(false);
-      setError(err.response);
+      console.log(err);
+      if (err.response?.status === 401) {
+        updateUser(false, null);
+      }
+      setIsLoaded(true);
+      setError(err);
     }
   }, [])
 
