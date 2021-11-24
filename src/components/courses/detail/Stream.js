@@ -3,66 +3,58 @@ import Banner from "./Banner";
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
-import InvBtn from '../../invitation/InvitationButton';
 import { UserContext } from "../../../contexts/UserContext";
 import axios from "axios";
 import { isTeacher, isStudent, isOwner } from '../../../utils/Role'
 
 axios.defaults.withCredentials = true;
 export default function Stream({ course, setCourse, role, setRole }) {
-	const [error, setError] = useState(null);
+	/*const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const { userInfo, updateUser } = useContext(UserContext);
 	const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+	const { id } = useParams();*/
 
-	const { id } = useParams();
+	
+	return (
+		<div style={{
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			gridTemplateColumns: '1fr',
+		}}>
+			<Grid container style={{ maxWidth: '1000px' }}>
+				<Grid item lg={12} md={12} sm={12} xs={12}>
+					<Banner course={course} />
+				</Grid>
+				<Grid
+					container
+					direction="row"
+					justifyContent="center"
+					alignItems="center"
+				>
+					<Grid 
+						item 
+						container 
+						direction="column" 
+						sx={{ display: { xs: 'none', sm: 'block' } }}
+						style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
+					>
 
-	useEffect(async () => {
-		try {
-			let config = null;
-			if (tokenLocal) {
-				config = {
-					headers: { 'authorization': `${tokenLocal}` }
-				};
-			}
-			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
-			setIsLoaded(true);
-			console.log(result);
-			setCourse(result.data.data);
-			setRole(result.data.role);
-			console.log("teacher: ", isTeacher(role));
-			console.log("student: ", isStudent(role));
-			console.log("owner: ", isOwner(role));
-		} catch (error) {
-			setIsLoaded(true);
-			setError(error);
-		}
-
-	}, [id, role])
-
-	console.log(course);
-
-	if (error) {
-		return <div>Error: {error.message}</div>;
-	} else if (!isLoaded) {
-		return <div>Loading...</div>;
-	} else {
-		return (
-			<div style={{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				gridTemplateColumns: '1fr',
-			}}>
-
-
-				<Grid container style={{ maxWidth: '1000px' }}>
-					<Grid item lg={12} md={12} sm={12} xs={12}>
-						<Banner course={course} />
+						<Paper 
+							variant='outlined' 
+							sx={{ margin: 'auto', overflow: 'hidden'}} 
+							style={{ textAlign: 'center', height: '20%' }}
+						>
+							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
+							style={{ margin: 5 }}>
+								{course.invitationId? course.invitationId : 'Upcoming!'}
+							</Typography>
+						</Paper>
 					</Grid>
-					<Grid
-						container
-						direction="row"
+
+					<Grid item lg md xs
+						direction="column"
 						justifyContent="center"
 						alignItems="center"
 					>
@@ -84,7 +76,6 @@ export default function Stream({ course, setCourse, role, setRole }) {
 									{course.invitationId ? course.invitationId : 'Upcoming!'}
 								</Typography>
 							</Paper>
-							<InvBtn course={course} />
 
 
 
@@ -113,9 +104,10 @@ export default function Stream({ course, setCourse, role, setRole }) {
 						</Grid>
 					</Grid>
 				</Grid>
-			</div>
-		);
-	}
+			</Grid>
+		</div>
+	);
+	
 }
 
 /*
