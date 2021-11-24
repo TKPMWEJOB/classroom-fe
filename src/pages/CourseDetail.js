@@ -14,69 +14,73 @@ export default function CourseDetail() {
   const [value, setValue] = React.useState('1');
   const [course, setCourse] = React.useState([]);
   const [error, setError] = useState(null);
-	const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   const [role, setRole] = React.useState('');
   const { id } = useParams();
 
-  useEffect( async () => {
-		try {
-			let config = null;
-			if (tokenLocal) {
-				config = {
-					headers: { 'authorization': `${tokenLocal}` }
-				};
-			}
-			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
-			setIsLoaded(true);
-			setCourse(result.data.data);
+  useEffect(async () => {
+    try {
+      let config = null;
+      if (tokenLocal) {
+        config = {
+          headers: { 'authorization': `${tokenLocal}` }
+        };
+      }
+      let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
+      setIsLoaded(true);
+      setCourse(result.data.data);
       setRole(result.data.role);
-			console.log("teacher: ", isTeacher(role));
-			console.log("student: ", isStudent(role));
-			console.log("owner: ", isOwner(role));
-		} catch(error) {
-			setIsLoaded(true);
-			setError(error);
-		}
-		
-	}, [id])
+      console.log("teacher: ", isTeacher(role));
+      console.log("student: ", isStudent(role));
+      console.log("owner: ", isOwner(role));
+    } catch (error) {
+      setIsLoaded(true);
+      setError(error);
+    }
+
+  }, [id])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   if (error) {
-		return <div>Error: {error.message}</div>;
-	} else if (!isLoaded) {
-		return <div>Loading...</div>;
-	} else {
-  return (
-    <div>
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-        <TabContext value={value}>
-          <AppBar handleChangeTab={handleChange} course={course}></AppBar>
+    return <div>Error: {error.message}</div>;
+  } else if (!isLoaded) {
+    return <div>Loading...</div>;
+  } else {
+    return (
+      <div>
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+          <TabContext value={value}>
+            <AppBar handleChangeTab={handleChange} course={course} role={role}></AppBar>
 
-          <TabPanel value="1" style={{ padding: 0 }}>
-            <Stream
-              course={course}
-              setCourse={setCourse}
-              role={role}
-              setRole={setRole}
-            >
-            </Stream>
-          </TabPanel>
-          <TabPanel value="2">
-          </TabPanel>
-          <TabPanel value="3">
-            <People
-              course={course}
-              setCourse={setCourse}
-              role={role}
-              setRole={setRole}>
-            </People>
-          </TabPanel>
-        </TabContext>
-      </Box>
+            <TabPanel value="1" style={{ padding: 0 }}>
+              <Stream
+                course={course}
+                setCourse={setCourse}
+                role={role}
+                setRole={setRole}
+              >
+              </Stream>
+            </TabPanel>
+            <TabPanel value="2">
+              Comming Soon
+            </TabPanel>
+            <TabPanel value="3">
+              <People
+                course={course}
+                setCourse={setCourse}
+                role={role}
+                setRole={setRole}>
+              </People>
+            </TabPanel>
+            <TabPanel value="4">
+              Comming Soon
+            </TabPanel>
+          </TabContext>
+        </Box>
       </div>
     );
   }

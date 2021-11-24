@@ -16,8 +16,10 @@ import { UserContext } from '../../../contexts/UserContext';
 import LoggedButtons from '../../appbar/LoggedButtons';
 import SigninButton from '../../appbar/SigninButton';
 
-export default function ButtonAppBar({course, handleChangeTab }) {
-	const { userInfo } = useContext(UserContext);
+import { isTeacher, isStudent, isOwner } from '../../../utils/Role';
+
+export default function ButtonAppBar({ course, handleChangeTab, role }) {
+  const { userInfo } = useContext(UserContext);
   const history = useHistory();
 
   const handleGoUserProfile = () => {
@@ -56,9 +58,13 @@ export default function ButtonAppBar({course, handleChangeTab }) {
             <Tab label="Stream" value="1" style={{ textTransform: 'none' }} />
             <Tab label="Classwork" value="2" style={{ textTransform: 'none' }} />
             <Tab label="People" value="3" style={{ textTransform: 'none' }} />
-            <Tab label="Grades" value="4" style={{ textTransform: 'none' }} />
+
+            {isTeacher(role) ?
+              <Tab label="Grades" value="4" style={{ textTransform: 'none' }} />
+              : ''
+            }
           </TabList>
-          { userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile}/> : <SigninButton /> }
+          {userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile} /> : <SigninButton />}
           {/*token ?
             <>
               <Avatar alt={token.user?.email} src="./user.png" onClick={handleGoUserProfile}/>
