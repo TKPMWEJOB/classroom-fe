@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
-import { useCookies } from 'react-cookie';
 import CourseCard from './CourseCard'
 import React from 'react'
 import axios from 'axios';
@@ -18,15 +17,14 @@ function Courses() {
   useEffect(async () => {
     try {
       let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
-      if (res.status === 200) {
-        setIsLoaded(true);
-        setCourses(res.data);
-      }
-    } catch(err) {
-      console.log(err);
+      // if (res.status === 200) {
+      setIsLoaded(true);
+      setCourses(res.data);
+    } catch (err) {
+      console.log(err.response);
       updateUser(false, null);
       setIsLoaded(false);
-      setError(err.error);
+      setError(err.response);
     }
   }, [])
 
@@ -39,7 +37,7 @@ function Courses() {
       <div>
         {/* <CreateCourseButton setCourses={setCourses} setError={setError} courses={courses}/> */}
         <Grid container spacing="24px" padding="24px">
-          {courses.map((course,index, courses) => (
+          {courses.map((course, index, courses) => (
             <Grid item key={course.id}>
               <CourseCard
                 course={course}
@@ -56,33 +54,3 @@ function Courses() {
 }
 
 export default Courses;
-
-/*
-    fetch(`${process.env.REACT_APP_API_URL}/courses/`, {
-      headers: {
-        "authorization": cookies.token,
-      }
-    })
-      .then(res => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        else {
-          return res.text().then(text => { throw new Error(text) })
-        }
-      })
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setCourses(result);
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          console.log(error);
-          setIsLoaded(true);
-          setError(error);
-        }
-      )
-      */

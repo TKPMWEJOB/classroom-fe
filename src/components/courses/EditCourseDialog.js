@@ -1,8 +1,6 @@
 import { useState, useContext } from 'react';
 import UpdateCourseDialog from './CreateUpdateCourseForm';
 import axios from 'axios'
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import { SnackbarContext } from '../../contexts/SnackbarContext';
 
 axios.defaults.withCredentials = true;
@@ -26,8 +24,8 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
         room: e.target.room.value
       });
       const newList = courses.map((item) => {
-        if (parseInt(item.id) === parseInt(res.data.id)) {
-          item = res.data;
+        if (parseInt(item.id) === parseInt(res.data.data.id)) {
+          item = res.data.data;
         }
         return item;
       });

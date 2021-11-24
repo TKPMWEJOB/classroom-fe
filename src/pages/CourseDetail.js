@@ -8,6 +8,7 @@ import TabPanel from '@mui/lab/TabPanel';
 export default function CourseDetail() {
   const [value, setValue] = React.useState('1');
   const [course, setCourse] = React.useState([]);
+  const [role, setRole] = React.useState('');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -20,12 +21,21 @@ export default function CourseDetail() {
           <AppBar handleChangeTab={handleChange} course={course}></AppBar>
 
           <TabPanel value="1" style={{ padding: 0 }}>
-            <Stream course={course} setCourse={setCourse}></Stream>
+            <Stream
+              course={course}
+              setCourse={setCourse}
+              role={role}
+              setRole={setRole}
+            >
+            </Stream>
           </TabPanel>
           <TabPanel value="2">
           </TabPanel>
           <TabPanel value="3">
-            <People></People>
+            <People
+              role={role}
+              setRole={setRole}>
+            </People>
           </TabPanel>
         </TabContext>
       </Box>
