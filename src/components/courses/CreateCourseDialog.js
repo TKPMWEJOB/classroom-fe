@@ -11,7 +11,8 @@ export default function CreateButton({ open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
-
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  
   const handleClose = () => {
     setOpen(false);
     setOpenErrorSnack(false);
@@ -27,13 +28,19 @@ export default function CreateButton({ open, setOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    let config = null;
+    if (tokenLocal) {
+      config = {
+        headers: { 'authorization': `${tokenLocal}` }
+      };
+    }
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/`, {
         name: e.target.course.value,
         section: e.target.section.value,
         subject: e.target.subject.value,
         room: e.target.room.value
-      });
+      }, config);
       setRedirect(`courses/${res.data.id}`);
       setLoading(false);
     } catch (err) {

@@ -5,7 +5,7 @@ import { Box } from '@material-ui/core'
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
-export default function CourseDetail() {
+export default function UserDetail() {
   const {userInfo, setUserInfo} = useContext(UserContext);
 
   return (    

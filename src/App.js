@@ -33,6 +33,8 @@ function App() {
           <Route exact path="/courses" component={Home}></Route>
           <Route exact path="/courses/:id" component={CourseDetail}></Route>
           <Route exact path="/user" component={UserPage}></Route>
+          <Route exact path="/invitation/:id" component={InvitationComfirm}></Route>
+          <Route path="*" component={NotFound} />
         </Switch>
       </UserContext.Provider>
     </main>

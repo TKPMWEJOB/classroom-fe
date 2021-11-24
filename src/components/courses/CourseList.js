@@ -12,12 +12,18 @@ function Courses() {
   const [courses, setCourses] = useState([]);
   const { userInfo, updateUser } = useContext(UserContext);
   
-  //const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   // Note: the empty deps array [] means
   // this useEffect will run once
   // similar to componentDidMount()
   useEffect(async () => {
-    let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
+    let config = null;
+    if (tokenLocal) {
+        config = {
+            headers: { 'authorization': `${tokenLocal}` }
+        };
+    }
+    let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`, config);
     if (res.status === 200) {
       setIsLoaded(true);
       setCourses(res.data);
