@@ -37,6 +37,7 @@ function UserInfoEdit({ setIsLoaded, setUser, user }) {
   const [openSuccessSnack, setOpenSuccessSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
   const [open, setOpen] = React.useState(false);
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
   const phoneRegExp=/^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
 
@@ -85,7 +86,13 @@ function UserInfoEdit({ setIsLoaded, setUser, user }) {
 
   const handleSubmit = (e) => {
     handleClickLoading();
-    axios.put(`${process.env.REACT_APP_API_URL}/user/info`, e)
+    let config = null;
+    if (tokenLocal) {
+      config = {
+        headers: { 'authorization': `${tokenLocal}` }
+      };
+    }
+    axios.put(`${process.env.REACT_APP_API_URL}/user/info`, e, config)
     .then(res => {
       setSnackMsg(res.data.msg);
       if(parseInt(user.id) === parseInt(res.data.id)) {          

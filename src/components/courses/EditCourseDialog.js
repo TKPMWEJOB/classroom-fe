@@ -9,6 +9,7 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
   const [loading, setLoading] = useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
   const handleClose = () => {
     setOpen(false);
@@ -26,12 +27,18 @@ export default function EditButton({ setIsLoaded, open, setOpen, setCourses, set
     setLoading(true);
 
     try {
+      let config = null;
+			if (tokenLocal) {
+				config = {
+					headers: { 'authorization': `${tokenLocal}` }
+				};
+			}
       const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, {
         name: e.target.course.value,
         section: e.target.section.value,
         subject: e.target.subject.value,
         room: e.target.room.value
-      });
+      }, config);
       const newList = courses.map((item) => {
         if (parseInt(item.id) === parseInt(res.data.id)) {
           item = res.data;

@@ -8,9 +8,17 @@ import axios from 'axios';
 
 export default function LoggedButtons({handleAvatarClick}) {
     const { userInfo, updateUser } = useContext(UserContext);
+    const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
+    
     const handleSignout = async () => {
-    let response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/logout`);
+    let config = null;
+    if (tokenLocal) {
+        config = {
+            headers: { 'authorization': `${tokenLocal}` }
+        };
+    }
+    let response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/logout`, config);
     console.log(response);
     updateUser(false, null);
 

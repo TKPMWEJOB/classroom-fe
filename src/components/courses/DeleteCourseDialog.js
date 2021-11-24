@@ -15,6 +15,7 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
   const [loading, setLoading] = useState(false);
   const [openErrorSnack, setOpenErrorSnack] = useState(false);
   const [snackMsg, setSnackMsg] = useState("");
+  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
   const handleClose = () => {
     setOpen(false);
@@ -37,8 +38,14 @@ export default function DeleteCourseButton({ open, setOpen, course, setCourses, 
 
   const handleDelete = async (e) => {
     handleClickLoading();
+    let config = null;
+    if (tokenLocal) {
+        config = {
+            headers: { 'authorization': `${tokenLocal}` }
+        };
+    }
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${course.id}`, config);
       setLoading(false);
       const newList = courses.filter((item) => parseInt(item.id) !== parseInt(course.id));
       setCourses(newList);

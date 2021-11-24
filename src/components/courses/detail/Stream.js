@@ -7,16 +7,24 @@ import InvBtn from '../../invitation/InvitationButton';
 import { UserContext } from "../../../contexts/UserContext";
 import axios from "axios";
 
+axios.defaults.withCredentials = true;
 export default function Stream({ course, setCourse }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const { userInfo, updateUser } = useContext(UserContext);
-
+	const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+	
 	const { id } = useParams();
 
 	useEffect( async () => {
 		try {
-			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
+			let config = null;
+			if (tokenLocal) {
+				config = {
+					headers: { 'authorization': `${tokenLocal}` }
+				};
+			}
+			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
 			setIsLoaded(true);
 			console.log(result);
 			setCourse(result.data);
