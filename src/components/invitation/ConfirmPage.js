@@ -22,21 +22,22 @@ export default function ComfirmPage() {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);  
     const [isJoined, setIsJoined] = useState(false);  
+    const [isSignin, setIsSignin] = useState(false);  
     const [user, setUser] = useState(null);
-    const token = JSON.parse(localStorage.getItem("token"));
+    //const token = JSON.parse(localStorage.getItem("token"));
     const invitationId  = useParams();
     const history = useHistory();
-    const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+    //const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
 
     useEffect(() => { 
-        let config = null;
+        /*let config = null;
         if (tokenLocal) {
             config = {
                 headers: { 'authorization': `${tokenLocal}` }
             };
-        }
+        }*/
 
-        axios.get(`${process.env.REACT_APP_API_URL}/user/find-user/${invitationId.id}`, config)
+        axios.get(`${process.env.REACT_APP_API_URL}/user/find-user/${invitationId.id}`)
         .then(res => {
             /*setSnackMsg(res.data.msg);  
             setOpenSuccessSnack(true);
@@ -52,6 +53,7 @@ export default function ComfirmPage() {
                     description: 'Click the button below to access to your class!',
                     buttonLabel: 'Accept Invitation'
                 }
+                setIsSignin(true);
                 setContent(newContent);
             }
             else if (res.status === 202) {
@@ -60,9 +62,9 @@ export default function ComfirmPage() {
                     description: 'Click the button below to access to your class!',
                     buttonLabel: 'Go to classroom'
                 }
-                console.log(newContent);
-                setContent(newContent);
+                setIsSignin(true);
                 setIsJoined(true);
+                setContent(newContent);
             }
             else if (res.status === 203) {
                 const newContent = {
@@ -70,7 +72,6 @@ export default function ComfirmPage() {
                     description: 'Click the button below to login',
                     buttonLabel: 'Signin'
                 }
-                console.log(newContent);
                 setContent(newContent);
             }
         })
@@ -127,10 +128,10 @@ export default function ComfirmPage() {
             invitationId: invitationId.id,
             userId: user.id
         }
-        const config = {
+        /*const config = {
             headers: { 'authorization': `${tokenLocal}` }
-        };
-        axios.put(`${process.env.REACT_APP_API_URL}/courses/student-accepted`, data, config)
+        };*/
+        axios.put(`${process.env.REACT_APP_API_URL}/courses/student-accepted`, data)
         .then(res => {
             setSnackMsg(res.data.msg);
             setOpenSuccessSnack(true);
@@ -176,7 +177,7 @@ export default function ComfirmPage() {
             }}
             >
             {isJoined? <ConfirmPageContent content={content} onClick={handleGotoClass} /> : 
-                token? <ConfirmPageContent content={content} onClick={handleAcceptInv} /> : 
+                isSignin? <ConfirmPageContent content={content} onClick={handleAcceptInv} /> : 
                 <ConfirmPageContent content={content} onClick={handleCreateSignin} />
             }
             </Box>
