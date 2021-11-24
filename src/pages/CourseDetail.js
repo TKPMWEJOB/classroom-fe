@@ -27,8 +27,7 @@ export default function CourseDetail() {
 			}
 			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
 			setIsLoaded(true);
-			console.log(result);
-			setCourse(result.data);
+			setCourse(result.data.data);
 		} catch(error) {
 			setIsLoaded(true);
 			setError(error);

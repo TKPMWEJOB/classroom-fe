@@ -8,7 +8,7 @@ import axios from "axios";
 import { isTeacher, isStudent, isOwner } from '../../../utils/Role'
 
 axios.defaults.withCredentials = true;
-export default function Stream({ course, setCourse }) {
+export default function Stream({ course, setCourse, role, setRole }) {
 	/*const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const { userInfo, updateUser } = useContext(UserContext);
@@ -76,7 +76,6 @@ export default function Stream({ course, setCourse }) {
 									{course.invitationId ? course.invitationId : 'Upcoming!'}
 								</Typography>
 							</Paper>
-							<InvBtn course={course} />
 
 
 

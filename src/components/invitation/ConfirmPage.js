@@ -131,7 +131,7 @@ export default function ComfirmPage() {
         /*const config = {
             headers: { 'authorization': `${tokenLocal}` }
         };*/
-        axios.put(`${process.env.REACT_APP_API_URL}/courses/student-accepted`, data)
+        axios.put(`${process.env.REACT_APP_API_URL}/courses/invitation-accepted`, data)
         .then(res => {
             setSnackMsg(res.data.msg);
             setOpenSuccessSnack(true);
