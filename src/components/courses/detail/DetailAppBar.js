@@ -7,7 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from '@mui/icons-material/Home';
 import Avatar from '@mui/material/Avatar';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
@@ -33,6 +33,7 @@ export default function ButtonAppBar({course, handleChangeTab }) {
       <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
         <Toolbar>
           <IconButton
+            href="/"
             size="large"
             edge="start"
             color="inherit"

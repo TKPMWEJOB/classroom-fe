@@ -35,6 +35,7 @@ export default function CourseDetail() {
 		}
 		
 	}, [id])
+  const [role, setRole] = React.useState('');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -46,21 +47,32 @@ export default function CourseDetail() {
 		return <div>Loading...</div>;
 	} else {
   return (
-      <div>
-        <Box sx={{ width: '100%', typography: 'body1' }}>
-          <TabContext value={value}>
-            <AppBar handleChangeTab={handleChange} course={course}></AppBar>
+    <div>
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+          <AppBar handleChangeTab={handleChange} course={course}></AppBar>
 
-            <TabPanel value="1" style={{ padding: 0 }}>
-              <Stream course={course} setCourse={setCourse}></Stream>
-            </TabPanel>
-            <TabPanel value="2">
-            </TabPanel>
-            <TabPanel value="3">
-              <People course={course} setCourse={setCourse}></People>
-            </TabPanel>
-          </TabContext>
-        </Box>
+          <TabPanel value="1" style={{ padding: 0 }}>
+            <Stream
+              course={course}
+              setCourse={setCourse}
+              role={role}
+              setRole={setRole}
+            >
+            </Stream>
+          </TabPanel>
+          <TabPanel value="2">
+          </TabPanel>
+          <TabPanel value="3">
+            <People
+              course={course}
+              setCourse={setCourse}
+              role={role}
+              setRole={setRole}>
+            </People>
+          </TabPanel>
+        </TabContext>
+      </Box>
       </div>
     );
   }

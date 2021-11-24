@@ -9,7 +9,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import { styled } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -17,11 +16,8 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import InvitationButton from '../../invitation/InvitationButton';
 
 
-const Demo = styled('div')(({ theme }) => ({
-	backgroundColor: theme.palette.background.paper,
-}));
 
-export default function People({ course, setCourse }) {
+export default function People({ course, setCourse, role, setRole }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [studentsInfo, setStudentsInfo] = useState([]);
@@ -32,11 +28,13 @@ export default function People({ course, setCourse }) {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(async () => {
 		try {
-			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`);
+			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/people`);
 			setIsLoaded(true);
+			console.log("asasd:", result.data.students[0].students);
 
-			setStudentsInfo(result.data);
-			setTeachersInfo(result.data);
+			setStudentsInfo(result.data.students[0].students);
+			setTeachersInfo(result.data.teachers[0].teachers);
+			console.log(result.data.teachers[0].teachers);
 		} catch (error) {
 			setIsLoaded(true);
 			setError(error);
@@ -92,7 +90,7 @@ export default function People({ course, setCourse }) {
 											U
 										</Avatar>
 									</ListItemAvatar>
-									<ListItemText>{teacher.name}</ListItemText>
+									<ListItemText>{teacher.firstName ? teacher.firstName : teacher.email}</ListItemText>
 								</ListItem>
 							))}
 						</List>
@@ -127,11 +125,11 @@ export default function People({ course, setCourse }) {
 								}
 							>
 								<ListItemAvatar>
-									<Avatar>
+									<Avatar sx={{ width: 32, height: 32 }}>
 										U
 									</Avatar>
 								</ListItemAvatar>
-								<ListItemText>{students.name}</ListItemText>
+								<ListItemText>{students.firstName ? students.firstName : students.email}</ListItemText>
 							</ListItem>
 						))}
 
