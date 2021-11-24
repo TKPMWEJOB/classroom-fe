@@ -72,6 +72,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
       setTimeout(() => {
         handleClose();
         updateUser(true, response.data.body);
+        window.location.reload();
       }, 1500);
     } catch (error) {
       console.error(error);
