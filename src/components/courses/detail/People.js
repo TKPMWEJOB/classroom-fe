@@ -14,7 +14,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 
 
-export default function People({ course, setCourse }) {
+export default function People({ course, setCourse, role }) {
 	const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [studentsInfo, setStudentsInfo] = useState([]);
