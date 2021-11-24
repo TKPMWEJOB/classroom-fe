@@ -1,5 +1,6 @@
-import AppBar from '../components/courses/detail/DetailAppBar'
-import Content from '../components/courses/detail/Content'
+import AppBar from '../components/courses/detail/DetailAppBar';
+import Stream from '../components/courses/detail/Stream';
+import People from '../components/courses/detail/People';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
@@ -19,10 +20,13 @@ export default function CourseDetail() {
           <AppBar handleChangeTab={handleChange} course={course}></AppBar>
 
           <TabPanel value="1" style={{ padding: 0 }}>
-            <Content course={course} setCourse={setCourse}></Content>
+            <Stream course={course} setCourse={setCourse}></Stream>
           </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
+          <TabPanel value="2">
+          </TabPanel>
+          <TabPanel value="3">
+            <People></People>
+          </TabPanel>
         </TabContext>
       </Box>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../assets/css/style.css';
 
 import {
@@ -16,11 +16,15 @@ import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import HomeIcon from '@mui/icons-material/Home';
 import EmailIcon from '@mui/icons-material/Email';
 import SchoolIcon from '@mui/icons-material/School';
+import axios from "axios";
 
 import NameEditBtn from './UserNameEdit';
 import InfoEditBtn from './UserInfoEdit';
 
 import { blue } from '@mui/material/colors';
+
+import { UserContext } from '../../contexts/UserContext';
+
 
 const theme = createTheme({
   palette: {
@@ -52,35 +56,18 @@ function UserProfile() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState(null);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const {userInfo, setUserInfo} = useContext(UserContext);
 
-
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/user`,{
-      headers: {
-        'authorization': token.jwtToken
-      }
-    }).then(res => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        else {
-          return res.text().then(text => { throw new Error(text) })
-        }
-      })
-      .then(
-        (result) => {
-          setUser(result);
-          setIsLoaded(true);          
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      )
+  useEffect( async() => {
+    try {
+      let result = await axios.get(`${process.env.REACT_APP_API_URL}/user`);
+      console.log(result);
+      setUser(result.data);
+      setIsLoaded(true);
+    } catch(error) {
+      setIsLoaded(true);
+      setError(error);
+    }
   }, []);
 
   if (error) {
@@ -214,3 +201,30 @@ function UserProfile() {
 }
   
 export default UserProfile;
+
+/*fetch(`${process.env.REACT_APP_API_URL}/user`,{
+      headers: {
+        'authorization': token.jwtToken
+      }
+    }).then(res => {
+        if (res.status === 200) {
+          return res.json();
+        }
+        else {
+          return res.text().then(text => { throw new Error(text) })
+        }
+      })
+      .then(
+        (result) => {
+          setUser(result);
+          setIsLoaded(true);          
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+      */

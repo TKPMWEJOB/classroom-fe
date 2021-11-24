@@ -1,65 +1,65 @@
-import React from 'react';
-import Button from '@mui/material/Button'
-import AddIcon from '@mui/icons-material/Add'
+import { useState } from 'react';
 import CreateCourseDialog from './CreateUpdateCourseForm';
 import { Redirect } from 'react-router';
+import axios from 'axios'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+axios.defaults.withCredentials = true;
 export default function CreateButton({ open, setOpen }) {
-  const [redirect, setRedirect] = React.useState(null);
-  const handleCreate = () => {
-    setOpen(true);
-  };
+  const [redirect, setRedirect] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openErrorSnack, setOpenErrorSnack] = useState(false);
+  const [snackMsg, setSnackMsg] = useState("");
 
   const handleClose = () => {
     setOpen(false);
+    setOpenErrorSnack(false);
   };
-  const token = JSON.parse(localStorage.getItem("token"));
-  console.log(token);
-  const handleSubmit = (e) => {
+
+  const handleCloseErrorSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErrorSnack(false);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setOpen(false);
-    fetch(`${process.env.REACT_APP_API_URL}/courses/`, {
-      method: 'POST',
-      body: JSON.stringify({
+    setLoading(true);
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/`, {
         name: e.target.course.value,
         section: e.target.section.value,
         subject: e.target.subject.value,
         room: e.target.room.value
-      }),
-      accept: '*/*',
-      headers: {
-        'Content-Type': 'application/json',
-        'authorization': token.jwtToken,
-      }
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json();
-      }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
-    })
-      .then(
-        (result) => {
-          setRedirect(`courses/${result.id}`)
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          //setIsLoaded(true);
-          //setError(error);
-        }
-      );
+      });
+      setRedirect(`courses/${res.data.id}`);
+      setLoading(false);
+    } catch (err) {
+      setSnackMsg(err.response.data.message ? err.response.data.message : "Unknown error");
+      setOpenErrorSnack(true);
+      setLoading(false);
+    }
   };
+  
   if (redirect) {
     const redirectURL = `/${redirect}`
     return (<Redirect push to={redirectURL} />)
   }
   else
     return (
-      <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit}
-        dialogTitle="Create course"
-      />
+      <div>
+        <CreateCourseDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit} loading={loading}
+          dialogTitle="Create course"
+        />
+        <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
+          <MuiAlert
+            elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }}
+          >
+            {snackMsg}
+          </MuiAlert>
+        </Snackbar>
+      </div>
     );
 }

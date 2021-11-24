@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -11,36 +12,15 @@ import Avatar from '@mui/material/Avatar';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
 
-import SigninDialog from '../../authentication/SigninDialog'
-import SignupDialog from '../../authentication/SignupDialog';
+import { UserContext } from '../../../contexts/UserContext';
+import LoggedButtons from '../../appbar/LoggedButtons';
+import SigninButton from '../../appbar/SigninButton';
 
 export default function ButtonAppBar({course, handleChangeTab }) {
   const [openSignin, setOpenSignin] = React.useState(false);
   const [openSignup, setOpenSignup] = React.useState(false);
+	const { userInfo, updateUser } = useContext(UserContext);
   const history = useHistory();
-
-  const handleCreateSignin = () => {
-    setOpenSignin(true);
-    setOpenSignup(false);
-  };
-
-  const handleCloseSignin = () => {
-    setOpenSignin(false);
-  };
-
-  const handleCreateSignup = () => {
-    setOpenSignup(true);
-    setOpenSignin(false);
-  };
-
-  const handleCloseSignup = () => {
-    setOpenSignup(false);
-  };
-
-  const handleSignout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
 
   const handleGoUserProfile = () => {
     const href = '/user';
@@ -48,20 +28,8 @@ export default function ButtonAppBar({course, handleChangeTab }) {
     window.location.reload();
   }
 
-  const token = JSON.parse(localStorage.getItem("token"));
-
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <SigninDialog open={openSignin}
-        handleClose={handleCloseSignin}
-        handleCreateSignup={handleCreateSignup}
-        dialogTitle="Sign In"
-      />
-      <SignupDialog open={openSignup}
-        handleClose={handleCloseSignup}
-        dialogTitle="Sign Up"
-      />
-
       <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
         <Toolbar>
           <IconButton
@@ -91,13 +59,14 @@ export default function ButtonAppBar({course, handleChangeTab }) {
             <Tab label="People" value="3" style={{ textTransform: 'none' }} />
             <Tab label="Grades" value="4" style={{ textTransform: 'none' }} />
           </TabList>
-          {token ?
+          { userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile}/> : <SigninButton /> }
+          {/*token ?
             <>
               <Avatar alt={token.user?.email} src="./user.png" onClick={handleGoUserProfile}/>
               <Button color="inherit" onClick={handleSignout}>Sign out</Button> 
             </> :
             <Button color="inherit" onClick={handleCreateSignin}>Sign in</Button>
-          }
+          */}
         </Toolbar>
       </AppBar>
     </Box>
