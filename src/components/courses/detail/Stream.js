@@ -34,6 +34,9 @@ export default function Stream({ course, setCourse }) {
 		}
 		
 	}, [id])
+
+	console.log(course);
+
 	if (error) {
 		return <div>Error: {error.message}</div>;
 	} else if (!isLoaded) {
@@ -46,6 +49,7 @@ export default function Stream({ course, setCourse }) {
 				alignItems: 'center',
 				gridTemplateColumns: '1fr',
 			}}>
+				
 
 				<Grid container style={{ maxWidth: '1000px' }}>
 					<Grid item lg={12} md={12} sm={12} xs={12}>
@@ -75,8 +79,9 @@ export default function Stream({ course, setCourse }) {
 									{course.invitationId? course.invitationId : 'Upcoming!'}
 								</Typography>
 							</Paper>
+							<InvBtn course={course}/>
 
-							<invitationButton />
+							
 
 						</Grid>
 

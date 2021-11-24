@@ -2,6 +2,9 @@ import './App.css';
 import Home from './pages/Home'
 import CourseDetail from './pages/CourseDetail'
 import UserPage from './pages/UserPage'
+import InvitationComfirm from './pages/InvitationComfirm'
+import NotFound from './pages/NotFoundPage'
+
 import {
   Route,
   Switch
