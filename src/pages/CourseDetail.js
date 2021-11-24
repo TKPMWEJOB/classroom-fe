@@ -8,6 +8,7 @@ import axios from "axios";
 import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
+import { isTeacher, isStudent, isOwner } from '../utils/Role'
 
 export default function CourseDetail() {
   const [value, setValue] = React.useState('1');
@@ -15,6 +16,7 @@ export default function CourseDetail() {
   const [error, setError] = useState(null);
 	const [isLoaded, setIsLoaded] = useState(false);
   const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
+  const [role, setRole] = React.useState('');
   const { id } = useParams();
 
   useEffect( async () => {
@@ -28,13 +30,16 @@ export default function CourseDetail() {
 			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
 			setIsLoaded(true);
 			setCourse(result.data.data);
+      setRole(result.data.role);
+			console.log("teacher: ", isTeacher(role));
+			console.log("student: ", isStudent(role));
+			console.log("owner: ", isOwner(role));
 		} catch(error) {
 			setIsLoaded(true);
 			setError(error);
 		}
 		
 	}, [id])
-  const [role, setRole] = React.useState('');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
