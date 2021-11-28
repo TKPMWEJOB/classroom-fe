@@ -20,10 +20,12 @@ export default function GradeItem({ id, title, point }) {
 		setDisabled(true);
 	}
 
-	const handleDelete = () => {
+	const handleDelete = (e) => {
 		console.log("handle delete");
-		const msg = `Are you sure to delete: "${title}"?`;
+		console.log(e);
+		const msg = `Are you sure to delete: "${e.title}"?`;
 		alert(msg);
+
 	}
 
 	return (
@@ -35,15 +37,15 @@ export default function GradeItem({ id, title, point }) {
 
 			</Paper>
 			{disabled ?
-				<IconButton onClick={handleEdit} style={{ margin: "auto", height: "50%" }}>
+				<IconButton onClick={handleEdit} style={{ margin: "auto", height: "50%", marginLeft: 10 }}>
 					<EditIcon />
 				</IconButton>
 				:
-				<IconButton onClick={handleSave} style={{ margin: "auto", height: "50%" }}>
+				<IconButton onClick={handleSave} style={{ margin: "auto", height: "50%", marginLeft: 10 }}>
 					<SaveIcon />
 				</IconButton>
 			}
-			<IconButton onClick={handleDelete} style={{ margin: "auto", height: "50%" }}>
+			<IconButton onClick={handleDelete} style={{ margin: "auto", height: "50%", marginRight: -30 }}>
 				<DeleteIcon />
 			</IconButton>
 		</div>
