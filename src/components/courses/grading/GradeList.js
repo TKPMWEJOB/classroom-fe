@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper"
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
 import AddIcon from '@mui/icons-material/Add';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import GradeItem from "./GradeItem";
 
@@ -34,7 +37,11 @@ const fakedata = [
 ]
 
 export default function GradeList() {
-	const [gradeStructure, setGradeStructure] = useState([])
+	const [gradeStructure, setGradeStructure] = useState([]);
+	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+	const [isDelete, setIsDelete] = useState(false);
+	const [targetDeleteId, setTargetDeleteId] = useState(null);
+	const [message, setMessage] = useState('');
 
 	useEffect(async () => {
 		try {
@@ -59,14 +66,43 @@ export default function GradeList() {
 		console.log(items);
 	} 
 
+	function handleCloseSnackbar() {
+		setIsSnackbarOpen(false);
+	}
+
 	function handleAddGrade() {
+		//find max id
+		const maxItemId = gradeStructure.reduce(function(prev, current) {
+			return (prev.id > current.id) ? prev : current
+		});
+		const newId = maxItemId.id + 1;
+		
 		const newGradeList = gradeStructure.concat({
-			id: gradeStructure.length,
-			title: "",
+			id: newId,
+			title: '',
 			point: 0,
 		});
 		setGradeStructure(newGradeList);
 	}
+
+	const handleDelete = () => {
+		if (targetDeleteId !== null) {
+			setGradeStructure(gradeStructure.filter(item => item.id !== targetDeleteId));
+			setTargetDeleteId(null);
+			setIsSnackbarOpen(false);
+		}
+	}
+
+	const handleOpenDeleteSnackbar = (values) => {
+		setIsSnackbarOpen(true);
+		let msg = 'Are you sure to delete';
+		values.title ? msg = msg + `: "${values.title}"?` : msg = msg + ' this input field?';
+		setMessage(msg);
+		setTargetDeleteId(values.id);
+		
+	}
+
+	
 
 	return (
 		<div style={{
@@ -82,14 +118,16 @@ export default function GradeList() {
 						<Droppable droppableId="grades">
 							{(provided) => (
 								<List className="grades" {...provided.droppableProps} ref={provided.innerRef}>
-									{gradeStructure.map(({ id, title, point }, index) => {
+									{gradeStructure.map((grade, index) => {
 										return (
-											<Draggable key={id.toString()} draggableId={id.toString()} index={index}>
+											<Draggable key={grade.id.toString()} draggableId={grade.id.toString()} index={index}>
 												{(provided) => (
 													<ListItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-														<GradeItem id={id}
-															title={title}
-															point={point}
+														<GradeItem 
+															grade={grade}
+															GradeStructure={gradeStructure}
+															setGradeStructure={setGradeStructure}
+															onDelete={handleOpenDeleteSnackbar}
 														/>
 													</ListItem>
 												)}
@@ -113,6 +151,23 @@ export default function GradeList() {
 				</Grid>			
 				
 			</Grid>
+			<Snackbar
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+				open={isSnackbarOpen}
+				autoHideDuration={8000}
+				onClose={handleCloseSnackbar}
+				message={message}
+				action={
+					<div> 
+						<Button color="inherit" size="small" onClick={handleCloseSnackbar}>
+							Cancel
+						</Button>
+						<Button color="inherit" size="small" onClick={handleDelete}>
+							Delete
+						</Button>
+					</div>
+				}
+			/>
 		</div>
 	)
 }
