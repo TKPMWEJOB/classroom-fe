@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import CreateCourseDialog from './CreateUpdateCourseForm';
 import { Redirect } from 'react-router';
-import axios from 'axios'
+import axios from 'axios';
 import { SnackbarContext } from '../../contexts/SnackbarContext';
 
 axios.defaults.withCredentials = true;

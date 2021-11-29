@@ -1,60 +1,109 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper"
 import List from '@mui/material/List';
+import Box from "@mui/material/Box";
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import AddIcon from '@mui/icons-material/Add';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import LinearProgress from '@mui/material/LinearProgress';
 
+import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import GradeItem from "./GradeItem";
 
-const fakedata = [
-	{
-		id: 0,
-		title: "Nice and clear description",
-		point: 20
-	},
-	{
-		id: 1,
-		title: "To ignore, add // eslint-disable-next-line to the line before.",
-		point: 10
-	},
-	{
-		id: 2,
-		title: "Line 1:10:  'Redirect' is defined but never used",
-		point: 20
-	},
-	{
-		id: 3,
-		title: "Either include them or remove the dependency array",
-		point: 40
-	}
-]
 
 export default function GradeList() {
 	const [gradeStructure, setGradeStructure] = useState([]);
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-	const [isDelete, setIsDelete] = useState(false);
 	const [targetDeleteId, setTargetDeleteId] = useState(null);
 	const [message, setMessage] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const { id } = useParams();
 
+	// get grade structure
 	useEffect(async () => {
+		setIsLoading(true);
 		try {
-			setGradeStructure(fakedata)
-			console.log(fakedata)
+			const res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`);			
+			console.log("data:", res.data);
+			setGradeStructure(res.data);
+			setIsLoading(false);
 		} catch (error) {
-			console.log(error);
-			// error
+			setIsLoading(false);
+			setError(error);
 		}
 
-	}, [])
+	}, [id])
 
-	function handleOnDragEnd(result) {
+	// add grade
+	async function handleAddGrade() {
+		//find max index
+		setIsLoading(true);
+		let index = 0;
+		if(gradeStructure.length > 0) {
+			const maxItemIndex = gradeStructure.reduce(function(prev, current) {
+				return (prev.index > current.index) ? prev : current
+			});
+			index = maxItemIndex.index + 1;
+		}
+		
+		
+		const newGrade = {
+			title: '',
+			point: 0,
+			index: index
+		};
+
+		try {
+			const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, newGrade);
+			console.log("data:", res.data);
+
+			// Find new grade had created
+			let newData = res.data.filter(obj => obj.index === index)
+
+			// construct new grade structure
+			let newGradeStructure = gradeStructure.concat(newData);
+			
+			setGradeStructure(newGradeStructure);
+
+			setIsLoading(false);
+		} catch (err) {
+			setError(err);
+			setIsLoading(false);
+		}
+	}
+
+	// delete grade
+	const handleDelete = async () => {
+		if (targetDeleteId !== null) {
+			setIsLoading(true);
+			try {
+				console.log(targetDeleteId);
+				const res = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, { data: { id: `${targetDeleteId}` } });
+				console.log("data:", res.data);
+
+				let newGradeStructure = gradeStructure;
+				
+				newGradeStructure = newGradeStructure.filter(function( obj ) {
+					return obj.id !== targetDeleteId;
+				});
+
+				setGradeStructure(newGradeStructure);
+				setTargetDeleteId(null);
+				setIsLoading(false);
+			} catch (err) {
+				setError(err);
+				setIsLoading(false);
+			}
+		}
+	}
+
+	async function handleOnDragEnd(result) {
 		if (!result.destination) {
 			return;
 		}
@@ -62,35 +111,32 @@ export default function GradeList() {
 		const items = Array.from(gradeStructure);
 		const [reorderedItem] = items.splice(result.source.index, 1);
 		items.splice(result.destination.index, 0, reorderedItem);
-		setGradeStructure(items);
-		console.log(items);
+		const newGradeStructure = resetIndex(items);
+		setIsLoading(true);
+		try {
+			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure});
+			setGradeStructure(items);
+			setIsLoading(false);
+		} catch (err) {
+			setError(err);
+			setIsLoading(false);
+		}
 	} 
+
+	function resetIndex(tempStructure) {
+		let index = 0;
+
+		const newGradeStructure = tempStructure.map(function(obj) { 
+			obj.index = index; 
+			index++;
+			return obj;
+		});
+		
+		return newGradeStructure;
+	}
 
 	function handleCloseSnackbar() {
 		setIsSnackbarOpen(false);
-	}
-
-	function handleAddGrade() {
-		//find max id
-		const maxItemId = gradeStructure.reduce(function(prev, current) {
-			return (prev.id > current.id) ? prev : current
-		});
-		const newId = maxItemId.id + 1;
-		
-		const newGradeList = gradeStructure.concat({
-			id: newId,
-			title: '',
-			point: 0,
-		});
-		setGradeStructure(newGradeList);
-	}
-
-	const handleDelete = () => {
-		if (targetDeleteId !== null) {
-			setGradeStructure(gradeStructure.filter(item => item.id !== targetDeleteId));
-			setTargetDeleteId(null);
-			setIsSnackbarOpen(false);
-		}
 	}
 
 	const handleOpenDeleteSnackbar = (values) => {
@@ -104,70 +150,78 @@ export default function GradeList() {
 
 	
 
-	return (
-		<div style={{
-			display: 'flex',
-			justifyContent: 'center',
-			alignItems: 'center',
-			gridTemplateColumns: '1fr',
-		}}>
+	if (error) {
+		return <div>Error: {error.message}</div>;
+	} else if (isLoading) {
+		return (
+			<Box sx={{ width: '100%' }}>
+			  <LinearProgress />
+			</Box>
+		  );
+	} else {
+		return (
+			<div style={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				gridTemplateColumns: '1fr',
+			}}>
 
-			<Grid container style={{ maxWidth: '800px' }}>
-				<Grid item lg={12} md={12} sm={12} xs={12}>
-					<DragDropContext onDragEnd={handleOnDragEnd}>
-						<Droppable droppableId="grades">
-							{(provided) => (
-								<List className="grades" {...provided.droppableProps} ref={provided.innerRef}>
-									{gradeStructure.map((grade, index) => {
-										return (
-											<Draggable key={grade.id.toString()} draggableId={grade.id.toString()} index={index}>
-												{(provided) => (
-													<ListItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-														<GradeItem 
-															grade={grade}
-															GradeStructure={gradeStructure}
-															setGradeStructure={setGradeStructure}
-															onDelete={handleOpenDeleteSnackbar}
-														/>
-													</ListItem>
-												)}
-											</Draggable>
-										);
-									})}
-									{provided.placeholder}
-								</List>
-							)}
-						</Droppable>
-					</DragDropContext>
+				<Grid container style={{ maxWidth: '800px' }}>
+					<Grid item lg={12} md={12} sm={12} xs={12}>
+						<DragDropContext onDragEnd={handleOnDragEnd}>
+							<Droppable droppableId="grades">
+								{(provided) => (
+									<List className="grades" {...provided.droppableProps} ref={provided.innerRef}>
+										{gradeStructure.map((grade, index) => {
+											return (
+												<Draggable key={grade.id.toString()} draggableId={grade.id.toString()} index={index}>
+													{(provided) => (
+														<ListItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+															<GradeItem 
+																grade={grade}
+																courseId={id}
+																setIsLoading={setIsLoading}
+																setError={setError}
+																gradeStructure={gradeStructure}
+																setGradeStructure={setGradeStructure}
+																onDelete={handleOpenDeleteSnackbar}
+															/>
+														</ListItem>
+													)}
+												</Draggable>
+											);
+										})}
+										{provided.placeholder}
+									</List>
+								)}
+							</Droppable>
+						</DragDropContext>
+					</Grid>
+					<Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'center' }}>
+						<IconButton style={{ width: 50, height: 50 }} edge="end" onClick={handleAddGrade}>
+							<AddIcon style={{ width: 30, height: 30 }} />
+						</IconButton>
+					</Grid>
 				</Grid>
-				
-				<Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'center' }}>
-					<IconButton style={{ width: 50, height: 50 }} edge="end" onClick={handleAddGrade}>
-						<AddIcon style={{ width: 30, height: 30 }} />
-					</IconButton>
-				</Grid>
-				<Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'right' }}>
-					<Button variant="contained">Save</Button>
-				</Grid>			
-				
-			</Grid>
-			<Snackbar
-				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-				open={isSnackbarOpen}
-				autoHideDuration={8000}
-				onClose={handleCloseSnackbar}
-				message={message}
-				action={
-					<div> 
-						<Button color="inherit" size="small" onClick={handleCloseSnackbar}>
-							Cancel
-						</Button>
-						<Button color="inherit" size="small" onClick={handleDelete}>
-							Delete
-						</Button>
-					</div>
-				}
-			/>
-		</div>
-	)
+				<Snackbar
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+					open={isSnackbarOpen}
+					autoHideDuration={8000}
+					onClose={handleCloseSnackbar}
+					message={message}
+					action={
+						<div> 
+							<Button color="inherit" size="small" onClick={handleCloseSnackbar}>
+								Cancel
+							</Button>
+							<Button color="inherit" size="small" onClick={handleDelete}>
+								Delete
+							</Button>
+						</div>
+					}
+				/>
+			</div>
+		)
+	}
 }
