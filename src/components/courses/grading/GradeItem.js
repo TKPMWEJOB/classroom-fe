@@ -1,6 +1,6 @@
 
 import { TextField } from "@mui/material";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Paper from "@mui/material/Paper";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DeleteIcon from "@mui/icons-material/Close";
@@ -8,10 +8,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from 'axios';
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
 
-export default function GradeItem({ grade, courseId, setIsLoading, setError, gradeStructure, setGradeStructure, onDelete }) {
+export default function GradeItem({ grade, courseId, setIsSaved, setError, gradeStructure, setGradeStructure, onDelete }) {
 	const [disabled, setDisabled] = useState(true);
 	const [editGrade, setEditGrade] = useState(grade);
+	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
 	const handleEdit = () => {
 		console.log("handle edit");
@@ -20,14 +22,16 @@ export default function GradeItem({ grade, courseId, setIsLoading, setError, gra
 
 	const handleSave = async () => {
 		console.log("handle save");
-		setIsLoading(true);
+		setIsSaved(false);
 		try {
 			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${courseId}/grade-structure/update-one`, { data: editGrade });
 			setGradeStructure(res.data);
-			setIsLoading(false);
+			setIsSaved(true);
+			handleOpenSuccessSnack(true);
+			handleSetMsgSnack("Grade info changed!");
 		} catch (err) {
 			setError(err);
-			setIsLoading(false);
+			setIsSaved(false);
 		}
 		setDisabled(true);
 	}

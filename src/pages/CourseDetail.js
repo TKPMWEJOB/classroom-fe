@@ -3,7 +3,7 @@ import Stream from '../components/courses/detail/Stream';
 import People from '../components/courses/detail/People';
 import GradeList from '../components/courses/grading/GradeList';
 import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Box from '@mui/material/Box';

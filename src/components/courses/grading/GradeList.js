@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 
 import Grid from "@mui/material/Grid";
@@ -10,10 +10,12 @@ import Snackbar from '@mui/material/Snackbar';
 import AddIcon from '@mui/icons-material/Add';
 import ListItem from '@mui/material/ListItem';
 import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
 
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import GradeItem from "./GradeItem";
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
 
 
 export default function GradeList() {
@@ -22,7 +24,9 @@ export default function GradeList() {
 	const [targetDeleteId, setTargetDeleteId] = useState(null);
 	const [message, setMessage] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const [isSaved, setIsSaved] = useState(true);
 	const [error, setError] = useState(null);
+  	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 	const { id } = useParams();
 
 	// get grade structure
@@ -35,6 +39,8 @@ export default function GradeList() {
 			setIsLoading(false);
 		} catch (error) {
 			setIsLoading(false);
+			handleOpenErrorSnack(true);
+			handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
 			setError(error);
 		}
 
@@ -43,7 +49,6 @@ export default function GradeList() {
 	// add grade
 	async function handleAddGrade() {
 		//find max index
-		setIsLoading(true);
 		let index = 0;
 		if(gradeStructure.length > 0) {
 			const maxItemIndex = gradeStructure.reduce(function(prev, current) {
@@ -58,7 +63,7 @@ export default function GradeList() {
 			point: 0,
 			index: index
 		};
-
+		setIsSaved(false);
 		try {
 			const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, newGrade);
 			console.log("data:", res.data);
@@ -70,18 +75,23 @@ export default function GradeList() {
 			let newGradeStructure = gradeStructure.concat(newData);
 			
 			setGradeStructure(newGradeStructure);
-
-			setIsLoading(false);
+			setIsSaved(true);
+			handleOpenSuccessSnack(true);
+			handleSetMsgSnack("Grade added!");
 		} catch (err) {
 			setError(err);
-			setIsLoading(false);
+			setIsSaved(false);
+			handleOpenErrorSnack(true);
+			handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
+			//setIsLoading(false);
 		}
 	}
 
 	// delete grade
 	const handleDelete = async () => {
 		if (targetDeleteId !== null) {
-			setIsLoading(true);
+			//setIsLoading(true);
+			setIsSaved(false);
 			try {
 				console.log(targetDeleteId);
 				const res = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, { data: { id: `${targetDeleteId}` } });
@@ -95,10 +105,15 @@ export default function GradeList() {
 
 				setGradeStructure(newGradeStructure);
 				setTargetDeleteId(null);
-				setIsLoading(false);
+				handleCloseSnackbar();
+				setIsSaved(true);
+				handleOpenSuccessSnack(true);
+				handleSetMsgSnack("Grade deleted!");
 			} catch (err) {
 				setError(err);
-				setIsLoading(false);
+				setIsSaved(false);
+				handleOpenErrorSnack(true);
+				handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
 			}
 		}
 	}
@@ -107,19 +122,34 @@ export default function GradeList() {
 		if (!result.destination) {
 			return;
 		}
-		console.log("handle drag end");
+		//console.log("handle drag end");
 		const items = Array.from(gradeStructure);
 		const [reorderedItem] = items.splice(result.source.index, 1);
 		items.splice(result.destination.index, 0, reorderedItem);
 		const newGradeStructure = resetIndex(items);
-		setIsLoading(true);
+		setGradeStructure(items);
+		setIsSaved(false);
 		try {
 			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure});
 			setGradeStructure(items);
-			setIsLoading(false);
+			setIsSaved(true);
 		} catch (err) {
 			setError(err);
-			setIsLoading(false);
+			setIsSaved(false);
+		}
+	} 
+
+	async function handleSave() {
+		let items = gradeStructure;
+		setIsSaved(false);
+		try {
+			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: items});
+			console.log(res.data);
+			setGradeStructure(items);
+			setIsSaved(true);
+		} catch (err) {
+			setError(err);
+			setIsSaved(false);
 		}
 	} 
 
@@ -168,6 +198,15 @@ export default function GradeList() {
 			}}>
 
 				<Grid container style={{ maxWidth: '800px' }}>
+					<Typography 
+						variant="p" 
+						component="div"
+						sx={{ color: '#9e9e9e', cursor: 'pointer'}}
+						onClick={handleSave}
+					>
+						{ isSaved ? "Saved" : "Saving . . ." }
+					</Typography>
+
 					<Grid item lg={12} md={12} sm={12} xs={12}>
 						<DragDropContext onDragEnd={handleOnDragEnd}>
 							<Droppable droppableId="grades">
@@ -181,7 +220,7 @@ export default function GradeList() {
 															<GradeItem 
 																grade={grade}
 																courseId={id}
-																setIsLoading={setIsLoading}
+																setIsSaved={setIsSaved}
 																setError={setError}
 																gradeStructure={gradeStructure}
 																setGradeStructure={setGradeStructure}
