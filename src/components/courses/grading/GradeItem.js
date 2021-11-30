@@ -9,6 +9,7 @@ import { IconButton } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from 'axios';
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function GradeItem({ grade, courseId, setIsSaved, setError, gradeStructure, setGradeStructure, onDelete }) {
 	const [disabled, setDisabled] = useState(true);
@@ -37,16 +38,15 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
 	}
 
 	const handleDelete = (e) => {
-		onDelete({ 
-			id: grade.id, 
-			title: grade.title, 
-			point: grade.point 
+		onDelete({
+			id: grade.id,
+			title: grade.title,
+			point: grade.point
 		});
 	}
 
 	const handleChageTitle = (e) => {
-		if(e.target.value !== editGrade.title)
-		{
+		if (e.target.value !== editGrade.title) {
 			const newGrade = {
 				id: editGrade.id,
 				title: e.target.value,
@@ -59,8 +59,7 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
 	}
 
 	const handleChagePoint = (e) => {
-		if(e.target.value !== editGrade.point)
-		{
+		if (e.target.value !== editGrade.point) {
 			const newGrade = {
 				id: editGrade.id,
 				title: editGrade.title,
@@ -76,23 +75,23 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
 		<div style={{ padding: "10px", width: "100%", display: "flex" }}>
 			<Paper elevation={3} style={{ padding: "10px", width: "100%", display: "flex" }}>
 				<DragIndicatorIcon style={{ margin: "auto", height: "50%" }} />
-				<TextField 
-					disabled={disabled} 
-					label="Title" 
-					defaultValue={editGrade.title} 
-					sx={{ flexGrow: 1 }} 
-					required 
-					style={{ margin: "0px 10px" }} 
+				<TextField
+					disabled={disabled}
+					label="Title"
+					defaultValue={editGrade.title}
+					sx={{ flexGrow: 1 }}
+					required
+					style={{ margin: "0px 10px" }}
 					onChange={handleChageTitle}
 				/>
 
-				<TextField 
+				<TextField
 					disabled={disabled}
-					label="Point" 
-					type="number" 
-					required 
-					style={{ width: 75 }} 
-					defaultValue={editGrade.point} 
+					label="Point"
+					type="number"
+					required
+					style={{ width: 75 }}
+					defaultValue={editGrade.point}
 					onChange={handleChagePoint}
 				/>
 
@@ -102,12 +101,16 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
 					<EditIcon />
 				</IconButton>
 				:
-				<IconButton onClick={handleSave} style={{ margin: "auto", height: "50%", marginLeft: 10 }}>
+				<LoadingButton onClick={handleSave}
+					style={{
+						margin: "auto auto auto 10px", width: '40px',
+						minWidth: '40px', height: '40px', padding: '0px', borderRadius: '50%'
+					}}>
 					<SaveIcon />
-				</IconButton>
+				</LoadingButton>
 			}
-			<IconButton type="button" name={grade.id} onClick={ handleDelete } style={{ margin: "auto", height: "50%", marginRight: -30 }}>
-				<DeleteIcon type="button" name={grade.id}/>
+			<IconButton type="button" name={grade.id} onClick={handleDelete} style={{ margin: "auto", height: "50%", marginRight: -30 }}>
+				<DeleteIcon type="button" name={grade.id} />
 			</IconButton>
 		</div>
 	)

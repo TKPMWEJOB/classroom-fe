@@ -16,7 +16,7 @@ import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import GradeItem from "./GradeItem";
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
-
+import AddGradeCard from './AddGradeCard'
 
 export default function GradeList() {
 	const [gradeStructure, setGradeStructure] = useState([]);
@@ -26,14 +26,14 @@ export default function GradeList() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
 	const [error, setError] = useState(null);
-  	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 	const { id } = useParams();
 
 	// get grade structure
 	useEffect(async () => {
 		setIsLoading(true);
 		try {
-			const res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`);			
+			const res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`);
 			console.log("data:", res.data);
 			setGradeStructure(res.data);
 			setIsLoading(false);
@@ -50,14 +50,14 @@ export default function GradeList() {
 	async function handleAddGrade() {
 		//find max index
 		let index = 0;
-		if(gradeStructure.length > 0) {
-			const maxItemIndex = gradeStructure.reduce(function(prev, current) {
+		if (gradeStructure.length > 0) {
+			const maxItemIndex = gradeStructure.reduce(function (prev, current) {
 				return (prev.index > current.index) ? prev : current
 			});
 			index = maxItemIndex.index + 1;
 		}
-		
-		
+
+
 		const newGrade = {
 			title: '',
 			point: 0,
@@ -73,7 +73,7 @@ export default function GradeList() {
 
 			// construct new grade structure
 			let newGradeStructure = gradeStructure.concat(newData);
-			
+
 			setGradeStructure(newGradeStructure);
 			setIsSaved(true);
 			handleOpenSuccessSnack(true);
@@ -98,8 +98,8 @@ export default function GradeList() {
 				console.log("data:", res.data);
 
 				let newGradeStructure = gradeStructure;
-				
-				newGradeStructure = newGradeStructure.filter(function( obj ) {
+
+				newGradeStructure = newGradeStructure.filter(function (obj) {
 					return obj.id !== targetDeleteId;
 				});
 
@@ -130,20 +130,20 @@ export default function GradeList() {
 		setGradeStructure(items);
 		setIsSaved(false);
 		try {
-			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure});
+			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure });
 			setGradeStructure(items);
 			setIsSaved(true);
 		} catch (err) {
 			setError(err);
 			setIsSaved(false);
 		}
-	} 
+	}
 
 	async function handleSave() {
 		let items = gradeStructure;
 		setIsSaved(false);
 		try {
-			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: items});
+			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: items });
 			console.log(res.data);
 			setGradeStructure(items);
 			setIsSaved(true);
@@ -151,17 +151,17 @@ export default function GradeList() {
 			setError(err);
 			setIsSaved(false);
 		}
-	} 
+	}
 
 	function resetIndex(tempStructure) {
 		let index = 0;
 
-		const newGradeStructure = tempStructure.map(function(obj) { 
-			obj.index = index; 
+		const newGradeStructure = tempStructure.map(function (obj) {
+			obj.index = index;
 			index++;
 			return obj;
 		});
-		
+
 		return newGradeStructure;
 	}
 
@@ -175,19 +175,19 @@ export default function GradeList() {
 		values.title ? msg = msg + `: "${values.title}"?` : msg = msg + ' this input field?';
 		setMessage(msg);
 		setTargetDeleteId(values.id);
-		
+
 	}
 
-	
+
 
 	if (error) {
 		return <div>Error: {error.message}</div>;
 	} else if (isLoading) {
 		return (
 			<Box sx={{ width: '100%' }}>
-			  <LinearProgress />
+				<LinearProgress />
 			</Box>
-		  );
+		);
 	} else {
 		return (
 			<div style={{
@@ -198,13 +198,13 @@ export default function GradeList() {
 			}}>
 
 				<Grid container style={{ maxWidth: '800px' }}>
-					<Typography 
-						variant="p" 
+					<Typography
+						variant="p"
 						component="div"
-						sx={{ color: '#9e9e9e', cursor: 'pointer'}}
+						sx={{ color: '#9e9e9e', cursor: 'pointer' }}
 						onClick={handleSave}
 					>
-						{ isSaved ? "Saved" : "Saving . . ." }
+						{isSaved ? "Saved" : "Saving . . ."}
 					</Typography>
 
 					<Grid item lg={12} md={12} sm={12} xs={12}>
@@ -217,7 +217,7 @@ export default function GradeList() {
 												<Draggable key={grade.id.toString()} draggableId={grade.id.toString()} index={index}>
 													{(provided) => (
 														<ListItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-															<GradeItem 
+															<GradeItem
 																grade={grade}
 																courseId={id}
 																setIsSaved={setIsSaved}
@@ -237,11 +237,18 @@ export default function GradeList() {
 							</Droppable>
 						</DragDropContext>
 					</Grid>
-					<Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'center' }}>
+					{/* <Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'center' }}>
 						<IconButton style={{ width: 50, height: 50 }} edge="end" onClick={handleAddGrade}>
 							<AddIcon style={{ width: 30, height: 30 }} />
 						</IconButton>
-					</Grid>
+					</Grid> */}
+					<AddGradeCard courseId={id}
+						isSaved={isSaved}
+						setIsSaved={setIsSaved}
+						setError={setError}
+						gradeStructure={gradeStructure}
+						setGradeStructure={setGradeStructure}
+					/>
 				</Grid>
 				<Snackbar
 					anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
@@ -250,7 +257,7 @@ export default function GradeList() {
 					onClose={handleCloseSnackbar}
 					message={message}
 					action={
-						<div> 
+						<div>
 							<Button color="inherit" size="small" onClick={handleCloseSnackbar}>
 								Cancel
 							</Button>
