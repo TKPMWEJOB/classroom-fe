@@ -1,21 +1,10 @@
 import { Grid, Paper } from "@mui/material";
 import Banner from "./Banner";
-import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
 import Typography from '@mui/material/Typography';
-import { UserContext } from "../../../contexts/UserContext";
-import axios from "axios";
-import { isTeacher, isStudent, isOwner } from '../../../utils/Role'
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
-axios.defaults.withCredentials = true;
-export default function Stream({ course, setCourse, role, setRole }) {
-	/*const [error, setError] = useState(null);
-	const [isLoaded, setIsLoaded] = useState(false);
-	const { userInfo, updateUser } = useContext(UserContext);
-	const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
-	const { id } = useParams();*/
-
-
+export default function Stream({ course, role, gradeStructure }) {
 	return (
 		<div style={{
 			display: 'flex',
@@ -30,8 +19,6 @@ export default function Stream({ course, setCourse, role, setRole }) {
 				<Grid
 					container
 					direction="row"
-					justifyContent="center"
-					alignItems="center"
 				>
 					<Grid
 						item
@@ -44,7 +31,7 @@ export default function Stream({ course, setCourse, role, setRole }) {
 						<Paper
 							variant='outlined'
 							sx={{ margin: 'auto', overflow: 'hidden' }}
-							style={{ textAlign: 'center', height: '20%' }}
+							style={{ textAlign: 'center' }}
 						>
 							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
 								style={{ margin: 5 }}>
@@ -55,7 +42,27 @@ export default function Stream({ course, setCourse, role, setRole }) {
 						<Paper
 							variant='outlined'
 							sx={{ margin: '20px 0px 0px 0px', overflow: 'hidden' }}
-							style={{ textAlign: 'center', height: '20%' }}
+							style={{ textAlign: 'center' }}
+						>
+							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
+								style={{ margin: 5 }}>
+								Grade Structure:
+							</Typography>
+							<List>
+								{gradeStructure.map((grade) => {
+									return (
+										<ListItem>
+											{grade.title}: {grade.point}
+										</ListItem>
+									);
+								})}
+							</List>
+						</Paper>
+
+						<Paper
+							variant='outlined'
+							sx={{ margin: '20px 0px 0px 0px', overflow: 'hidden' }}
+							style={{ textAlign: 'center' }}
 						>
 							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
 								style={{ margin: 5 }}>
@@ -65,13 +72,10 @@ export default function Stream({ course, setCourse, role, setRole }) {
 					</Grid>
 
 					<Grid item lg md xs
-						direction="column"
-						justifyContent="center"
-						alignItems="center"
+						container
 					>
 
 						<Grid item lg md xs
-							direction="column"
 							justifyContent="center"
 							alignItems="center"
 						>

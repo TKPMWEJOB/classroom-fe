@@ -82,14 +82,6 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
 		}
 	}
 
-	// const handleOpenDelete = (e) => {
-	// 	on({
-	// 		id: grade.id,
-	// 		title: grade.title,
-	// 		point: grade.point
-	// 	});
-	// }
-
 	const handleChangeTitle = (e) => {
 		if (e.target.value !== editGrade.title) {
 			const newGrade = {

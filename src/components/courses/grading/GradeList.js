@@ -4,10 +4,6 @@ import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import List from '@mui/material/List';
 import Box from "@mui/material/Box";
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Snackbar from '@mui/material/Snackbar';
-import AddIcon from '@mui/icons-material/Add';
 import ListItem from '@mui/material/ListItem';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
@@ -15,74 +11,13 @@ import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import GradeItem from "./GradeItem";
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import AddGradeCard from './AddGradeCard'
 
-export default function GradeList() {
-	const [gradeStructure, setGradeStructure] = useState([]);
+export default function GradeList({ gradeStructure, setGradeStructure }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
 	const [error, setError] = useState(null);
-	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 	const { id } = useParams();
-
-	// get grade structure
-	useEffect(async () => {
-		setIsLoading(true);
-		try {
-			const res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`);
-			console.log("data:", res.data);
-			setGradeStructure(res.data);
-			setIsLoading(false);
-		} catch (error) {
-			setIsLoading(false);
-			handleOpenErrorSnack(true);
-			handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
-			setError(error);
-		}
-
-	}, [id])
-
-	// add grade
-	async function handleAddGrade() {
-		//find max index
-		let index = 0;
-		if (gradeStructure.length > 0) {
-			const maxItemIndex = gradeStructure.reduce(function (prev, current) {
-				return (prev.index > current.index) ? prev : current
-			});
-			index = maxItemIndex.index + 1;
-		}
-
-
-		const newGrade = {
-			title: '',
-			point: 0,
-			index: index
-		};
-		setIsSaved(false);
-		try {
-			const res = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, newGrade);
-			console.log("data:", res.data);
-
-			// Find new grade had created
-			let newData = res.data.filter(obj => obj.index === index)
-
-			// construct new grade structure
-			let newGradeStructure = gradeStructure.concat(newData);
-
-			setGradeStructure(newGradeStructure);
-			setIsSaved(true);
-			handleOpenSuccessSnack(true);
-			handleSetMsgSnack("Grade added!");
-		} catch (err) {
-			setError(err);
-			setIsSaved(false);
-			handleOpenErrorSnack(true);
-			handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
-			//setIsLoading(false);
-		}
-	}
 
 	async function handleOnDragEnd(result) {
 		if (!result.destination) {
@@ -187,11 +122,6 @@ export default function GradeList() {
 							</Droppable>
 						</DragDropContext>
 					</Grid>
-					{/* <Grid item lg={12} md={12} sm={12} xs={12} sx={{ justifyContent: 'center', textAlign: 'center' }}>
-						<IconButton style={{ width: 50, height: 50 }} edge="end" onClick={handleAddGrade}>
-							<AddIcon style={{ width: 30, height: 30 }} />
-						</IconButton>
-					</Grid> */}
 					<AddGradeCard courseId={id}
 						isSaved={isSaved}
 						setIsSaved={setIsSaved}

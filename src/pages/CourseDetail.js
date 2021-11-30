@@ -10,37 +10,38 @@ import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import { isTeacher, isStudent, isOwner } from '../utils/Role'
+import { LinearProgress } from '@mui/material';
 
 export default function CourseDetail() {
-  const [value, setValue] = React.useState('1');
-  const [course, setCourse] = React.useState([]);
+  const [value, setValue] = useState('1');
+  const [gradeStructure, setGradeStructure] = useState([]);
+  const [course, setCourse] = useState([]);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
-  const [role, setRole] = React.useState('');
+  const [role, setRole] = useState('');
   const { id } = useParams();
 
   useEffect(async () => {
     try {
-      let config = null;
-      if (tokenLocal) {
-        config = {
-          headers: { 'authorization': `${tokenLocal}` }
-        };
-      }
-      let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`, config);
+      let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
+      let resGrades = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`);
+      setGradeStructure(resGrades.data);
+      setCourse(resCourse.data.data);
+
       setIsLoaded(true);
-      setCourse(result.data.data);
-      setRole(result.data.role);
-      console.log("teacher: ", isTeacher(role));
-      console.log("student: ", isStudent(role));
-      console.log("owner: ", isOwner(role));
+      setRole(resCourse.data.role);
+      console.log("teacher: ", isTeacher(resCourse.data.role));
+      console.log("student: ", isStudent(resCourse.data.role));
+      console.log("owner: ", isOwner(resCourse.data.role));
     } catch (error) {
       setIsLoaded(true);
       setError(error);
     }
-
   }, [id])
+
+
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -49,7 +50,11 @@ export default function CourseDetail() {
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>
+    );
   } else {
     return (
       <div>
@@ -63,8 +68,7 @@ export default function CourseDetail() {
                 setCourse={setCourse}
                 role={role}
                 setRole={setRole}
-              >
-              </Stream>
+                gradeStructure={gradeStructure} />
             </TabPanel>
             <TabPanel value="2">
               Comming Soon
@@ -78,7 +82,9 @@ export default function CourseDetail() {
               </People>
             </TabPanel>
             <TabPanel value="4">
-              <GradeList></GradeList>
+              <GradeList
+                gradeStructure={gradeStructure}
+                setGradeStructure={setGradeStructure} />
             </TabPanel>
           </TabContext>
         </Box>
