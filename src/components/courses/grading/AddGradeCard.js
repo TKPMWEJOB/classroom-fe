@@ -8,7 +8,7 @@ import axios from 'axios';
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import LoadingButton from '@mui/lab/LoadingButton';
 
-export default function GradeItem({ grade, courseId, setIsSaved, setError, gradeStructure, setGradeStructure }) {
+export default function GradeItem({ courseId, setIsSaved, setError, gradeStructure, setGradeStructure }) {
     const [loading, setLoading] = useState(false);
     const [isAllowedAdd, setIsAllowedAdd] = useState(false);
     const [editGrade, setEditGrade] = useState({ title: '', point: 0 });
@@ -46,6 +46,7 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
             setIsSaved(true);
             setLoading(false);
             handleOpenSuccessSnack(true);
+            setEditGrade({ title: '', point: 0 });
             handleSetMsgSnack("Grade added!");
         } catch (err) {
             setError(err);
@@ -98,6 +99,7 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
                     label="Title"
                     sx={{ flexGrow: 1 }}
                     required
+                    value={editGrade.title}
                     style={{ margin: "0px 10px" }}
                     onChange={handleChageTitle}
                 />
