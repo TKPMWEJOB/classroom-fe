@@ -10,6 +10,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function GradeItem({ grade, courseId, setIsSaved, setError, gradeStructure, setGradeStructure }) {
     const [loading, setLoading] = useState(false);
+    const [isAllowedAdd, setIsAllowedAdd] = useState(false);
     const [editGrade, setEditGrade] = useState({ title: '', point: 0 });
     const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
@@ -57,6 +58,13 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
     }
 
     const handleChageTitle = (e) => {
+        if (!e.target.value) {
+            setIsAllowedAdd(false);
+        }
+        else {
+            setIsAllowedAdd(true);
+        }
+
         if (e.target.value !== editGrade.title) {
             const newGrade = {
                 id: editGrade.id,
@@ -97,13 +105,12 @@ export default function GradeItem({ grade, courseId, setIsSaved, setError, grade
                 <TextField
                     label="Point"
                     type="number"
-                    required
                     style={{ width: 75 }}
                     onChange={handleChagePoint}
                 />
 
             </Paper>
-            <LoadingButton loading={loading} onClick={handleAddGrade}
+            <LoadingButton loading={loading} onClick={handleAddGrade} disabled={!isAllowedAdd}
                 style={{
                     margin: "auto auto auto 10px", width: '40px',
                     minWidth: '40px', height: '40px', padding: '0px', borderRadius: '50%'

@@ -20,9 +20,6 @@ import AddGradeCard from './AddGradeCard'
 
 export default function GradeList() {
 	const [gradeStructure, setGradeStructure] = useState([]);
-	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-	const [targetDeleteId, setTargetDeleteId] = useState(null);
-	const [message, setMessage] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
 	const [error, setError] = useState(null);
@@ -87,37 +84,6 @@ export default function GradeList() {
 		}
 	}
 
-	// delete grade
-	const handleDelete = async () => {
-		if (targetDeleteId !== null) {
-			//setIsLoading(true);
-			setIsSaved(false);
-			try {
-				console.log(targetDeleteId);
-				const res = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure`, { data: { id: `${targetDeleteId}` } });
-				console.log("data:", res.data);
-
-				let newGradeStructure = gradeStructure;
-
-				newGradeStructure = newGradeStructure.filter(function (obj) {
-					return obj.id !== targetDeleteId;
-				});
-
-				setGradeStructure(newGradeStructure);
-				setTargetDeleteId(null);
-				handleCloseSnackbar();
-				setIsSaved(true);
-				handleOpenSuccessSnack(true);
-				handleSetMsgSnack("Grade deleted!");
-			} catch (err) {
-				setError(err);
-				setIsSaved(false);
-				handleOpenErrorSnack(true);
-				handleSetMsgSnack(error.response.data.message ? error.response.data.message : "Unknown error");
-			}
-		}
-	}
-
 	async function handleOnDragEnd(result) {
 		if (!result.destination) {
 			return;
@@ -130,7 +96,7 @@ export default function GradeList() {
 		setGradeStructure(items);
 		setIsSaved(false);
 		try {
-			const res = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure });
+			await axios.put(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/update-all`, { data: newGradeStructure });
 			setGradeStructure(items);
 			setIsSaved(true);
 		} catch (err) {
@@ -164,21 +130,6 @@ export default function GradeList() {
 
 		return newGradeStructure;
 	}
-
-	function handleCloseSnackbar() {
-		setIsSnackbarOpen(false);
-	}
-
-	const handleOpenDeleteSnackbar = (values) => {
-		setIsSnackbarOpen(true);
-		let msg = 'Are you sure to delete';
-		values.title ? msg = msg + `: "${values.title}"?` : msg = msg + ' this input field?';
-		setMessage(msg);
-		setTargetDeleteId(values.id);
-
-	}
-
-
 
 	if (error) {
 		return <div>Error: {error.message}</div>;
@@ -224,7 +175,6 @@ export default function GradeList() {
 																setError={setError}
 																gradeStructure={gradeStructure}
 																setGradeStructure={setGradeStructure}
-																onDelete={handleOpenDeleteSnackbar}
 															/>
 														</ListItem>
 													)}
@@ -250,23 +200,6 @@ export default function GradeList() {
 						setGradeStructure={setGradeStructure}
 					/>
 				</Grid>
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-					open={isSnackbarOpen}
-					autoHideDuration={8000}
-					onClose={handleCloseSnackbar}
-					message={message}
-					action={
-						<div>
-							<Button color="inherit" size="small" onClick={handleCloseSnackbar}>
-								Cancel
-							</Button>
-							<Button color="inherit" size="small" onClick={handleDelete}>
-								Delete
-							</Button>
-						</div>
-					}
-				/>
 			</div>
 		)
 	}
