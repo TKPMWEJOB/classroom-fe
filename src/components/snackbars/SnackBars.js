@@ -20,14 +20,14 @@ export default function SnackBars({ openErrorSnack, openSuccessSnack, SnackMsg, 
 
   return (
     <div>
-        <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
+        <Snackbar open={openErrorSnack} autoHideDuration={2000} onClose={handleCloseErrorSnack}>
             <MuiAlert 
                 elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
             > 
                 {SnackMsg}
             </MuiAlert>
         </Snackbar>
-        <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
+        <Snackbar open={openSuccessSnack} autoHideDuration={2000} onClose={handleCloseSuccessSnack}>
             <MuiAlert 
                 elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
             > 

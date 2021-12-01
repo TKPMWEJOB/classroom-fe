@@ -108,6 +108,7 @@ export default function GradeItem({ courseId, setIsSaved, setError, gradeStructu
                     label="Point"
                     type="number"
                     style={{ width: 75 }}
+                    value={editGrade.point}
                     onChange={handleChagePoint}
                 />
 
