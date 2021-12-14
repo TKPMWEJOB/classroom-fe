@@ -60,7 +60,11 @@ export default function ButtonAppBar({ course, handleChangeTab, role }) {
             <Tab label="People" value="3" style={{ textTransform: 'none' }} />
 
             {isTeacher(role) ?
-              <Tab label="Grades" value="4" style={{ textTransform: 'none' }} />
+              <Tab label="Grade Structure" value="4" style={{ textTransform: 'none' }} />
+              : ''
+            }
+            {isTeacher(role) ?
+              <Tab label="Student Grades" value="5" style={{ textTransform: 'none' }} />
               : ''
             }
           </TabList>

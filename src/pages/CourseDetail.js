@@ -2,6 +2,7 @@ import AppBar from '../components/courses/detail/DetailAppBar';
 import Stream from '../components/courses/detail/Stream';
 import People from '../components/courses/detail/People';
 import GradeList from '../components/courses/grading/GradeList';
+import StudentGrades from '../components/courses/studentRecords/StudentGrades';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
@@ -83,6 +84,11 @@ export default function CourseDetail() {
             </TabPanel>
             <TabPanel value="4">
               <GradeList
+                gradeStructure={gradeStructure}
+                setGradeStructure={setGradeStructure} />
+            </TabPanel>
+            <TabPanel value="5">
+              <StudentGrades
                 gradeStructure={gradeStructure}
                 setGradeStructure={setGradeStructure} />
             </TabPanel>
