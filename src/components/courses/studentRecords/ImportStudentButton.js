@@ -28,9 +28,9 @@ export default function ImportStudentButton({ gradeStructure }) {
     const [loading, setLoading] = useState(false);
 	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
-    const gradeStructureHeaders = gradeStructure.map(grade => {
+    const gradeStructureHeaders = gradeStructure.map((grade, id) => {
         const header = {
-            field: grade.title,
+            field: 'grade' + id,
             headerName: `${grade.title} \n (${grade.point})`,
             width: 150
         }
