@@ -15,22 +15,7 @@ export default function StudentGrades({ gradeStructure }) {
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
-    
-    const gradeStructureHeaders = gradeStructure.map((grade, id) => {
-        const header = {
-            field: 'grade' + id,
-            headerName: `${grade.title} \n (${grade.point})`,
-            width: 150,
-            editable: true,
-            type: "number"
-        }
-        return header;
-    });
-
-    const columnsArray = [
-        { field: 'studentId', minWidth: 150, headerName: 'Student ID', editable: true },
-        { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: true }
-    ].concat(gradeStructureHeaders);
+    const [columnHeaders, setColumnHeaders] = useState([]);
 
     useEffect(async () => {
         try {
@@ -40,6 +25,37 @@ export default function StudentGrades({ gradeStructure }) {
             setCsvData(res.data);
             //setIsLoaded(true);
             //setCourses(res.data);
+            let totalPoint = 0;
+            gradeStructure.forEach(async (grade) => {
+                totalPoint += grade.point;
+            });
+
+            const gradeStructureHeaders = gradeStructure.map((grade, id) => {
+                const header = {
+                    field: 'grade' + id,
+                    headerName: `${grade.title} \n (${grade.point})`,
+                    width: 150,
+                    editable: true,
+                    type: "number"
+                }
+                return header;
+            });
+        
+            const totalHeader = {
+                field: 'total',
+                headerName: `total \n (${totalPoint})`,
+                width: 150,
+                editable: true,
+                type: "number"
+            }
+        
+            const columnsArray = [
+                { field: 'studentId', minWidth: 150, headerName: 'Student ID', editable: true },
+                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: true }
+            ].concat(gradeStructureHeaders).concat(totalHeader);
+
+            setColumnHeaders(columnsArray);
+
         } catch (err) {
             console.log(err);
             if (err.response?.status === 401) {
@@ -57,7 +73,7 @@ export default function StudentGrades({ gradeStructure }) {
             >
                 <DataGrid
                     autoHeight
-                    columns={columnsArray}
+                    columns={columnHeaders}
                     rows={csvData}
                     pageSize={pageSize}
                     onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
