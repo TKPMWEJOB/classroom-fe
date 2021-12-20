@@ -51,11 +51,12 @@ export default function ImportStudentButton({ gradeStructure }) {
                 complete: function (results) {
                     console.log("Finished:", results.data);
 
-                    const data = results.data.filter(function(item) {
+                    /*const data = results.data.filter(function(item) {
                         return item["Student ID"] !== '';
-                    });
+                    });*/
 
-                    const dataPreview = data.map((result, index) => {
+
+                    const dataPreview = results.data.map((result, index) => {
                         const row = {
                             id: index,
                             studentId: result["Student ID"],
@@ -74,7 +75,7 @@ export default function ImportStudentButton({ gradeStructure }) {
                         return row;
                     });
 
-                    const dataSave = data.map((result, index) => {
+                    const dataSave = results.data.map((result, index) => {
                         const gradesPoint = gradeStructure.map(grade => {
                             let point;
                             if (grade.title in result){
@@ -136,7 +137,7 @@ export default function ImportStudentButton({ gradeStructure }) {
                 variant="contained"
                 component="label"
             >
-                Import
+                Upload Grades
                 <input
                     type="file"
                     accept=".csv"
