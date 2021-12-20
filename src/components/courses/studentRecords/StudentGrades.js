@@ -2,13 +2,32 @@ import { useState, useEffect } from 'react'
 import ImportStudentButton from "./ImportStudentButton";
 import UploadFullGradeButton from "./UploadFullGrades";
 import { readString, CSVDownloader } from 'react-papaparse';
-import Button from "@mui/material/Button";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridApi, GridCellValue } from '@mui/x-data-grid';
+
+import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+import ButtonMenu from "./PublishButton";
+
+const options = [
+    'Publish Point'
+];
+
+const ITEM_HEIGHT = 48;
 
 export default function StudentGrades({ gradeStructure }) {
+    const [openDialog, setOpenDialog] = useState(false);
+    const [itemTable, setItemTable] = useState(null);
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
@@ -36,7 +55,33 @@ export default function StudentGrades({ gradeStructure }) {
                     headerName: `${grade.title} \n (${grade.point})`,
                     width: 150,
                     editable: true,
-                    type: "number"
+                    type: "number",
+                    renderCell: (params) => {
+                        /*const onClick = (e) => {
+                          e.stopPropagation();
+                  
+                          /*const api: GridApi = params.api;
+                          const thisRow: Record<string, GridCellValue> = {};
+                  
+                          api
+                            .getAllColumns()
+                            .filter((c) => c.field !== '__check__' && !!c)
+                            .forEach(
+                              (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
+                            );
+                  
+                          return alert(JSON.stringify(thisRow, null, 4));
+                        };*/
+                  
+                        return (
+                            <Stack width={150} height={50} direction="row" spacing={5} justifyContent="flex-end">
+                                {params.value}
+                                <ButtonMenu 
+                                    OnClickPublish={handleOpenDialog}
+                                ></ButtonMenu>
+                            </Stack>
+                        );
+                    }
                 }
                 return header;
             });
@@ -66,6 +111,36 @@ export default function StudentGrades({ gradeStructure }) {
         }
     }, [])
 
+   
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    /*const handleOpenMenu = () => {
+        setOpenMenu(true);
+    };*/
+
+    /*const handleCloseMenu = () => {
+        setOpenMenu(false);
+    };    
+
+    const handleClickMenu = (e) => {
+        console.log(e.currentTarget);
+        setItemMenu(e.currentTarget);
+    }; */
+
+    const handleCellClick = (e) => {
+        setItemTable(e);
+    };
+
+    const handlePublish = () => {
+        console.log(itemTable);
+    };
+
     return (
         <div>
             <Box
@@ -80,7 +155,9 @@ export default function StudentGrades({ gradeStructure }) {
                     rowsPerPageOptions={[5, 10, 20, 50, 100]}
                     pagination
                     {...csvData}
+                    onCellClick={handleCellClick}
                 />
+                
             </Box>
             
             <Button>
@@ -101,6 +178,26 @@ export default function StudentGrades({ gradeStructure }) {
             </ImportStudentButton>
             <UploadFullGradeButton gradeStructure={gradeStructure}>
             </UploadFullGradeButton>
+            
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                {"Do you want to pulish this grade?"}
+                </DialogTitle>
+                <DialogContent>
+                
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleCloseDialog}>Cancel</Button>
+                <Button onClick={handlePublish} autoFocus>
+                    Pulish
+                </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
