@@ -6,7 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ITEM_HEIGHT = 48;
 
-export default function ButtonMenu({OnClickPublish}) {
+export default function ButtonMenu({OnClickPublish, className}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -29,6 +29,7 @@ export default function ButtonMenu({OnClickPublish}) {
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
         onClick={handleClick}
+        className={className}
       >
         <MoreVertIcon />
       </IconButton>

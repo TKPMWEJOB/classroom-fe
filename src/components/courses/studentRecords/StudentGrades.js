@@ -5,6 +5,7 @@ import { readString, CSVDownloader } from 'react-papaparse';
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { DataGrid, GridColDef, GridApi, GridCellValue } from '@mui/x-data-grid';
+import { makeStyles } from "@material-ui/core/styles";
 
 import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
@@ -27,7 +28,19 @@ const options = [
 
 const ITEM_HEIGHT = 48;
 
+const useStyles = makeStyles(() => ({
+    root: {
+      "& .appear-button": {
+        visibility: "hidden"
+      },
+      "&:hover .appear-button": {
+        visibility: "visible"
+      }
+    }
+}))
+
 export default function StudentGrades({ gradeStructure }) {
+    const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
     const [itemTable, setItemTable] = useState(null);
     const [openPreview, setOpenPreview] = useState(false);
@@ -58,13 +71,19 @@ export default function StudentGrades({ gradeStructure }) {
                     headerName: `${grade.title} \n (${grade.point})`,
                     width: 150,
                     editable: true,
-                    type: "number",
                     renderCell: (params) => {
                         return (
-                            <Stack width={150} height={50} direction="row" spacing={5} justifyContent="flex-end">
+                            <Stack 
+                                width={150} 
+                                height={50} 
+                                direction="row"
+                                justifyContent="space-between"
+                                className={classes.root}
+                            >
                                 {params.value}
                                 <ButtonMenu 
                                     OnClickPublish={handleOpenDialog}
+                                    className='appear-button'
                                 ></ButtonMenu>
                             </Stack>
                         );
