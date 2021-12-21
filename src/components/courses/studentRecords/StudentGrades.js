@@ -1,17 +1,51 @@
 import { useState, useEffect, useContext } from 'react'
-import { readString, CSVDownloader } from 'react-papaparse';
-import Button from "@mui/material/Button";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { DataGrid } from '@mui/x-data-grid';
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import ImportStudentButton from "./ImportStudentButton";
 import UploadFullGradeButton from "./UploadFullGrades";
 import TemplateDownloadButton from './TemplateDownloadButton';
 
+import Stack from '@mui/material/Stack';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
+
+import ButtonMenu from "./PublishButton";
+
+const options = [
+    'Publish Point'
+];
+
+const ITEM_HEIGHT = 48;
+
+const useStyles = makeStyles(() => ({
+    root: {
+      "& .appear-button": {
+        visibility: "hidden"
+      },
+      "&:hover .appear-button": {
+        visibility: "visible"
+      }
+    }
+}))
+
 export default function StudentGrades({ gradeStructure }) {
+    const classes = useStyles();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [itemTable, setItemTable] = useState(null);
+    const [openPreview, setOpenPreview] = useState(false);
+    const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
@@ -34,13 +68,37 @@ export default function StudentGrades({ gradeStructure }) {
                 totalPoint += grade.point;
             });
 
-            const gradeStructureHeaders = gradeStructure.map((grade, id) => {
+            const gradeStructureHeaders = gradeStructure.map((grade, index) => {
                 const header = {
-                    field: 'grade' + id,
+                    field: `grade${index}`,
                     headerName: `${grade.title} \n (${grade.point})`,
                     width: 150,
                     editable: true,
-                    type: "number"
+                    renderCell: (params) => {
+                        return (
+                            <Stack 
+                                width={150} 
+                                height={50} 
+                                direction="row"
+                                justifyContent="space-between"
+                                className={classes.root}
+                            >
+                                {
+                                    params.value ? (
+                                        <>
+                                            <div>
+                                                {params.value}
+                                            </div>
+                                            <ButtonMenu 
+                                                OnClickPublish={handleOpenDialog}
+                                                className='appear-button'
+                                            />
+                                        </>
+                                    ) : " " 
+                                }
+                            </Stack>
+                        );
+                    }
                 }
                 return header;
             });
@@ -83,6 +141,43 @@ export default function StudentGrades({ gradeStructure }) {
             handleSetMsgSnack(err.response.data.message);
         }
     }
+   
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    const handleCellClick = (e) => {
+        setItemTable(e);
+    };
+
+    const handlePublish = async () => {
+        const gradeIdOrder = parseInt(itemTable.field.replace('grade',''));
+        const gradeId = gradeStructure[gradeIdOrder].id;
+        //console.log(gradeId);
+        const data = {
+            studentId: itemTable.row.studentId,
+            gradeId: gradeId,
+            point: itemTable.value
+        }
+        setLoading(true);
+        handleCloseDialog();
+        try {
+            await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-grade`, { data: data });
+            setLoading(false);
+            handleOpenSuccessSnack(true);
+            handleSetMsgSnack("Publish Successfully");
+            setOpenPreview(false);
+        } catch (err) {
+            setLoading(false);
+            setOpenPreview(false);
+            handleOpenErrorSnack(true);
+            handleSetMsgSnack(err.response.data.message);
+        }
+    };
 
     return (
         <div>
@@ -109,7 +204,9 @@ export default function StudentGrades({ gradeStructure }) {
                     loading={loading}
                     onCellEditCommit={onCellChange}
                     {...csvData}
+                    onCellClick={handleCellClick}
                 />
+                
             </Box>
 
             <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
@@ -118,6 +215,25 @@ export default function StudentGrades({ gradeStructure }) {
                 <UploadFullGradeButton gradeStructure={gradeStructure} />
             </Box>
 
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                {"Do you want to pulish this grade?"}
+                </DialogTitle>
+                <DialogContent>
+                
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleCloseDialog}>Cancel</Button>
+                <Button onClick={handlePublish} autoFocus>
+                    Pulish
+                </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }
