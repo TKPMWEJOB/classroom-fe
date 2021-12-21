@@ -53,10 +53,8 @@ export default function StudentGrades({ gradeStructure }) {
             });
 
             const gradeStructureHeaders = gradeStructure.map((grade, index) => {
-                console.log(grade.id);
                 const header = {
                     field: `grade${grade.id}`,
-                    key: grade.id,
                     headerName: `${grade.title} \n (${grade.point})`,
                     width: 150,
                     editable: true,
@@ -122,13 +120,13 @@ export default function StudentGrades({ gradeStructure }) {
         }
         //console.log(data);
         setLoading(true);
+        handleCloseDialog();
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-grade`, { data: data });
             setLoading(false);
             handleOpenSuccessSnack(true);
             handleSetMsgSnack("Publish Successfully");
             setOpenPreview(false);
-
         } catch (err) {
             setLoading(false);
             setOpenPreview(false);
