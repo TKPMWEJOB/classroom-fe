@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import ImportStudentButton from "./ImportStudentButton";
 import UploadFullGradeButton from "./UploadFullGrades";
 import { readString, CSVDownloader } from 'react-papaparse';
@@ -16,6 +16,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
 
 import ButtonMenu from "./PublishButton";
 
@@ -35,6 +37,7 @@ export default function StudentGrades({ gradeStructure }) {
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
     const [columnHeaders, setColumnHeaders] = useState([]);
+    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
     useEffect(async () => {
         try {
@@ -49,30 +52,16 @@ export default function StudentGrades({ gradeStructure }) {
                 totalPoint += grade.point;
             });
 
-            const gradeStructureHeaders = gradeStructure.map((grade, id) => {
+            const gradeStructureHeaders = gradeStructure.map((grade, index) => {
+                console.log(grade.id);
                 const header = {
-                    field: 'grade' + id,
+                    field: `grade${grade.id}`,
+                    key: grade.id,
                     headerName: `${grade.title} \n (${grade.point})`,
                     width: 150,
                     editable: true,
                     type: "number",
                     renderCell: (params) => {
-                        /*const onClick = (e) => {
-                          e.stopPropagation();
-                  
-                          /*const api: GridApi = params.api;
-                          const thisRow: Record<string, GridCellValue> = {};
-                  
-                          api
-                            .getAllColumns()
-                            .filter((c) => c.field !== '__check__' && !!c)
-                            .forEach(
-                              (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
-                            );
-                  
-                          return alert(JSON.stringify(thisRow, null, 4));
-                        };*/
-                  
                         return (
                             <Stack width={150} height={50} direction="row" spacing={5} justifyContent="flex-end">
                                 {params.value}
@@ -120,25 +109,32 @@ export default function StudentGrades({ gradeStructure }) {
         setOpenDialog(false);
     };
 
-    /*const handleOpenMenu = () => {
-        setOpenMenu(true);
-    };*/
-
-    /*const handleCloseMenu = () => {
-        setOpenMenu(false);
-    };    
-
-    const handleClickMenu = (e) => {
-        console.log(e.currentTarget);
-        setItemMenu(e.currentTarget);
-    }; */
-
     const handleCellClick = (e) => {
         setItemTable(e);
     };
 
-    const handlePublish = () => {
-        console.log(itemTable);
+    const handlePublish = async () => {
+        const gradeId = itemTable.field.replace('grade','');
+        const data = {
+            studentId: itemTable.row.studentId,
+            gradeId: gradeId,
+            point: itemTable.value
+        }
+        //console.log(data);
+        setLoading(true);
+        try {
+            await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-grade`, { data: data });
+            setLoading(false);
+            handleOpenSuccessSnack(true);
+            handleSetMsgSnack("Publish Successfully");
+            setOpenPreview(false);
+
+        } catch (err) {
+            setLoading(false);
+            setOpenPreview(false);
+            handleOpenErrorSnack(true);
+            handleSetMsgSnack(err.response.data.message);
+        }
     };
 
     return (
