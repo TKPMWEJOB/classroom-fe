@@ -14,16 +14,12 @@ import { Typography } from '@mui/material';
 import ImportStudentButton from "./ImportStudentButton";
 import UploadFullGradeButton from "./UploadFullGrades";
 import TemplateDownloadButton from './TemplateDownloadButton';
-
 import Stack from '@mui/material/Stack';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import Link from '@mui/material/Link';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
 
 import ButtonMenu from "./PublishButton";
@@ -52,8 +48,6 @@ export default function StudentGrades({ gradeStructure, role }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [itemTable, setItemTable] = useState(null);
     const [openPreview, setOpenPreview] = useState(false);
-    const [isEditable, setIsEditable] = useState(false);
-    const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
@@ -64,11 +58,12 @@ export default function StudentGrades({ gradeStructure, role }) {
 
     useEffect(async () => {
         setLoading(true);
+        let isEditable = false;
         if(role === "student") {
-            setIsEditable(false);
+            isEditable = false;
         }
         else {
-            setIsEditable(true);
+            isEditable = true;
         }
         try {
             let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
@@ -126,8 +121,26 @@ export default function StudentGrades({ gradeStructure, role }) {
             }
         
             const columnsArray = [
-                { field: 'studentId', minWidth: 150, headerName: 'Student ID', editable: isEditable },
-                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable }
+                { field: 'studentId', minWidth: 150, headerName: 'Student ID',
+                renderCell: (params) => {
+                    return (
+                        <Stack 
+                            width={150} 
+                            height={50} 
+                            direction="row"
+                            justifyContent="space-between"
+                            className={classes.root}
+                        >
+                            {
+                                params.value.userId ?
+                                <Link href={`/user/${params.value.userId}`} >{params.value.value}</Link> :
+                                params.value.value
+                            }
+                        </Stack>
+                    );
+                }
+                },
+                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable}
             ].concat(gradeStructureHeaders).concat(totalHeader);
 
             setColumnHeaders(columnsArray);

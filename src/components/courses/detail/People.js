@@ -30,7 +30,7 @@ export default function People({ course, setCourse, role, setRole }) {
 		try {
 			let result = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/people`);
 			setIsLoaded(true);
-			console.log("asasd:", result.data.students[0].students);
+			console.log("asasd:", result.data);
 
 			setStudentsInfo(result.data.students[0].students);
 			setTeachersInfo(result.data.teachers[0].teachers);

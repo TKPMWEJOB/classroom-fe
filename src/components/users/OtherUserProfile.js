@@ -18,11 +18,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import SchoolIcon from '@mui/icons-material/School';
 import axios from "axios";
 
-import NameEditBtn from './UserNameEdit';
-import InfoEditBtn from './UserInfoEdit';
-
 import { blue } from '@mui/material/colors';
-
+import { useParams } from "react-router-dom";
 import { UserContext } from '../../contexts/UserContext';
 
 
@@ -52,15 +49,16 @@ const Avatar = styled('img')({
   borderRadius: '50%',
 });
 
-function UserProfile() {
+function OtherUserProfile() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const {userInfo, setUserInfo} = useContext(UserContext);
+	const { id } = useParams();
   
   useEffect( async() => {
     try {
-      let result = await axios.get(`${process.env.REACT_APP_API_URL}/user`);
+      let result = await axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`);
       console.log(result);
       setUser(result.data);
       setIsLoaded(true);
@@ -112,7 +110,6 @@ function UserProfile() {
                       </Grid>
                     </Item>
                   </Grid>
-                  <NameEditBtn setUser={setUser} setIsLoaded={setIsLoaded} user={user}/>
                 </Grid>
               </Grid>
             </Grid>
@@ -189,7 +186,6 @@ function UserProfile() {
                     {user.school? user.school : 'Not set'}
                     </span>
                   </Grid>
-                  <InfoEditBtn setUser={setUser} setIsLoaded={setIsLoaded} user={user}/>
                 </Grid>
               </Grid>
             </Grid>
@@ -200,4 +196,4 @@ function UserProfile() {
   };
 }
   
-export default UserProfile;
+export default OtherUserProfile;
