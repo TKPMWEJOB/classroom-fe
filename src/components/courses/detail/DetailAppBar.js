@@ -63,10 +63,7 @@ export default function ButtonAppBar({ course, handleChangeTab, role }) {
               <Tab label="Grade Structure" value="4" style={{ textTransform: 'none' }} />
               : ''
             }
-            {isTeacher(role) ?
-              <Tab label="Student Grades" value="5" style={{ textTransform: 'none' }} />
-              : ''
-            }
+            <Tab label="Student Grades" value="5" style={{ textTransform: 'none' }} />
           </TabList>
           {userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile} /> : <SigninButton />}
           {/*token ?

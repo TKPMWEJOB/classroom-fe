@@ -64,8 +64,9 @@ export default function ImportStudentButton({ gradeStructure }) {
                         };
 
                         Object.keys(gradeStructure).forEach(key => {
-                            if (gradeStructure[key].title in result){
-                                row[gradeStructure[key].title] = result[gradeStructure[key].title];
+                            const gradeHeader = `#${key} ${gradeStructure[key].title} (${gradeStructure[key].point})`;
+                            if (gradeHeader in result){
+                                row[gradeStructure[key].title] = result[gradeHeader];
                             }
                             else {
                                 row[gradeStructure[key].title] = 0;
@@ -76,10 +77,12 @@ export default function ImportStudentButton({ gradeStructure }) {
                     });
 
                     const dataSave = results.data.map((result, index) => {
-                        const gradesPoint = gradeStructure.map(grade => {
+                        const gradesPoint = gradeStructure.map((grade, gradeIndex) => {
                             let point;
-                            if (grade.title in result){
-                                point = result[grade.title];
+                            const gradeHeader = `#${gradeIndex} ${grade.title} (${grade.point})`;
+                            console.log(gradeHeader);
+                            if (gradeHeader in result){
+                                point = result[gradeHeader];
                             }
                             else {
                                 point = 0;
@@ -100,6 +103,9 @@ export default function ImportStudentButton({ gradeStructure }) {
                         
                         return newData;
                     });
+
+                    console.log(dataPreview);
+                    console.log(dataSave);
                     
                     setCsvDataPreview(dataPreview);
                     setCsvDataSave(dataSave);

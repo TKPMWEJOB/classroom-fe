@@ -90,7 +90,8 @@ export default function CourseDetail() {
             <TabPanel value="5">
               <StudentGrades
                 gradeStructure={gradeStructure}
-                setGradeStructure={setGradeStructure} />
+                setGradeStructure={setGradeStructure} 
+                role={role}/>
             </TabPanel>
           </TabContext>
         </Box>

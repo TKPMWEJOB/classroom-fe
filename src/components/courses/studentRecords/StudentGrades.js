@@ -47,11 +47,12 @@ function CustomToolbar() {
     );
 }
 
-export default function StudentGrades({ gradeStructure }) {
+export default function StudentGrades({ gradeStructure, role }) {
     const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false);
     const [itemTable, setItemTable] = useState(null);
     const [openPreview, setOpenPreview] = useState(false);
+    const [isEditable, setIsEditable] = useState(false);
     const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
@@ -63,6 +64,12 @@ export default function StudentGrades({ gradeStructure }) {
 
     useEffect(async () => {
         setLoading(true);
+        if(role === "student") {
+            setIsEditable(false);
+        }
+        else {
+            setIsEditable(true);
+        }
         try {
             let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
             // if (res.status === 200) {
@@ -80,7 +87,7 @@ export default function StudentGrades({ gradeStructure }) {
                     field: `grade${index}`,
                     headerName: `${grade.title} (${grade.point})`,
                     width: 150,
-                    editable: true,
+                    editable: isEditable,
                     renderCell: (params) => {
                         return (
                             <Stack 
@@ -96,10 +103,11 @@ export default function StudentGrades({ gradeStructure }) {
                                             <div>
                                                 {params.value}
                                             </div>
-                                            <ButtonMenu 
+                                            {role=="student"? "" : <ButtonMenu 
                                                 OnClickPublish={handleOpenDialog}
                                                 className='appear-button'
                                             />
+                                            }
                                         </>
                                     ) : " " 
                                 }
@@ -118,8 +126,8 @@ export default function StudentGrades({ gradeStructure }) {
             }
         
             const columnsArray = [
-                { field: 'studentId', minWidth: 150, headerName: 'Student ID', editable: true },
-                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: true }
+                { field: 'studentId', minWidth: 150, headerName: 'Student ID', editable: isEditable },
+                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable }
             ].concat(gradeStructureHeaders).concat(totalHeader);
 
             setColumnHeaders(columnsArray);
@@ -200,7 +208,18 @@ export default function StudentGrades({ gradeStructure }) {
                     {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
                 </Typography>
 
+                {role =="student"? 
                 <DataGrid
+                    autoHeight
+                    columns={columnHeaders}
+                    rows={csvData}
+                    pageSize={pageSize}
+                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                    rowsPerPageOptions={[5, 10, 20, 50, 100]}
+                    pagination
+                    loading={loading}
+                    
+                /> : <DataGrid
                     autoHeight
                     columns={columnHeaders}
                     rows={csvData}
@@ -216,16 +235,17 @@ export default function StudentGrades({ gradeStructure }) {
                         Toolbar: CustomToolbar,
                     }}
                 />
+                }
                 
             </Box>
 
-            <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
+            {role=="student"? "" : <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
                 <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
                 <ImportStudentButton gradeStructure={gradeStructure} />
                 <UploadFullGradeButton gradeStructure={gradeStructure} />
-            </Box>
+            </Box>}
 
-            <Dialog
+            {role=="student"? "" : <Dialog
                 open={openDialog}
                 onClose={handleCloseDialog}
                 aria-labelledby="alert-dialog-title"
@@ -243,7 +263,7 @@ export default function StudentGrades({ gradeStructure }) {
                     Pulish
                 </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog>}
         </div>
     );
 }
