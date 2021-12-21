@@ -1,7 +1,12 @@
 import { useState, useEffect, useContext } from 'react'
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { DataGrid } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridToolbarExport,
+    gridClasses,
+} from '@mui/x-data-grid';
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@mui/material/Button";
 import Box from '@mui/material/Box';
@@ -23,12 +28,6 @@ import { SnackbarContext } from "../../../contexts/SnackbarContext";
 
 import ButtonMenu from "./PublishButton";
 
-const options = [
-    'Publish Point'
-];
-
-const ITEM_HEIGHT = 48;
-
 const useStyles = makeStyles(() => ({
     root: {
       "& .appear-button": {
@@ -39,6 +38,14 @@ const useStyles = makeStyles(() => ({
       }
     }
 }))
+
+function CustomToolbar() {
+    return (
+      <GridToolbarContainer className={gridClasses.toolbarContainer}>
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
+}
 
 export default function StudentGrades({ gradeStructure }) {
     const classes = useStyles();
@@ -71,7 +78,7 @@ export default function StudentGrades({ gradeStructure }) {
             const gradeStructureHeaders = gradeStructure.map((grade, index) => {
                 const header = {
                     field: `grade${index}`,
-                    headerName: `${grade.title} \n (${grade.point})`,
+                    headerName: `${grade.title} (${grade.point})`,
                     width: 150,
                     editable: true,
                     renderCell: (params) => {
@@ -105,7 +112,7 @@ export default function StudentGrades({ gradeStructure }) {
         
             const totalHeader = {
                 field: 'total',
-                headerName: `Total \n (${totalPoint})`,
+                headerName: `Total (${totalPoint})`,
                 width: 150,
                 type: "number"
             }
@@ -205,12 +212,15 @@ export default function StudentGrades({ gradeStructure }) {
                     onCellEditCommit={onCellChange}
                     {...csvData}
                     onCellClick={handleCellClick}
+                    components={{
+                        Toolbar: CustomToolbar,
+                    }}
                 />
                 
             </Box>
 
             <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
-                <TemplateDownloadButton gradeStructure={gradeStructure} />
+                <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
                 <ImportStudentButton gradeStructure={gradeStructure} />
                 <UploadFullGradeButton gradeStructure={gradeStructure} />
             </Box>

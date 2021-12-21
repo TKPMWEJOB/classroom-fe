@@ -4,7 +4,7 @@ import * as React from "react";
 
 import TemplateDownloadDialog from './TemplateDownloadDialog'
 
-export default function TemplateDownloadButton({ gradeStructure }) {
+export default function TemplateDownloadButton({ gradeStructure, tableData }) {
     const [open, setOpen] = React.useState(false);
   
     const handleCreateDialog = () => {
@@ -21,10 +21,10 @@ export default function TemplateDownloadButton({ gradeStructure }) {
                 onClick={handleCreateDialog} 
                 variant="contained"
             >
-                Download
+                Download Template
             </Button>
 
-            <TemplateDownloadDialog gradeStructure={gradeStructure} open={open} handleClose={handleCloseDialog} />
+            <TemplateDownloadDialog gradeStructure={gradeStructure} open={open} handleClose={handleCloseDialog} tableData={tableData} />
         </div>
     );
 }

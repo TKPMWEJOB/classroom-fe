@@ -11,7 +11,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 
-export default function TemplateDownloadDialog({ gradeStructure, open, handleClose }) {
+export default function TemplateDownloadDialog({ gradeStructure, open, handleClose, tableData }) {
     const [selection, setSelection] = useState('');
     const [fileName, setFileName] = useState("StudentListTemplate");
     const [menuItems, setMenuItems] = useState([]);
@@ -38,7 +38,7 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
                     "Full Name": ""
             };
             newFileName = "StudentListTemplate";
-        }
+        } 
 
         setSelection(newSelection);
         setCsvData(newData);
