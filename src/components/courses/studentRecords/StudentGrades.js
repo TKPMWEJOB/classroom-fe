@@ -1,14 +1,15 @@
 import { useState, useEffect, useContext } from 'react'
-import ImportStudentButton from "./ImportStudentButton";
-import UploadFullGradeButton from "./UploadFullGrades";
 import { readString, CSVDownloader } from 'react-papaparse';
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import { Typography } from '@mui/material';
+import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import ImportStudentButton from "./ImportStudentButton";
+import UploadFullGradeButton from "./UploadFullGrades";
+import TemplateDownloadButton from './TemplateDownloadButton';
 
 export default function StudentGrades({ gradeStructure }) {
     const [csvData, setCsvData] = useState([]);
@@ -110,25 +111,13 @@ export default function StudentGrades({ gradeStructure }) {
                     {...csvData}
                 />
             </Box>
-            
-            <Button>
-                <CSVDownloader
-                    data={[
-                        {
-                            "Student ID": "",
-                            "Full Name": ""
-                        },
-                    ]}
-                    filename={'StudentListTemplate'}
-                >
-                    Download
-                </CSVDownloader>
-            </Button>
 
-            <ImportStudentButton gradeStructure={gradeStructure}>
-            </ImportStudentButton>
-            <UploadFullGradeButton gradeStructure={gradeStructure}>
-            </UploadFullGradeButton>
+            <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
+                <TemplateDownloadButton gradeStructure={gradeStructure} />
+                <ImportStudentButton gradeStructure={gradeStructure} />
+                <UploadFullGradeButton gradeStructure={gradeStructure} />
+            </Box>
+
         </div>
     );
 }
