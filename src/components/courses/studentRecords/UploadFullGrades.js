@@ -23,21 +23,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ImportStudentButton({ gradeStructure }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
+    const [gradeStructureHeaders, setGradeStructureHeaders] = useState("");
     const [csvDataPreview, setCsvDataPreview] = useState([]);
     const [csvDataSave, setCsvDataSave] = useState([]);
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
 	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
-
-    const gradeStructureHeaders = gradeStructure.map(grade => {
-        const header = {
-            field: grade.title,
-            headerName: `${grade.title} \n (${grade.point})`,
-            width: 150
-        }
-        return header;
-    });
 
     const { id } = useParams();
     const handleReviewCSV = (e) => {
@@ -49,18 +41,13 @@ export default function ImportStudentButton({ gradeStructure }) {
             readString(files[0], {
                 header: true,
                 complete: function (results) {
-                    console.log("Finished:", results.data);
-
-                    /*const data = results.data.filter(function(item) {
+                    const data = results.data.filter(function(item) {
                         return item["Student ID"] !== '';
-                    });*/
-
-
-                    const dataPreview = results.data.map((result, index) => {
+                    });
+                    const dataPreview = data.map((result, index) => {
                         const row = {
                             id: index,
-                            studentId: result["Student ID"],
-                            fullName: result["Full Name"]
+                            studentId: result["Student ID"]
                         };
 
                         Object.keys(gradeStructure).forEach(key => {
@@ -68,44 +55,49 @@ export default function ImportStudentButton({ gradeStructure }) {
                             if (gradeHeader in result){
                                 row[gradeStructure[key].title] = result[gradeHeader];
                             }
-                            else {
-                                row[gradeStructure[key].title] = 0;
-                            }
                         });
                         
                         return row;
                     });
 
-                    const dataSave = results.data.map((result, index) => {
+                    const newGradeStructureHeaders = gradeStructure.map(grade => {
+                        let header = [];
+                        if(dataPreview) {
+                            if (dataPreview[0][grade.title]) {
+                                header = {
+                                    field: grade.title,
+                                    headerName: `${grade.title} (${grade.point})`,
+                                    width: 150
+                                }
+                            }
+                        }
+                        return header;
+                    });
+
+                    setGradeStructureHeaders(newGradeStructureHeaders);
+
+                    const dataSave = data.map((result, index) => {
                         const gradesPoint = gradeStructure.map((grade, gradeIndex) => {
                             let point;
                             const gradeHeader = `#${gradeIndex} ${grade.title} (${grade.point})`;
-                            console.log(gradeHeader);
                             if (gradeHeader in result){
                                 point = result[gradeHeader];
+                                const newdata = {
+                                    gradeId: grade.id,
+                                    point: point
+                                }
+                                return newdata;
                             }
-                            else {
-                                point = 0;
-                            }
-                            const newdata = {
-                                gradeId: grade.id,
-                                point: point
-                            }
-                            return newdata;
                         });
 
                         const newData = {
                             id: index,
                             studentId: result["Student ID"],
-                            fullName: result["Full Name"],
                             gradesPoint: gradesPoint
                         };
                         
                         return newData;
                     });
-
-                    console.log(dataPreview);
-                    console.log(dataSave);
                     
                     setCsvDataPreview(dataPreview);
                     setCsvDataSave(dataSave);
@@ -178,8 +170,7 @@ export default function ImportStudentButton({ gradeStructure }) {
                 </AppBar>
                 <Alert severity="warning">Import new grades will erase your old data!</Alert>
                 <DataGrid
-                    columns={[{ field: 'studentId', minWidth: 150, headerName: 'Student ID' },
-                    { field: 'fullName', minWidth: 300, headerName: 'Full Name' }].concat(gradeStructureHeaders)}
+                    columns={[{ field: 'studentId', minWidth: 150, headerName: 'Student ID' }].concat(gradeStructureHeaders)}
                     rows={csvDataPreview}
                     pageSize={pageSize}
                     onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
