@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ImportStudentButton({ gradeStructure }) {
+export default function ImportStudentButton({ gradeStructure, setIsReload }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
@@ -45,7 +45,9 @@ export default function ImportStudentButton({ gradeStructure }) {
             console.log(files[0]);
             setFileName(files[0].name);
             readString(files[0], {
+                skipEmptyLines: true,
                 header: true,
+                encoding:'ISO-8859-1',
                 complete: function (results) {
                     console.log("Finished:", results.data);
                     const data = results.data.map((result, index) => {
@@ -72,7 +74,7 @@ export default function ImportStudentButton({ gradeStructure }) {
             handleOpenSuccessSnack(true);
             handleSetMsgSnack("Imported Successfully");
             setOpenPreview(false);
-
+            setIsReload(true);
         } catch (err) {
             setLoading(false);
             setOpenPreview(false);
@@ -91,7 +93,7 @@ export default function ImportStudentButton({ gradeStructure }) {
                 variant="contained"
                 component="label"
             >
-                Import
+                Import Student List
                 <input
                     type="file"
                     accept=".csv"

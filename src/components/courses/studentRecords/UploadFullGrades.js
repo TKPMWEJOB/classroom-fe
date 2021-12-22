@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ImportStudentButton({ gradeStructure }) {
+export default function ImportStudentButton({ gradeStructure, setIsReload }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [gradeStructureHeaders, setGradeStructureHeaders] = useState("");
@@ -39,6 +39,8 @@ export default function ImportStudentButton({ gradeStructure }) {
             //console.log(files[0]);
             setFileName(files[0].name);
             readString(files[0], {
+                skipEmptyLines: true,
+                encoding:'ISO-8859-1',
                 header: true,
                 complete: function (results) {
                     const data = results.data.filter(function(item) {
@@ -116,7 +118,7 @@ export default function ImportStudentButton({ gradeStructure }) {
             handleOpenSuccessSnack(true);
             handleSetMsgSnack("Imported Successfully");
             setOpenPreview(false);
-
+            setIsReload(true);
         } catch (err) {
             setLoading(false);
             setOpenPreview(false);

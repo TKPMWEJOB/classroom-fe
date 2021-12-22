@@ -26,20 +26,20 @@ import ButtonMenu from "./PublishButton";
 
 const useStyles = makeStyles(() => ({
     root: {
-      "& .appear-button": {
-        visibility: "hidden"
-      },
-      "&:hover .appear-button": {
-        visibility: "visible"
-      }
+        "& .appear-button": {
+            visibility: "hidden"
+        },
+        "&:hover .appear-button": {
+            visibility: "visible"
+        }
     }
 }))
 
 function CustomToolbar() {
     return (
-      <GridToolbarContainer className={gridClasses.toolbarContainer}>
-        <GridToolbarExport />
-      </GridToolbarContainer>
+        <GridToolbarContainer className={gridClasses.toolbarContainer}>
+            <GridToolbarExport />
+        </GridToolbarContainer>
     );
 }
 
@@ -52,14 +52,15 @@ export default function StudentGrades({ gradeStructure, role }) {
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
     const [isSaved, setIsSaved] = useState(true);
+    const [isReload, setIsReload] = useState(false);
     const { id } = useParams();
     const [columnHeaders, setColumnHeaders] = useState([]);
-	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
     useEffect(async () => {
         setLoading(true);
         let isEditable = false;
-        if(role === "student") {
+        if (role === "student") {
             isEditable = false;
         }
         else {
@@ -85,9 +86,9 @@ export default function StudentGrades({ gradeStructure, role }) {
                     editable: isEditable,
                     renderCell: (params) => {
                         return (
-                            <Stack 
-                                width={150} 
-                                height={50} 
+                            <Stack
+                                width={150}
+                                height={50}
                                 direction="row"
                                 justifyContent="space-between"
                                 className={classes.root}
@@ -98,13 +99,13 @@ export default function StudentGrades({ gradeStructure, role }) {
                                             <div>
                                                 {params.value}
                                             </div>
-                                            {role=="student"? "" : <ButtonMenu 
+                                            {role == "student" ? "" : <ButtonMenu
                                                 OnClickPublish={handleOpenDialog}
                                                 className='appear-button'
                                             />
                                             }
                                         </>
-                                    ) : " " 
+                                    ) : " "
                                 }
                             </Stack>
                         );
@@ -112,35 +113,36 @@ export default function StudentGrades({ gradeStructure, role }) {
                 }
                 return header;
             });
-        
+
             const totalHeader = {
                 field: 'total',
                 headerName: `Total (${totalPoint})`,
                 width: 150,
                 type: "number"
             }
-        
+
             const columnsArray = [
-                { field: 'studentId', minWidth: 150, headerName: 'Student ID',
-                renderCell: (params) => {
-                    return (
-                        <Stack 
-                            width={150} 
-                            height={50} 
-                            direction="row"
-                            justifyContent="space-between"
-                            className={classes.root}
-                        >
-                            {
-                                params.value.userId ?
-                                <Link href={`/user/${params.value.userId}`} >{params.value.value}</Link> :
-                                params.value.value
-                            }
-                        </Stack>
-                    );
-                }
+                {
+                    field: 'studentId', minWidth: 150, headerName: 'Student ID',
+                    renderCell: (params) => {
+                        return (
+                            <Stack
+                                width={150}
+                                height={50}
+                                direction="row"
+                                justifyContent="space-between"
+                                className={classes.root}
+                            >
+                                {
+                                    params.value.userId ?
+                                        <Link href={`/user/${params.value.userId}`} >{params.value.value}</Link> :
+                                        params.value.value
+                                }
+                            </Stack>
+                        );
+                    }
                 },
-                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable}
+                { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable }
             ].concat(gradeStructureHeaders).concat(totalHeader);
 
             setColumnHeaders(columnsArray);
@@ -151,7 +153,7 @@ export default function StudentGrades({ gradeStructure, role }) {
             handleOpenErrorSnack(true);
             handleSetMsgSnack(err.response.data.message);
         }
-    }, [])
+    }, [isReload])
 
     async function onCellChange(params, event, detail) {
         let newCsvData = csvData;
@@ -169,7 +171,7 @@ export default function StudentGrades({ gradeStructure, role }) {
             handleSetMsgSnack(err.response.data.message);
         }
     }
-   
+
     const handleOpenDialog = () => {
         setOpenDialog(true);
     };
@@ -183,7 +185,7 @@ export default function StudentGrades({ gradeStructure, role }) {
     };
 
     const handlePublish = async () => {
-        const gradeIdOrder = parseInt(itemTable.field.replace('grade',''));
+        const gradeIdOrder = parseInt(itemTable.field.replace('grade', ''));
         const gradeId = gradeStructure[gradeIdOrder].id;
         //console.log(gradeId);
         const data = {
@@ -221,60 +223,60 @@ export default function StudentGrades({ gradeStructure, role }) {
                     {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
                 </Typography>
 
-                {role =="student"? 
-                <DataGrid
-                    autoHeight
-                    columns={columnHeaders}
-                    rows={csvData}
-                    pageSize={pageSize}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    rowsPerPageOptions={[5, 10, 20, 50, 100]}
-                    pagination
-                    loading={loading}
-                    
-                /> : <DataGrid
-                    autoHeight
-                    columns={columnHeaders}
-                    rows={csvData}
-                    pageSize={pageSize}
-                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                    rowsPerPageOptions={[5, 10, 20, 50, 100]}
-                    pagination
-                    loading={loading}
-                    onCellEditCommit={onCellChange}
-                    {...csvData}
-                    onCellClick={handleCellClick}
-                    components={{
-                        Toolbar: CustomToolbar,
-                    }}
-                />
+                {role == "student" ?
+                    <DataGrid
+                        autoHeight
+                        columns={columnHeaders}
+                        rows={csvData}
+                        pageSize={pageSize}
+                        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                        rowsPerPageOptions={[5, 10, 20, 50, 100]}
+                        pagination
+                        loading={loading}
+
+                    /> : <DataGrid
+                        autoHeight
+                        columns={columnHeaders}
+                        rows={csvData}
+                        pageSize={pageSize}
+                        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                        rowsPerPageOptions={[5, 10, 20, 50, 100]}
+                        pagination
+                        loading={loading}
+                        onCellEditCommit={onCellChange}
+                        {...csvData}
+                        onCellClick={handleCellClick}
+                        components={{
+                            Toolbar: CustomToolbar,
+                        }}
+                    />
                 }
-                
+
             </Box>
 
-            {role=="student"? "" : <Box sx={{display: "flex", margin: 2, justifyContent: "space-evenly"}}>
+            {role == "student" ? "" : <Box sx={{ display: "flex", margin: 2, justifyContent: "space-evenly" }}>
                 <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
-                <ImportStudentButton gradeStructure={gradeStructure} />
-                <UploadFullGradeButton gradeStructure={gradeStructure} />
+                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
+                <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
             </Box>}
 
-            {role=="student"? "" : <Dialog
+            {role == "student" ? "" : <Dialog
                 open={openDialog}
                 onClose={handleCloseDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                {"Do you want to pulish this grade?"}
+                    {"Do you want to pulish this grade?"}
                 </DialogTitle>
                 <DialogContent>
-                
+
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleCloseDialog}>Cancel</Button>
-                <Button onClick={handlePublish} autoFocus>
-                    Pulish
-                </Button>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={handlePublish} autoFocus>
+                        Pulish
+                    </Button>
                 </DialogActions>
             </Dialog>}
         </div>

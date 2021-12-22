@@ -34,11 +34,11 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
             console.log(gradeIndex);
         } else if (newSelection === "student") {
             newData[0] = {
-                    "Student ID": "",
-                    "Full Name": ""
+                "Student ID": "",
+                "Full Name": ""
             };
             newFileName = "StudentListTemplate";
-        } 
+        }
 
         setSelection(newSelection);
         setCsvData(newData);
@@ -63,12 +63,12 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
             });
         });
 
-        
+
         let newMenuItems = newtitleList.map((item, id) => {
             return <MenuItem key={id} value={item.value}>{item.title}</MenuItem>;
         });
         console.log(newMenuItems);
-        
+
         setMenuItems(newMenuItems);
         setSelection("student");
     }
@@ -78,9 +78,9 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Download Template</DialogTitle>
                 <DialogContent
-                    sx={{padding: 2, marginBottom: 4}}
+                    sx={{ padding: 2, marginBottom: 4 }}
                 >
-                    <FormControl sx={{marginTop: 2}} fullWidth>
+                    <FormControl sx={{ marginTop: 2 }} fullWidth>
                         <InputLabel id="select-template">Template</InputLabel>
                         <Select
                             labelId="select-template"
@@ -89,17 +89,17 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
                             label="Select Template"
                             onChange={handleChange}
                         >
-                            { menuItems }
+                            {menuItems}
                         </Select>
                     </FormControl>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button 
+                    <Button
                         onClick={handleClose}
                         fullWidth
                         size="large"
-                        sx={{margin: 3}}
+                        sx={{ margin: 3 }}
                     >
                         Cancel
                     </Button>
@@ -109,7 +109,7 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
                         variant="contained"
                         color="primary"
                         size="large"
-                        sx={{margin: 3}}
+                        sx={{ margin: 3 }}
                     >
                         <CSVDownloader
                             data={csvData}
