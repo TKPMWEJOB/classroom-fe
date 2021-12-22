@@ -256,7 +256,7 @@ export default function StudentGrades({ gradeStructure, role }) {
 
             {role == "student" ? "" : <Box sx={{ display: "flex", margin: 2, justifyContent: "space-evenly" }}>
                 <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
-                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
+                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} gradeData={csvData}/>
                 <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
             </Box>}
 

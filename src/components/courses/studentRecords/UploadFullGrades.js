@@ -40,7 +40,6 @@ export default function ImportStudentButton({ gradeStructure, setIsReload }) {
             setFileName(files[0].name);
             readString(files[0], {
                 skipEmptyLines: true,
-                encoding:'ISO-8859-1',
                 header: true,
                 complete: function (results) {
                     const data = results.data.filter(function(item) {

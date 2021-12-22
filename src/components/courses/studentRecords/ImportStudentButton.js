@@ -20,19 +20,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ImportStudentButton({ gradeStructure, setIsReload }) {
+export default function ImportStudentButton({ gradeStructure, setIsReload, gradeData }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
-	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
-    const gradeStructureHeaders = gradeStructure.map((grade, id) => {
+    const gradeStructureHeaders = gradeStructure.map((grade, index) => {
         const header = {
-            field: 'grade' + id,
+            field: `grade${index}`,
             headerName: `${grade.title} \n (${grade.point})`,
-            width: 150
+            width: 150,
         }
         return header;
     });
@@ -47,17 +47,23 @@ export default function ImportStudentButton({ gradeStructure, setIsReload }) {
             readString(files[0], {
                 skipEmptyLines: true,
                 header: true,
-                encoding:'ISO-8859-1',
                 complete: function (results) {
                     console.log("Finished:", results.data);
                     const data = results.data.map((result, index) => {
-                        const row = {
+                        let row = {
                             id: index,
                             studentId: result["Student ID"],
                             fullName: result["Full Name"]
                         }
+                        const grade = gradeData.find(element => element.studentId.value === row.studentId || element.studentId === row.studentId);
+                        console.log(grade);
+                        if (grade) {
+                            row = Object.assign(grade, row);
+                        }
                         return row;
                     });
+                    console.log(gradeData);
+                    console.log(data);
                     setCsvData(data);
                 }
             })
