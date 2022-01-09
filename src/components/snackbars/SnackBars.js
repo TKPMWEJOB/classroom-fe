@@ -12,22 +12,19 @@ export default function SnackBars({ openErrorSnack, openSuccessSnack, SnackMsg, 
   };
 
   const handleCloseSuccessSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
     setOpenSuccessSnack(false);
   };
 
   return (
     <div>
-        <Snackbar open={openErrorSnack} autoHideDuration={6000} onClose={handleCloseErrorSnack}>
+        <Snackbar open={openErrorSnack} autoHideDuration={4000} onClose={handleCloseErrorSnack}>
             <MuiAlert 
                 elevation={6} variant="filled" onClose={handleCloseErrorSnack} severity="error" sx={{ width: '100%' }} 
             > 
                 {SnackMsg}
             </MuiAlert>
         </Snackbar>
-        <Snackbar open={openSuccessSnack} autoHideDuration={6000} onClose={handleCloseSuccessSnack}>
+        <Snackbar open={openSuccessSnack} autoHideDuration={4000} onClose={handleCloseSuccessSnack}>
             <MuiAlert 
                 elevation={6} variant="filled" onClose={handleCloseSuccessSnack} severity="success" sx={{ width: '100%' }} 
             > 

@@ -37,7 +37,7 @@ export default function SigninGoogleButton({ handleSetMsgSnack, handleOpenSucces
         <div style={{ width: '50%', margin: 'auto' }}>
             <GoogleLogin
                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                buttonText="Loggin with Google"
+                buttonText="Login with Google"
                 onSuccess={handleLogin}
                 onFailure={handleFailure}
                 cookiePolicy={'single_host_origin'}

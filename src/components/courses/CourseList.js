@@ -39,21 +39,30 @@ function Courses() {
     return (
       <div>
         {/* <CreateCourseButton setCourses={setCourses} setError={setError} courses={courses}/> */}
-        <Grid container spacing="24px" padding="24px">
-          {courses.map((course, index, courses) => (
-            <Grid item key={course.id}>
-              <CourseCard
-                course={course}
-                courses={courses}
-                setIsLoaded={setIsLoaded}
-                setCourses={setCourses} setError={setError}
-              />
-            </Grid>
-          ))}
-        </Grid>
+        {
+          courses.length === 0 ? <h1 style={styles.textStyle}>You have not join any class yet!</h1> :
+          <Grid container spacing="24px" padding="24px">
+            {courses.map((course, index, courses) => (
+              <Grid item key={course.id}>
+                <CourseCard
+                  course={course}
+                  courses={courses}
+                  setIsLoaded={setIsLoaded}
+                  setCourses={setCourses} setError={setError}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        }
       </div>
     );
   }
 }
 
 export default Courses;
+
+const styles = {
+  textStyle: {
+      textAlign: 'center'
+  }
+};

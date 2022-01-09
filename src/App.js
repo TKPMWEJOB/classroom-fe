@@ -14,6 +14,8 @@ import { UserContext } from './contexts/UserContext';
 import { SnackbarContext } from './contexts/SnackbarContext';
 import { useState } from 'react';
 import SnackBars from './components/snackbars/SnackBars';
+import AccountActivate from './pages/AccountActivate';
+import PasswordResetPage from './pages/PasswordResetPage';
 
 function App() {
   const localUser = JSON.parse(localStorage.getItem("user"));
@@ -58,6 +60,8 @@ function App() {
             <Route exact path="/courses/:id" component={CourseDetail}></Route>
             <Route exact path="/user" component={UserPage}></Route>
             <Route exact path="/user/:id" component={OtherUserPage}></Route>
+            <Route exact path="/auth/activate/:token" component={AccountActivate}></Route>
+            <Route exact path="/auth/reset/:token" component={PasswordResetPage}></Route>
             <Route exact path="/invitation/:id" component={InvitationComfirm}></Route>
             <Route path="*" component={NotFound} />
           </Switch>
