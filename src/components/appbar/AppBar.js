@@ -9,6 +9,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 
 import CreateCourseDialog from '../courses/CreateCourseDialog';
 import SigninButton from './SigninButton';
@@ -66,11 +69,23 @@ export default function ButtonAppBar() {
           </Typography>
 
           {userInfo.isLogin ? 
-            <IconButton size="large" edge="start" color="inherit" aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={handleCreateCourse}>
-              <AddIcon />
-            </IconButton>
+            <>
+              <Tooltip title="Notification" arrow>
+                <IconButton size="large" edge="start" color="inherit" aria-label="menu"
+                  sx={{ mr: 2 }}>
+                    <Badge badgeContent={4} color="error"> 
+                      <NotificationsIcon />
+                    </Badge>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Create Class" arrow>
+                <IconButton size="large" edge="start" color="inherit" aria-label="menu"
+                  sx={{ mr: 2 }}
+                  onClick={handleCreateCourse}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </>
             : ""
           }
 
