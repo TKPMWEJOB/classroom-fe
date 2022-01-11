@@ -12,6 +12,7 @@ import axios from 'axios';
 import { UserContext } from '../../contexts/UserContext';
 import { SnackbarContext } from '../../contexts/SnackbarContext';
 import SigninGoogleButton from './SigninGoogleButton';
+import SigninFacebookButton from './SigninFacebookButton';
 
 axios.defaults.withCredentials = true;
 export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup, handleCreateForget}) {
@@ -110,12 +111,14 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
             No account? Sign up here.
           </Typography>
           
-          <SigninGoogleButton 
-            handleSetMsgSnack={handleSetMsgSnack} 
-            handleOpenSuccessSnack={handleOpenSuccessSnack} 
-            handleOpenErrorSnack={handleOpenErrorSnack}
-            handleClose={handleClose}
-          />
+          <Grid display="flex" flexDirection="column" alignItems="center">
+            <SigninGoogleButton 
+              handleClose={handleClose}
+            />
+            <SigninFacebookButton
+              handleClose={handleClose}
+            />
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button 
