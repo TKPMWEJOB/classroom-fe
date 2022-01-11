@@ -253,8 +253,7 @@ export default function StudentGrades({ gradeStructure, role }) {
             const gradeId = gradeStructure[gradeIdOrder].id;
             const data = {
                 studentId: itemTable.row.studentId,
-                gradeId: gradeId,
-                point: itemTable.value
+                gradeId: gradeId
             }
             try {
                 await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-one-grade`, { data: data });

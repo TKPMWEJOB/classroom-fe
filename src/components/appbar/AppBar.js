@@ -16,6 +16,7 @@ import Badge from '@mui/material/Badge';
 import CreateCourseDialog from '../courses/CreateCourseDialog';
 import SigninButton from './SigninButton';
 import LoggedButtons from './LoggedButtons';
+import NotificationButtonMenu from '../notification/NotificationButton';
 
 export default function ButtonAppBar() {
   const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
@@ -70,14 +71,7 @@ export default function ButtonAppBar() {
 
           {userInfo.isLogin ? 
             <>
-              <Tooltip title="Notification" arrow>
-                <IconButton size="large" edge="start" color="inherit" aria-label="menu"
-                  sx={{ mr: 2 }}>
-                    <Badge badgeContent={4} color="error"> 
-                      <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-              </Tooltip>
+              <NotificationButtonMenu />
               <Tooltip title="Create Class" arrow>
                 <IconButton size="large" edge="start" color="inherit" aria-label="menu"
                   sx={{ mr: 2 }}
