@@ -61,6 +61,7 @@ export default function NotificationMenu() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [numberOfNotification, setNumberOfNotification] = useState(0);
 
   useEffect(async () => {
     try {
@@ -69,6 +70,10 @@ export default function NotificationMenu() {
       //console.log(res.data);
       if (res.data) {
         setNotification(res.data);
+        const newArray = res.data.filter(function (e) {
+          return e.status === 'waiting';
+        });
+        setNumberOfNotification(newArray.length);
       }
       setIsLoaded(true);
     } catch (err) {
@@ -85,7 +90,22 @@ export default function NotificationMenu() {
     setAnchorEl(null);
   };
 
-  const handleClickItem = (e) => {
+  const handleClickItem = async(e) => {
+    const data = {
+      notificationId: e.currentTarget.value
+    }
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/notification/update-viewed-status`, { data: data });
+      if (res.data) {
+        setNotification(res.data);
+        const newArray = res.data.filter(function (e) {
+          return e.status === 'waiting';
+        });
+        setNumberOfNotification(newArray.length);
+      }
+    } catch (err) {
+        console.log(err.response.data.message);
+    }
     setAnchorEl(null);
   }
 
@@ -104,8 +124,8 @@ export default function NotificationMenu() {
           disableElevation
           onClick={handleClick}
           sx={{ mr: 2 }}>
-            { notification ? 
-            <Badge badgeContent={notification.length} color="error"> 
+            { numberOfNotification > 0 ? 
+            <Badge badgeContent={numberOfNotification} color="error"> 
               <NotificationsIcon />
             </Badge>
             : <NotificationsIcon />}
@@ -123,8 +143,8 @@ export default function NotificationMenu() {
       >
         { notification ? notification.map((item, index) => (
           <MenuItem key={`notification${index}`} value={`${item.id}`} onClick={handleClickItem} disableRipple>
-            <Box sx={{width: 400}}>
-              <Typography
+          <Box sx={{width: 400}}>
+            {item.status === 'waiting' ? <><Typography
                 variant="body2"
                 sx={{ fontWeight: 'medium', color: '#2196f3' }}
               >
@@ -136,9 +156,24 @@ export default function NotificationMenu() {
               >
                 {item.content}
               </Typography>
-              <NotificationTimer createdTime={item.createdAt}></NotificationTimer>
-            </Box>
-          </MenuItem>
+            </> 
+            : <><Typography
+                variant="body2"
+                sx={{ fontWeight: 'medium', color: '#aaaaaa' }}
+              >
+                {item.title}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 'regular', color: '#aaaaaa'  }}
+              >
+                {item.content}
+              </Typography>
+            </>}
+            <NotificationTimer createdTime={item.createdAt}></NotificationTimer>
+          </Box>
+        </MenuItem>
+          
         )) : ''}
         
         
