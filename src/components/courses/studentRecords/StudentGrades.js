@@ -5,10 +5,11 @@ import {
     DataGrid,
     GridToolbarContainer,
     GridToolbarExport,
-    gridClasses,
+    gridClasses
 } from '@mui/x-data-grid';
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import ImportStudentButton from "./ImportStudentButton";
@@ -21,6 +22,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import SendIcon from '@mui/icons-material/Send';
+import Tooltip from '@mui/material/Tooltip';
 
 import ButtonMenu from "./PublishButton";
 
@@ -53,9 +56,12 @@ export default function StudentGrades({ gradeStructure, role }) {
     const [loading, setLoading] = useState(false);
     const [isSaved, setIsSaved] = useState(true);
     const [isReload, setIsReload] = useState(false);
+    const [isClickedAction, setIsClickedAction] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState('');
     const { id } = useParams();
     const [columnHeaders, setColumnHeaders] = useState([]);
     const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+
 
     useEffect(async () => {
         setLoading(true);
@@ -69,7 +75,7 @@ export default function StudentGrades({ gradeStructure, role }) {
         try {
             let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
             // if (res.status === 200) {
-            console.log(res.data);
+            //console.log(res.data);
             setCsvData(res.data);
             setLoading(false);
             //setCourses(res.data);
@@ -121,11 +127,27 @@ export default function StudentGrades({ gradeStructure, role }) {
                 type: "number"
             }
 
+            const action = {
+                field: 'actions',
+                type: 'actions',
+                width: 120,
+                sortable: false,
+                disableClickEventBubbling: true,
+                renderCell: () => {
+                    return (
+                        <Tooltip title="Return all grades to student" arrow>
+                            <IconButton variant="contained" color="default" size="small" sx={{ml: 10}} onClick={handleOpenDialogAction}>
+                                <SendIcon />
+                            </IconButton>
+                        </Tooltip>
+                    );
+                }
+            }
+
             const columnsArray = [
                 {
                     field: 'studentId', minWidth: 150, headerName: 'Student ID',
                     renderCell: (params) => {
-                       console.log(params);
                         return (
                             <Stack
                                 width={150}
@@ -144,7 +166,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                     }
                 },
                 { field: 'fullName', minWidth: 300, headerName: 'Full Name', editable: isEditable }
-            ].concat(gradeStructureHeaders).concat(totalHeader);
+            ].concat(gradeStructureHeaders).concat(totalHeader).concat(action);
 
             setColumnHeaders(columnsArray);
 
@@ -155,6 +177,7 @@ export default function StudentGrades({ gradeStructure, role }) {
             handleSetMsgSnack(err.response.data.message);
         }
     }, [isReload])
+    
 
     async function onCellChange(params, event, detail) {
         let newCsvData = csvData;
@@ -175,6 +198,16 @@ export default function StudentGrades({ gradeStructure, role }) {
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
+        const title = `Do you want to publish this grade to student`
+        setDialogTitle(title);
+        handleOffAction();
+    };
+
+    const handleOpenDialogAction = () => {
+        setOpenDialog(true);
+        const title = `Do you want to publish all grades to student`
+        setDialogTitle(title);
+        handleClickAction();
     };
 
     const handleCloseDialog = () => {
@@ -185,29 +218,57 @@ export default function StudentGrades({ gradeStructure, role }) {
         setItemTable(e);
     };
 
+    const handleClickAction = () => {
+        setIsClickedAction(true);
+    };
+
+    const handleOffAction = () => {
+        setIsClickedAction(false);
+    };
+
     const handlePublish = async () => {
-        const gradeIdOrder = parseInt(itemTable.field.replace('grade', ''));
-        const gradeId = gradeStructure[gradeIdOrder].id;
-        //console.log(gradeId);
-        const data = {
-            studentId: itemTable.row.studentId,
-            gradeId: gradeId,
-            point: itemTable.value
-        }
         setLoading(true);
         handleCloseDialog();
-        try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-grade`, { data: data });
-            setLoading(false);
-            handleOpenSuccessSnack(true);
-            handleSetMsgSnack("Publish Successfully");
-            setOpenPreview(false);
-        } catch (err) {
-            setLoading(false);
-            setOpenPreview(false);
-            handleOpenErrorSnack(true);
-            handleSetMsgSnack(err.response.data.message);
+        if (!isClickedAction) {
+            const gradeIdOrder = parseInt(itemTable.field.replace('grade', ''));
+            const gradeId = gradeStructure[gradeIdOrder].id;
+            const data = {
+                studentId: itemTable.row.studentId,
+                gradeId: gradeId,
+                point: itemTable.value
+            }
+            try {
+                await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-one-grade`, { data: data });
+                setLoading(false);
+                handleOpenSuccessSnack(true);
+                handleSetMsgSnack("Publish Successfully");
+                setOpenPreview(false);
+            } catch (err) {
+                setLoading(false);
+                setOpenPreview(false);
+                handleOpenErrorSnack(true);
+                handleSetMsgSnack(err.response.data.message);
+            }
         }
+        else {
+            const data = {
+                studentId: itemTable.row.studentId
+            }
+            try {
+                await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/publish-one-row`, { data: data });
+                setLoading(false);
+                handleOpenSuccessSnack(true);
+                handleSetMsgSnack("Publish Successfully");
+                setOpenPreview(false);
+            } catch (err) {
+                setLoading(false);
+                setOpenPreview(false);
+                handleOpenErrorSnack(true);
+                handleSetMsgSnack(err.response.data.message);
+            }
+        }
+
+        handleOffAction();
     };
 
     return (
@@ -268,7 +329,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Do you want to pulish this grade?"}
+                    {dialogTitle}
                 </DialogTitle>
                 <DialogContent>
 
