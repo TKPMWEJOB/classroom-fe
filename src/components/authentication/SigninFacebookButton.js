@@ -51,6 +51,7 @@ export default function SigninFacebookButton({ handleClose }) {
                 callback={handleLogin}
                 onFailure={handleFailure}
                 returnScopes="true"
+                icon="fa-facebook"
             />
         </div>
     );

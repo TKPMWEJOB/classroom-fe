@@ -18,6 +18,7 @@ import LoggedButtons from '../../appbar/LoggedButtons';
 import SigninButton from '../../appbar/SigninButton';
 
 import { isTeacher, isStudent, isOwner } from '../../../utils/Role';
+import NotificationButtonMenu from '../../notification/NotificationButton';
 
 export default function ButtonAppBar({ course, handleChangeTab, role }) {
   const { userInfo } = useContext(UserContext);
@@ -68,14 +69,7 @@ export default function ButtonAppBar({ course, handleChangeTab, role }) {
           </TabList>
 
           {userInfo.isLogin ? 
-            <Tooltip title="Notification" arrow>
-              <IconButton size="large" edge="start" color="inherit" aria-label="menu"
-                sx={{ mr: 2 }}>
-                  <Badge badgeContent={4} color="error"> 
-                    <NotificationsIcon />
-                  </Badge>
-              </IconButton>
-            </Tooltip>
+            <NotificationButtonMenu />
             : ""
           }
           {userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile} /> : <SigninButton />}
