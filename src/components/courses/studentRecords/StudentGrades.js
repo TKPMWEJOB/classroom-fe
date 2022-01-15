@@ -67,9 +67,17 @@ export default function StudentGrades({ gradeStructure, role }) {
             isEditable = true;
         }
         try {
-            let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
+            let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`,
+                {
+                    // query URL without using browser cache
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                    },
+                });
             // if (res.status === 200) {
-            console.log(res.data);
+            console.log("Grades:", res.data);
             setCsvData(res.data);
             setLoading(false);
             //setCourses(res.data);
@@ -125,7 +133,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                 {
                     field: 'studentId', minWidth: 150, headerName: 'Student ID',
                     renderCell: (params) => {
-                       console.log(params);
+                        //console.log(params);
                         return (
                             <Stack
                                 width={150}
@@ -257,8 +265,8 @@ export default function StudentGrades({ gradeStructure, role }) {
 
             {role == "student" ? "" : <Box sx={{ display: "flex", margin: 2, justifyContent: "space-evenly" }}>
                 <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
-                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} gradeData={csvData}/>
-                <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
+                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} isReload={isReload} gradeData={csvData} />
+                <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} isReload={isReload} />
             </Box>}
 
             {role == "student" ? "" : <Dialog
