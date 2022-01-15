@@ -8,24 +8,26 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Home';
-import AddIcon from '@mui/icons-material/Add';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import Tooltip from '@mui/material/Tooltip';
-import Badge from '@mui/material/Badge';
 
 import CreateCourseDialog from '../courses/CreateCourseDialog';
 import SigninButton from './SigninButton';
 import LoggedButtons from './LoggedButtons';
 import NotificationButtonMenu from '../notification/NotificationButton';
+import PlusIconButton from './PlusIconButton'
+import JoinClassDialog from './JoinClassDialog';
 
 export default function ButtonAppBar() {
   const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
+  const [openJoinClass, setOpenJoinClass] = React.useState(false);
   const { userInfo } = useContext(UserContext);
 
   const handleCreateCourse = () => {
     setOpenCreateCourse(true);
   };
 
+  const handleCreateJoin = () => {
+    setOpenJoinClass(true);
+  };
   const history = useHistory();
 
   const handleGoUserProfile = () => {
@@ -45,6 +47,10 @@ export default function ButtonAppBar() {
       <CreateCourseDialog
         open={openCreateCourse}
         setOpen={setOpenCreateCourse}
+      />
+      <JoinClassDialog 
+        open={openJoinClass}
+        setOpen={setOpenJoinClass}
       />
 
       <AppBar position="static" style={{ background: "white", borderBottom: "1px solid #e0e0e0", boxShadow: 'none', color: "#3c4043" }}>
@@ -72,13 +78,10 @@ export default function ButtonAppBar() {
           {userInfo.isLogin ? 
             <>
               <NotificationButtonMenu />
-              <Tooltip title="Create Class" arrow>
-                <IconButton size="large" edge="start" color="inherit" aria-label="menu"
-                  sx={{ mr: 2 }}
-                  onClick={handleCreateCourse}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
+              <PlusIconButton 
+                handleCreateCourse={handleCreateCourse} 
+                handleCreateJoin={handleCreateJoin}
+              />
             </>
             : ""
           }
