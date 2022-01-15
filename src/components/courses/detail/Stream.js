@@ -28,16 +28,18 @@ export default function Stream({ course, role, gradeStructure }) {
 						style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
 					>
 
-						<Paper
-							variant='outlined'
-							sx={{ margin: 'auto', overflow: 'hidden' }}
-							style={{ textAlign: 'center' }}
-						>
-							<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
-								style={{ margin: 5 }}>
-								Code: {course.invitationId ? course.invitationId : 'Upcoming!'}
-							</Typography>
-						</Paper>
+						{ role === "student" ? "" :
+							<Paper
+								variant='outlined'
+								sx={{ margin: 'auto', overflow: 'hidden' }}
+								style={{ textAlign: 'center' }}
+							>
+								<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
+									style={{ margin: 5, color: "blue"}}>
+									Classroom's Code: {course.invitationId ? course.invitationId : 'Upcoming!'}
+								</Typography>
+							</Paper>
+						}
 
 						<Paper
 							variant='outlined'
