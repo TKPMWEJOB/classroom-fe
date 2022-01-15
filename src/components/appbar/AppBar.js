@@ -9,10 +9,14 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 
 import CreateCourseDialog from '../courses/CreateCourseDialog';
 import SigninButton from './SigninButton';
 import LoggedButtons from './LoggedButtons';
+import NotificationButtonMenu from '../notification/NotificationButton';
 
 export default function ButtonAppBar() {
   const [openCreateCourse, setOpenCreateCourse] = React.useState(false);
@@ -66,11 +70,16 @@ export default function ButtonAppBar() {
           </Typography>
 
           {userInfo.isLogin ? 
-            <IconButton size="large" edge="start" color="inherit" aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={handleCreateCourse}>
-              <AddIcon />
-            </IconButton>
+            <>
+              <NotificationButtonMenu />
+              <Tooltip title="Create Class" arrow>
+                <IconButton size="large" edge="start" color="inherit" aria-label="menu"
+                  sx={{ mr: 2 }}
+                  onClick={handleCreateCourse}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </>
             : ""
           }
 

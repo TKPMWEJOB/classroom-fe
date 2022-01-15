@@ -74,6 +74,7 @@ export default function ImportStudentButton({ gradeStructure, setIsReload, isRel
 
     const handleUpload = async () => {
         setLoading(true);
+        setIsReload(false);
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/studentlist`, { data: csvData });
             setLoading(false);

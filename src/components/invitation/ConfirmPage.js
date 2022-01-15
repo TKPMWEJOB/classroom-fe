@@ -23,7 +23,9 @@ export default function ComfirmPage() {
     const [isLoaded, setIsLoaded] = useState(false);  
     const [isJoined, setIsJoined] = useState(false);  
     const [isSignin, setIsSignin] = useState(false);  
+    const [isNotPermitted, setIsNotPermitted] = useState(false); 
     const [user, setUser] = useState(null);
+    const [classCode, setClassCode] = useState('');
     //const token = JSON.parse(localStorage.getItem("token"));
     const invitationId  = useParams();
     const history = useHistory();
@@ -65,6 +67,7 @@ export default function ComfirmPage() {
                 setIsSignin(true);
                 setIsJoined(true);
                 setContent(newContent);
+                setClassCode(res.data.invitationId);
             }
             else if (res.status === 203) {
                 const newContent = {
@@ -73,6 +76,16 @@ export default function ComfirmPage() {
                     buttonLabel: 'Signin'
                 }
                 setContent(newContent);
+            }
+            else if (res.status === 204) {
+                const newContent = {
+                    title: 'You do not have permission to join class with teacher role',
+                    description: 'Click the button below to return',
+                    buttonLabel: 'Home'
+                }
+                setContent(newContent);
+                //console.log(newContent);
+                setIsNotPermitted(true);
             }
         })
         .catch( 
@@ -148,7 +161,11 @@ export default function ComfirmPage() {
     }
 
     const handleGotoClass = () => {
-        history.push(`/courses/${invitationId.id}`);
+        history.push(`/courses/${classCode}`);
+    };
+
+    const handleGotoHome = () => {
+        history.push(`/`);
     };
 
 
@@ -176,10 +193,10 @@ export default function ComfirmPage() {
                 pb: 6,
             }}
             >
-            {isJoined? <ConfirmPageContent content={content} onClick={handleGotoClass} /> : 
-                isSignin? <ConfirmPageContent content={content} onClick={handleAcceptInv} /> : 
-                <ConfirmPageContent content={content} onClick={handleCreateSignin} />
-            }
+            {isNotPermitted? <ConfirmPageContent content={content} onClick={handleGotoHome} /> :
+                isJoined? <ConfirmPageContent content={content} onClick={handleGotoClass} /> : 
+                    isSignin? <ConfirmPageContent content={content} onClick={handleAcceptInv} /> : 
+                    <ConfirmPageContent content={content} onClick={handleCreateSignin} />}
             </Box>
             <Snackbar open={openErrorSnack} autoHideDuration={4000} onClose={handleCloseErrorSnack}>
                 <MuiAlert 

@@ -5,18 +5,20 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Home';
-import Avatar from '@mui/material/Avatar';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 
 import { UserContext } from '../../../contexts/UserContext';
 import LoggedButtons from '../../appbar/LoggedButtons';
 import SigninButton from '../../appbar/SigninButton';
 
 import { isTeacher, isStudent, isOwner } from '../../../utils/Role';
+import NotificationButtonMenu from '../../notification/NotificationButton';
 
 export default function ButtonAppBar({ course, handleChangeTab, role }) {
   const { userInfo } = useContext(UserContext);
@@ -65,6 +67,11 @@ export default function ButtonAppBar({ course, handleChangeTab, role }) {
             }
             <Tab label="Student Grades" value="5" style={{ textTransform: 'none' }} />
           </TabList>
+
+          {userInfo.isLogin ? 
+            <NotificationButtonMenu />
+            : ""
+          }
           {userInfo.isLogin ? <LoggedButtons handleAvatarClick={handleGoUserProfile} /> : <SigninButton />}
           {/*token ?
             <>

@@ -61,8 +61,23 @@ export default function IvitationButton({ course, role }) {
     const config = {
       headers: { 'authorization': `${tokenLocal}` }
     };
-    if (role === 'student' || role === 'teacher') {
+    if (role === 'student') {
       axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-member`, e, config)
+      .then(res => {
+        setSnackMsg(res.data.msg);  
+        setOpenSuccessSnack(true);
+        setLoading(false);
+      })
+      .catch( 
+        error => {
+          setSnackMsg(error.response.data.msg);
+          setOpenErrorSnack(true);
+          setLoading(false);
+        }      
+      );
+    }
+    else if (role === 'teacher') {
+      axios.put(`${process.env.REACT_APP_API_URL}/courses/invite-teacher`, e, config)
       .then(res => {
         setSnackMsg(res.data.msg);  
         setOpenSuccessSnack(true);
@@ -85,7 +100,7 @@ export default function IvitationButton({ course, role }) {
   }
 
   
-  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`;
+  const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/`;
   const invitationTitle = `Invite ${role}`;
   
   const initialValues = {

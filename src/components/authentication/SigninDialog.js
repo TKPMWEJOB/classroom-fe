@@ -12,9 +12,10 @@ import axios from 'axios';
 import { UserContext } from '../../contexts/UserContext';
 import { SnackbarContext } from '../../contexts/SnackbarContext';
 import SigninGoogleButton from './SigninGoogleButton';
+import SigninFacebookButton from './SigninFacebookButton';
 
 axios.defaults.withCredentials = true;
-export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup}) {
+export default function SigninDialog({ open, dialogTitle, handleClose, handleCreateSignup, handleCreateForget}) {
   const [loading, setLoading] = React.useState(false);
   const { updateUser } = useContext(UserContext);
   const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
@@ -63,8 +64,8 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
             required
             margin="normal"
             id="email"
-            label="Email Address"
-            type="email"
+            label="Username or Email"
+            type="text"
             fullWidth
             variant="outlined"
             inputProps={{ maxLength: 50 }}
@@ -94,6 +95,7 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
               color="primary"
               role="button"
               sx={{cursor: "pointer"}}
+              onClick={handleCreateForget}
             >
               Forget Password?
             </Typography>
@@ -109,12 +111,14 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
             No account? Sign up here.
           </Typography>
           
-          <SigninGoogleButton 
-            handleSetMsgSnack={handleSetMsgSnack} 
-            handleOpenSuccessSnack={handleOpenSuccessSnack} 
-            handleOpenErrorSnack={handleOpenErrorSnack}
-            handleClose={handleClose}
-          />
+          <Grid display="flex" flexDirection="column" alignItems="center">
+            <SigninGoogleButton 
+              handleClose={handleClose}
+            />
+            <SigninFacebookButton
+              handleClose={handleClose}
+            />
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button 
@@ -136,71 +140,8 @@ export default function SigninDialog({ open, dialogTitle, handleClose, handleCre
           >
             Sign in
           </LoadingButton>
-          {/*
-          <Button 
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{margin: 3}}
-            
-          >
-            Sign in
-          </Button>
-          */}
         </DialogActions>
       </form>
     </Dialog>
   );
 }
-
-/*
-    fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
-      method: 'POST',
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        email: e.target.email.value,
-        password: e.target.password.value,
-        remember: e.target.remember.checked
-      }),
-      accept: '/*',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json();
-      }
-      else {
-        return res.text().then(text => { throw new Error(text) })
-      }
-    })
-      .then(
-        (result) => {
-          setSnackMsg(result.msg);
-          setOpenSuccessSnack(true);
-          setLoading(false);
-          setTimeout(() => {  
-            console.log(result);
-            setCookie("token", result.jwtToken, {maxAge: result.maxAge});
-            //window.location.reload();
-            localStorage.setItem('token', JSON.stringify({
-              user: result.body,
-              jwtToken: result.jwtToken
-            }));
-            handleClose();
-          }, 2000);
-          
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          console.log(error);
-          setSnackMsg(JSON.parse(error.message).msg);
-          setOpenErrorSnack(true);
-          setLoading(false);
-        }
-      );
-      */

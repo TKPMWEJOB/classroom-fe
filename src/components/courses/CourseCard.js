@@ -10,7 +10,8 @@ import FolderIcon from '@mui/icons-material/FolderOpen';
 import EditCourseDialog from './EditCourseDialog';
 import DeleteCourseDialog from './DeleteCourseDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit'
+import EditIcon from '@mui/icons-material/Edit';
+import Tooltip from '@mui/material/Tooltip';
 import { UserContext } from '../../contexts/UserContext';
 
 const styles = {
@@ -79,7 +80,7 @@ export default function CourseCard({ setIsLoaded, setCourses, setError, course, 
     <div>
       <Card sx={{ width: 300 }} href={course.id}>
         <div style={styles.paperContainer}>
-          <CardContent>
+          <CardContent onClick={handleGoDetail}>
             <Typography style={styles.courseTitle} variant="Headline">
               {course.name}
             </Typography>
@@ -93,18 +94,24 @@ export default function CourseCard({ setIsLoaded, setCourses, setError, course, 
         </div>
 
         <CardActions disableSpacing>
-          <IconButton aria-label="view" onClick={handleGoDetail}>
-            <FolderIcon />
-          </IconButton>
+          <Tooltip title="View" arrow> 
+            <IconButton aria-label="view" onClick={handleGoDetail}>
+              <FolderIcon />
+            </IconButton>
+          </Tooltip>          
         { userInfo.info.id === course.ownerId ?
           <>
-          <IconButton aria-label="delete" onClick={handleClickEdit}>
-            <EditIcon />
-          </IconButton>
-
-          <IconButton aria-label="delete" onClick={handleClickDelete}>
-            <DeleteIcon />
-          </IconButton> 
+          <Tooltip title="Edit" arrow>
+            <IconButton aria-label="edit" onClick={handleClickEdit}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Delete" arrow>
+            <IconButton aria-label="delete" onClick={handleClickDelete}>
+              <DeleteIcon />
+            </IconButton> 
+          </Tooltip>
           </>
           : <div></div>
         }

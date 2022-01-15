@@ -15,6 +15,8 @@ import { useParams } from "react-router-dom";
 import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 import { SnackbarContext } from "../../../contexts/SnackbarContext";
+import SendIcon from '@mui/icons-material/Send';
+import Tooltip from '@mui/material/Tooltip';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -45,6 +47,7 @@ export default function ImportStudentButton({ gradeStructure, setIsReload, isRel
                     const data = results.data.filter(function(item) {
                         return item["Student ID"] !== '';
                     });
+                    console.log(data);
                     const dataPreview = data.map((result, index) => {
                         const row = {
                             id: index,
@@ -111,6 +114,7 @@ export default function ImportStudentButton({ gradeStructure, setIsReload, isRel
 
     const handleUpload = async () => {
         setLoading(true);
+        setIsReload(false);
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/full-grade`, { data: csvDataSave });
             setLoading(false);
