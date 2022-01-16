@@ -1,6 +1,7 @@
 import './App.css';
 import Home from './pages/Home'
 import CourseDetail from './pages/CourseDetail'
+import GradeDetail from './pages/GradeDetail'
 import UserPage from './pages/UserPage'
 import OtherUserPage from './pages/OtherUserPage'
 import InvitationComfirm from './pages/InvitationComfirm'
@@ -58,6 +59,7 @@ function App() {
             <Route exact path="/" component={Home}></Route>
             <Route exact path="/courses" component={Home}></Route>
             <Route exact path="/courses/:id" component={CourseDetail}></Route>
+            <Route exact path="/courses/:id/grade/:gradeId" component={GradeDetail}></Route>
             <Route exact path="/user" component={UserPage}></Route>
             <Route exact path="/user/:id" component={OtherUserPage}></Route>
             <Route exact path="/auth/activate/:token" component={AccountActivate}></Route>

@@ -25,7 +25,7 @@ import { SnackbarContext } from "../../../contexts/SnackbarContext";
 import SendIcon from '@mui/icons-material/Send';
 import Tooltip from '@mui/material/Tooltip';
 import LoadingButton from '@mui/lab/LoadingButton';
-
+import { useHistory } from 'react-router-dom';
 import ButtonMenu from "./PublishButton";
 import ButtonPublishMenu from "./MenuPublishButton";
 
@@ -61,10 +61,11 @@ export default function StudentGrades({ gradeStructure, role }) {
     const [isClickedAction, setIsClickedAction] = useState(false);
     const [isClickedMenu, setIsClickedMenu] = useState(false);
     const [dialogTitle, setDialogTitle] = useState('');
-    const { id } = useParams();
     const [columnHeaders, setColumnHeaders] = useState([]);
-    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
+    const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+    const { id } = useParams();
+    const history = useHistory();
 
     useEffect(async () => {
         setLoading(true);
@@ -93,6 +94,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                     headerName: `${grade.title} (${grade.point})`,
                     width: 150,
                     editable: isEditable,
+                    description: 'Double click to see in detail',
                     renderCell: (params) => {
                         return (
                             <Stack
@@ -246,6 +248,16 @@ export default function StudentGrades({ gradeStructure, role }) {
         setItemTable(e);
     };
 
+    const handleHeaderClick = (e) => {
+        const gradeIdOrder = parseInt(e.field.replace('grade', ''));
+        const gradeId = gradeStructure[gradeIdOrder].id;
+        //console.log(gradeId);
+        const href = `/courses/${id}/grade/${gradeId}`;
+        history.push(href);
+        window.location.reload();
+        
+    };
+
     const handlePublish = async () => {
         setLoading(true);
         if (!isClickedAction && !isClickedMenu) {
@@ -355,7 +367,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                         rowsPerPageOptions={[5, 10, 20, 50, 100]}
                         pagination
                         loading={loading}
-
+                        onColumnHeaderDoubleClick={handleHeaderClick}
                     /> : <DataGrid
                         autoHeight
                         columns={columnHeaders}
