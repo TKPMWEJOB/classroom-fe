@@ -24,12 +24,22 @@ export default function TemplateDownloadDialog({ gradeStructure, open, handleClo
 
     function handleChange(event) {
         let newSelection = event.target.value;
-        let newData = [{}];
+        let newData = [];
         let newFileName = "";
         if (newSelection.substring(0, 5) === "grade") {
             let gradeIndex = parseInt(newSelection.substring(5));
-            newData[0]["Student ID"] = "";
-            newData[0][`#${gradeIndex} ${gradeStructure[gradeIndex].title} (${gradeStructure[gradeIndex].point})`] = "";
+            //newData[0]["Student ID"] = "";
+            //newData[0][`#${gradeIndex} ${gradeStructure[gradeIndex].title} (${gradeStructure[gradeIndex].point})`] = "";
+
+            //console.log(tableData);
+            tableData.map(data => {
+                let student = {
+                    "Student ID": data.studentId.value ? data.studentId.value : data.studentId,
+                }
+                student[`#${gradeIndex} ${gradeStructure[gradeIndex].title} (${gradeStructure[gradeIndex].point})`] = "";
+                newData.push(student);
+            })
+            console.log(newData);
             newFileName = `${gradeStructure[gradeIndex].title}ListTemplate`;
             console.log(gradeIndex);
         } else if (newSelection === "student") {

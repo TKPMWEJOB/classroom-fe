@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ImportStudentButton({ gradeStructure, setIsReload, gradeData }) {
+export default function ImportStudentButton({ gradeStructure, setIsReload, isReload, gradeData }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [csvData, setCsvData] = useState([]);
@@ -62,8 +62,8 @@ export default function ImportStudentButton({ gradeStructure, setIsReload, grade
                         }
                         return row;
                     });
-                    console.log(gradeData);
-                    console.log(data);
+                    //console.log(gradeData);
+                    //console.log(data);
                     setCsvData(data);
                 }
             })
@@ -81,7 +81,7 @@ export default function ImportStudentButton({ gradeStructure, setIsReload, grade
             handleOpenSuccessSnack(true);
             handleSetMsgSnack("Imported Successfully");
             setOpenPreview(false);
-            setIsReload(true);
+            setIsReload(!isReload);
         } catch (err) {
             setLoading(false);
             setOpenPreview(false);
