@@ -6,10 +6,18 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ITEM_HEIGHT = 48;
 
-export default function ButtonMenu({OnClickPublish, className}) {
+export default function ButtonMenu({OnClickPublish, className, params, draftData, gradeStructure}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isPublish, setIsPublish] = React.useState(false);
   const open = Boolean(anchorEl);
+
+  
   const handleClick = (event) => {
+    const numGrade = gradeStructure.length;
+    const colId = parseInt(params.field.replace('grade', ''));
+    const rowId = parseInt(params.id);
+    const dataId = rowId * numGrade + colId;
+    setIsPublish(draftData[dataId]['StudentRecords.publish']);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -48,8 +56,12 @@ export default function ButtonMenu({OnClickPublish, className}) {
           },
         }}
       >
-        <MenuItem onClick={handleClickPublish}>Publish Grade</MenuItem>
+        {isPublish ? 
+        <MenuItem  disabled={true}>Publish Grade</MenuItem>
+        : <MenuItem  onClick={handleClickPublish}>Publish Grade</MenuItem> }
+        
       </Menu>
     </div>
   );
 }
+//disabled={!isPublishActive}

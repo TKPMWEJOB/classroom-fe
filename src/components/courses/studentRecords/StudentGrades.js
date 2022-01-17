@@ -53,6 +53,7 @@ export default function StudentGrades({ gradeStructure, role }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [itemTable, setItemTable] = useState(null);
     const [openPreview, setOpenPreview] = useState(false);
+    //const [draftData, setDraftData] = useState([]);
     const [csvData, setCsvData] = useState([]);
     const [pageSize, setPageSize] = useState(5);
     const [loading, setLoading] = useState(false);
@@ -80,7 +81,8 @@ export default function StudentGrades({ gradeStructure, role }) {
             let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
             // if (res.status === 200) {
             //console.log(res.data);
-            setCsvData(res.data);
+            setCsvData(res.data.resData);
+            //setDraftData(res.data.draftData);
             setLoading(false);
             //setCourses(res.data);
             let totalPoint = 0;
@@ -96,6 +98,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                     editable: isEditable,
                     description: 'Double click to see in detail',
                     renderCell: (params) => {
+
                         return (
                             <Stack
                                 width={150}
@@ -113,6 +116,9 @@ export default function StudentGrades({ gradeStructure, role }) {
                                             {role == "student" ? "" : <ButtonMenu
                                                 OnClickPublish={handleOpenDialog}
                                                 className='appear-button'
+                                                params={params}
+                                                draftData={res.data.draftData}
+                                                gradeStructure={gradeStructure}
                                             />
                                             }
                                         </>
