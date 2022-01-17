@@ -52,10 +52,6 @@ export default function ButtonAppBar({ course, role, gradeInfor }) {
           </Stack>
           
 
-          <Typography variant="h6" component="div" align='center'>
-            {gradeInfor.title}
-          </Typography>
-
           <Stack direction="row" justifyContent="center" alignItems="center">
             {userInfo.isLogin ? 
               <NotificationButtonMenu />

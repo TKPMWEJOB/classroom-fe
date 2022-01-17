@@ -13,6 +13,11 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import NotificationTimer from './NotificationTimer';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -62,6 +67,18 @@ export default function NotificationMenu() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [notification, setNotification] = useState(null);
   const [numberOfNotification, setNumberOfNotification] = useState(0);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [dialogTitle, setDialogTitle] = React.useState(false);
+  const [dialogContent, setDialogContent] = React.useState(false);
+  const [dialogTime, setDialogTime] = React.useState(false);
+
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   useEffect(async () => {
     try {
@@ -94,17 +111,30 @@ export default function NotificationMenu() {
     const data = {
       notificationId: e.currentTarget.value
     }
-    try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/notification/update-viewed-status`, { data: data });
-      if (res.data) {
-        setNotification(res.data);
-        const newArray = res.data.filter(function (e) {
-          return e.status === 'waiting';
-        });
-        setNumberOfNotification(newArray.length);
+
+    const notificationContent = notification.filter(obj => {
+      return obj.id === data.notificationId
+    });
+
+    setDialogTitle(notificationContent[0].title);
+    setDialogContent(notificationContent[0].content);
+    setDialogTime(notificationContent[0].createdAt);
+
+    handleClickOpenDialog();
+
+    if (notificationContent[0].status !== 'viewed') {
+      try {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/notification/update-viewed-status`, { data: data });
+        if (res.data) {
+          setNotification(res.data);
+          const newArray = res.data.filter(function (e) {
+            return e.status === 'waiting';
+          });
+          setNumberOfNotification(newArray.length);
+        }
+      } catch (err) {
+          console.log(err.response.data.message);
       }
-    } catch (err) {
-        console.log(err.response.data.message);
     }
     setAnchorEl(null);
   }
@@ -143,29 +173,31 @@ export default function NotificationMenu() {
       >
         { notification ? notification.map((item, index) => (
           <MenuItem key={`notification${index}`} value={`${item.id}`} onClick={handleClickItem} disableRipple>
-          <Box sx={{width: 400}}>
-            {item.status === 'waiting' ? <><Typography
+          <Box sx={{width: 300, textOverflow: 'ellipsis', overflow: 'hidden'}}>
+            {item.status === 'waiting' ? 
+            <>
+              <Typography
                 variant="body2"
-                sx={{ fontWeight: 'medium', color: '#2196f3' }}
+                sx={{ fontWeight: 'medium', color: '#2196f3', textOverflow: 'ellipsis', overflow: 'hidden' }}
               >
                 {item.title}
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ fontWeight: 'regular' }}
+                sx={{ fontWeight: 'regular', textOverflow: 'ellipsis', overflow: 'hidden' }}
               >
                 {item.content}
               </Typography>
             </> 
             : <><Typography
                 variant="body2"
-                sx={{ fontWeight: 'medium', color: '#aaaaaa' }}
+                sx={{ fontWeight: 'medium', color: '#aaaaaa', textOverflow: 'ellipsis', overflow: 'hidden'}}
               >
                 {item.title}
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ fontWeight: 'regular', color: '#aaaaaa'  }}
+                sx={{ fontWeight: 'regular', color: '#aaaaaa', textOverflow: 'ellipsis', overflow: 'hidden'}}
               >
                 {item.content}
               </Typography>
@@ -174,10 +206,29 @@ export default function NotificationMenu() {
           </Box>
         </MenuItem>
           
-        )) : ''}
-        
-        
+        )) : 'No message'}
       </StyledMenu>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="notification-dialog-title"
+        aria-describedby="notification-dialog-description"
+      >
+        <DialogTitle id="notification-title">
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 'medium', color: '#2196f3' }}
+          >
+            {dialogTitle}
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="notification-content" sx={{mb: 2}}>
+            {dialogContent}
+          </DialogContentText>
+          <NotificationTimer createdTime={dialogTime}></NotificationTimer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
