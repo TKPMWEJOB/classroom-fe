@@ -29,6 +29,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import CommentField from "./Comment/CommentField"
 
 export default function StudentGradeDetail({course}) {
   const [loading, setLoading] = React.useState(false);
@@ -36,6 +37,8 @@ export default function StudentGradeDetail({course}) {
   const [open, setOpen] = useState(false);
   const [grade, setGrade] = useState(null);
   const [record, setRecord] = useState(null);
+  const [comment, setComment] = useState(null);
+  const [user, setUser] = useState(null);
   //const [course, setCourse] = useState([]);
   const [modifiedDate, setModifiedDate] = useState('');
   const [error, setError] = useState(null);
@@ -50,14 +53,15 @@ export default function StudentGradeDetail({course}) {
       //let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
       let resRecord = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/student`);
       let resGrade = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/${gradeId}`);
+      let resComment = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/comment/student`);
+      let resUser = await axios.get(`${process.env.REACT_APP_API_URL}/user`);
 
-      
       setRecord(resRecord.data);
       setGrade(resGrade.data);
-      //setCourse(resCourse.data.data);
+      setComment(resComment.data);
+      setUser(resUser.data);
 
       setIsLoaded(true);
-      //setRole(resCourse.data.role);
       setMaxValue(parseInt(resGrade.data.point));
 
       if (resRecord.data) {
@@ -65,9 +69,6 @@ export default function StudentGradeDetail({course}) {
         setModifiedDate(resRecord.data.publishedDate.split('T')[0]);
       }
       
-      //console.log("teacher: ", isTeacher(resCourse.data.role));
-      //console.log("student: ", isStudent(resCourse.data.role));
-      //console.log("owner: ", isOwner(resCourse.data.role));
     } catch (error) {
       setIsLoaded(true);
       setError(error);
@@ -123,10 +124,10 @@ export default function StudentGradeDetail({course}) {
       <div>
         <Box sx={{ width: '100%' }}>
           <AppBar course={course} role={role}></AppBar>
-          <Container maxWidth="lg">
+          <Container sx={{width: '120%'}}>
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={5} sx={{ mt: 1, mb: 1, p: 2 }}>
-                <Grid item xs={9}>
+                <Grid item xs={8}>
                   <Stack direction="row" spacing={2}>
                     <Avatar sx={{ bgcolor: '#1e88e5' }}>
                       <AssignmentIcon />
@@ -162,9 +163,12 @@ export default function StudentGradeDetail({course}) {
                       >
                         { record ? 
                         <Button onClick={handleClickOpen} variant="contained" startIcon={<RateReviewIcon />}>
-                          Request a review
+                          <Typography variant="h6" gutterBottom component="div" sx={{ mt: 0.5, fontWeight: 'Medium' }}>
+                            Request a review
+                          </Typography>
                         </Button>
                         : "" }
+                        <CommentField comment={comment} setComment={setComment} user={user} course={course} />
                       </Stack>
                     </Box>
                   </Paper>
