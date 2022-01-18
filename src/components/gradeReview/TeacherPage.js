@@ -159,7 +159,7 @@ export default function TeacherGradeDetail({course}) {
             </Tabs>
 
             {record.map((item, index) => ( 
-              <TabPanel value={value} index={index} record={item} grade={grade}></TabPanel>
+              <TabPanel value={value} index={index} record={item} setRecord={setRecord} grade={grade}></TabPanel>
             ))}
           </Box>
           
