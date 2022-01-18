@@ -73,10 +73,10 @@ export default function CommentField({ comment, setComment, user, course }) {
   } else {
     return (
       <Box>
-        <Typography variant="h6" gutterBottom component="div" sx={{ mt: 3, fontWeight: 'Medium' }}>
+        {comment.length > 0 ? <Typography variant="h6" gutterBottom component="div" sx={{ mt: 3, fontWeight: 'Medium' }}>
           List comment
-        </Typography>
-        <Divider sx={{ mt: 1, background: '#1e88e5' }}/>
+        </Typography> : ''}
+        {comment.length > 0 ? <Divider sx={{ mt: 1, background: '#1e88e5' }}/> : ''}
         <List sx={{
           width: '100%',
           maxWidth: 360,

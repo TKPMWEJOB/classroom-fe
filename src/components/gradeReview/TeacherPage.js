@@ -66,60 +66,17 @@ export default function TeacherGradeDetail({course}) {
       
       setRecord(resRecord.data);
       setGrade(resGrade.data);
-      //setCourse(resCourse.data.data);
+
+      console.log(resRecord.data);
+
 
       setIsLoaded(true);
-      //setRole(resCourse.data.role);
-      /*setMaxValue(parseInt(resGrade.data.point));
 
-      if (resRecord.data) {
-        //Set date string
-        setModifiedDate(resRecord.data.publishedDate.split('T')[0]);
-      }*/
-      
-      //console.log("teacher: ", isTeacher(resCourse.data.role));
-      //console.log("student: ", isStudent(resCourse.data.role));
-      //console.log("owner: ", isOwner(resCourse.data.role));
     } catch (error) {
       setIsLoaded(true);
       setError(error);
     }
   }, []);
-
-  /*const initialValues = {
-    explanation: '',
-    expectationPoint: ''
-  }
-
-  const validationSchema = Yup.object().shape({
-    expectationPoint:Yup.number()
-    .min(0, "Must be more than 0")
-    .max(maxValue, `Your max point is ${maxValue}`)
-    .required("Your expectation point is requried")
-  }); 
-  
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = async(e) => {
-    setLoading(true);
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/request-review`, e);
-      handleOpenSuccessSnack(true);
-      handleSetMsgSnack("Send Successfully");
-    } catch (err) {
-        handleOpenErrorSnack(true);
-        handleSetMsgSnack(err.response.data.message);
-    }
-    setOpen(false);
-    setLoading(false);
-  }*/
 
 
   if (error) {
