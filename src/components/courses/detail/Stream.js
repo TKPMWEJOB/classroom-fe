@@ -1,10 +1,20 @@
-import { Grid, Paper } from "@mui/material";
+import { Grid, Button, Paper } from "@mui/material";
 import Banner from "./Banner";
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import LinkIcon from '@mui/icons-material/Link'
 
 export default function Stream({ course, role, gradeStructure }) {
+	const copyHandle = async () => {
+		if (!course.invitationId) {
+			alert("No invitation link found!")
+		}
+		else {
+			const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`;
+			navigator.clipboard.writeText(invitationLink);
+		}
+	}
 	return (
 		<div style={{
 			display: 'flex',
@@ -28,15 +38,18 @@ export default function Stream({ course, role, gradeStructure }) {
 						style={{ margin: '0px 24px 0px 0px', height: '100%', width: '196px' }}
 					>
 
-						{ role === "student" ? "" :
+						{role === "student" ? "" :
 							<Paper
 								variant='outlined'
 								sx={{ margin: 'auto', overflow: 'hidden' }}
 								style={{ textAlign: 'center' }}
 							>
 								<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
-									style={{ margin: 5, color: "blue"}}>
-									Classroom's Code: {course.invitationId ? course.invitationId : 'Upcoming!'}
+									style={{ margin: 5, color: "primary" }}>
+									Classroom's Code: {course.invitationId ? <Typography variant="h5" style={{ color: '#1565c0' }}>{course.invitationId}</Typography> : <Typography>Upcoming!</Typography>}
+									<Button variant="contained" endIcon={<LinkIcon />} onClick={copyHandle}>
+										invitation link
+									</Button>
 								</Typography>
 							</Paper>
 						}

@@ -170,7 +170,7 @@ export default function ComfirmPage() {
 
 
     if (error) {
-        return <NotFound />;
+        return <div>Error... May be you are already in this class</div>;
     } else if (!isLoaded) {
         return <div>Loading...</div>;
     } 

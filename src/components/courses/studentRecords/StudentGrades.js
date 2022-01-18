@@ -88,7 +88,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                     },
                 });
             // if (res.status === 200) {
-            //console.log(res.data);
+            console.log(res.data);
             setCsvData(res.data.resData);
             //setDraftData(res.data.draftData);
             setLoading(false);
