@@ -357,22 +357,24 @@ export default function StudentGrades({ gradeStructure, role }) {
             <Box
                 component="span"
             >
-                <Stack
-                    direction="row"
-                    justifyContent="flex-end"
-                    alignItems="center"
-                    spacing={2}
-                    sx={{mb: 2}}
-                >
-                    <Typography
-                        variant="h5"
-                        component="div"
-                        sx={{ color: '#9e9e9e', cursor: 'pointer' }}
+                { role == "student" ? "" :
+                    <Stack
+                        direction="row"
+                        justifyContent="flex-end"
+                        alignItems="center"
+                        spacing={2}
+                        sx={{mb: 2}}
                     >
-                        {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
-                    </Typography>
-                    {role == "student" ? '' : <ButtonPublishMenu gradeStructure={gradeStructure} setItemTable={setItemTable} onClick={handleOpenDialogMenu}/>}
-                </Stack>
+                        <Typography
+                            variant="h5"
+                            component="div"
+                            sx={{ color: '#9e9e9e', cursor: 'pointer' }}
+                        >
+                            {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
+                        </Typography>
+                        <ButtonPublishMenu gradeStructure={gradeStructure} setItemTable={setItemTable} onClick={handleOpenDialogMenu}/>
+                    </Stack>
+                }
 
                 {role == "student" ?
                     <DataGrid
