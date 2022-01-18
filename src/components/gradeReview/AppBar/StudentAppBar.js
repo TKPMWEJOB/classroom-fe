@@ -14,12 +14,12 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 
-import { UserContext } from '../../../../contexts/UserContext';
-import LoggedButtons from '../../../appbar/LoggedButtons';
-import SigninButton from '../../../appbar/SigninButton';
+import { UserContext } from '../../../contexts/UserContext';
+import LoggedButtons from '../../appbar/LoggedButtons';
+import SigninButton from '../../appbar/SigninButton';
 
-import { isTeacher, isStudent, isOwner } from '../../../../utils/Role';
-import NotificationButtonMenu from '../../../notification/NotificationButton';
+import { isTeacher, isStudent, isOwner } from '../../../utils/Role';
+import NotificationButtonMenu from '../../notification/NotificationButton';
 
 export default function ButtonAppBar({ course, role, gradeInfor }) {
   const { userInfo } = useContext(UserContext);
