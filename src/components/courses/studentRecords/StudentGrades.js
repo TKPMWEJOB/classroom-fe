@@ -78,9 +78,17 @@ export default function StudentGrades({ gradeStructure, role }) {
             isEditable = true;
         }
         try {
-            let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`);
+            let res = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades`,
+                {
+                    // query URL without using browser cache
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                    },
+                });
             // if (res.status === 200) {
-            //console.log(res.data);
+            console.log(res.data);
             setCsvData(res.data.resData);
             //setDraftData(res.data.draftData);
             setLoading(false);
@@ -159,6 +167,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                 {
                     field: 'studentId', minWidth: 150, headerName: 'Student ID',
                     renderCell: (params) => {
+                                    console.log(params)
                         return (
                             <Stack
                                 width={150}
@@ -168,9 +177,11 @@ export default function StudentGrades({ gradeStructure, role }) {
                                 className={classes.root}
                             >
                                 {
-                                    params.row.userId ?
-                                        <Link href={`/user/${params.row.userId}`} >{params.value}</Link> :
-                                        params.value
+                                    params.row.userId ? 
+                                        (params.row.isMapping ?
+                                            <Link href={`/user/${params.row.userId}`} >{params.value}</Link> 
+                                        : params.value)
+                                    : params.value
                                 }
                             </Stack>
                         );
@@ -346,22 +357,24 @@ export default function StudentGrades({ gradeStructure, role }) {
             <Box
                 component="span"
             >
-                <Stack
-                    direction="row"
-                    justifyContent="flex-end"
-                    alignItems="center"
-                    spacing={2}
-                    sx={{mb: 2}}
-                >
-                    <Typography
-                        variant="h5"
-                        component="div"
-                        sx={{ color: '#9e9e9e', cursor: 'pointer' }}
+                { role == "student" ? "" :
+                    <Stack
+                        direction="row"
+                        justifyContent="flex-end"
+                        alignItems="center"
+                        spacing={2}
+                        sx={{mb: 2}}
                     >
-                        {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
-                    </Typography>
-                    {role == "student" ? '' : <ButtonPublishMenu gradeStructure={gradeStructure} setItemTable={setItemTable} onClick={handleOpenDialogMenu}/>}
-                </Stack>
+                        <Typography
+                            variant="h5"
+                            component="div"
+                            sx={{ color: '#9e9e9e', cursor: 'pointer' }}
+                        >
+                            {loading ? "" : (isSaved ? "Saved" : "Saving . . .")}
+                        </Typography>
+                        <ButtonPublishMenu gradeStructure={gradeStructure} setItemTable={setItemTable} onClick={handleOpenDialogMenu}/>
+                    </Stack>
+                }
 
                 {role == "student" ?
                     <DataGrid
@@ -397,8 +410,8 @@ export default function StudentGrades({ gradeStructure, role }) {
 
             {role == "student" ? "" : <Box sx={{ display: "flex", margin: 2, justifyContent: "space-evenly" }}>
                 <TemplateDownloadButton gradeStructure={gradeStructure} tableData={csvData} />
-                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} gradeData={csvData}/>
-                <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} />
+                <ImportStudentButton gradeStructure={gradeStructure} setIsReload={setIsReload} isReload={isReload} gradeData={csvData} />
+                <UploadFullGradeButton gradeStructure={gradeStructure} setIsReload={setIsReload} isReload={isReload} />
             </Box>}
 
             {role == "student" ? "" : <Dialog

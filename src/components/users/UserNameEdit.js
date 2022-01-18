@@ -15,6 +15,7 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Switch from '@mui/material/Switch';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -90,7 +91,8 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
-    studentID: user.studentID
+    studentID: user.studentID,
+    isMapping: user.isMapping,
   }
     
   const validationSchema = Yup.object().shape({
@@ -154,6 +156,17 @@ function UserNameEditForm({ setIsLoaded, setUser, user }) {
                       autoComplete="studentid"
                       helperText={<ErrorMessage name='studentid' />}
                       />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Switch
+                      name="isMapping"
+                      value="Y"
+                      checked={props.values.isMapping}
+                      onChange={(event, checked) => {
+                        props.setFieldValue("isMapping", checked);
+                      }}
+                    />
+                    <p>{props.values.isMapping ? "Mapping ID" : "Unmapping ID"}</p>
                   </Grid>
                   </Grid>
 

@@ -39,7 +39,7 @@ export default function ComfirmPage() {
             };
         }*/
 
-        axios.get(`${process.env.REACT_APP_API_URL}/user/find-user/${invitationId.id}`)
+        axios.get(`${process.env.REACT_APP_API_URL}/user/find-user-in-course/${invitationId.id}`)
         .then(res => {
             /*setSnackMsg(res.data.msg);  
             setOpenSuccessSnack(true);
@@ -170,7 +170,7 @@ export default function ComfirmPage() {
 
 
     if (error) {
-        return <NotFound />;
+        return <div>Error... May be you are already in this class</div>;
     } else if (!isLoaded) {
         return <div>Loading...</div>;
     } 

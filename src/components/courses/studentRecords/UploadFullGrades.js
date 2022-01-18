@@ -22,7 +22,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ImportStudentButton({ gradeStructure, setIsReload }) {
+export default function ImportStudentButton({ gradeStructure, setIsReload, isReload }) {
     const [openPreview, setOpenPreview] = useState(false);
     const [fileName, setFileName] = useState("");
     const [gradeStructureHeaders, setGradeStructureHeaders] = useState("");
@@ -119,14 +119,15 @@ export default function ImportStudentButton({ gradeStructure, setIsReload }) {
             await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/upload/full-grade`, { data: csvDataSave });
             setLoading(false);
             handleOpenSuccessSnack(true);
+            setIsReload(!isReload);
+            setIsReload(!isReload);
             handleSetMsgSnack("Imported Successfully");
             setOpenPreview(false);
-            setIsReload(true);
         } catch (err) {
             setLoading(false);
             setOpenPreview(false);
             handleOpenErrorSnack(true);
-            handleSetMsgSnack(err.response.data.message);
+            handleSetMsgSnack("Upload Failed");
         }
     };
 
