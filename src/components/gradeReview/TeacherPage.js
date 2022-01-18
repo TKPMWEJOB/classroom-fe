@@ -1,16 +1,16 @@
+import AppBar from './AppBar/StudentAppBar';
 import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Box from '@mui/material/Box';
+import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import TabContext from '@mui/lab/TabContext';
-import TabPanel from '@mui/lab/TabPanel';
-import { isTeacher, isStudent, isOwner } from '../utils/Role'
+//import { isTeacher, isStudent, isOwner } from '../utils/Role'
 import { LinearProgress } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Avatar from '@mui/material/Avatar';
@@ -25,19 +25,24 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { SnackbarContext } from "../contexts/SnackbarContext";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import StudentPage from '../components/gradeReview/StudentPage';
-import TeacherPage from '../components/gradeReview/TeacherPage';
 
-export default function GradeDetail() {
+import TabContext from '@mui/lab/TabContext';
+//import TabPanel from '@mui/lab/TabPanel';
+import TabPanel from './TabPanel/StudentPanel';
+import TabList from '@mui/lab/TabList';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+
+export default function TeacherGradeDetail({course}) {
   const [loading, setLoading] = React.useState(false);
   const [maxValue, setMaxValue] = useState(0);
   const [open, setOpen] = useState(false);
   const [grade, setGrade] = useState(null);
   const [record, setRecord] = useState(null);
-  const [course, setCourse] = useState([]);
+  //const [course, setCourse] = useState([]);
   const [modifiedDate, setModifiedDate] = useState('');
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -45,23 +50,28 @@ export default function GradeDetail() {
   const [role, setRole] = useState('');
   const { id, gradeId } = useParams();
   const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
-  
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   useEffect(async () => {
     try {
-      let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
-      //let resRecord = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}`);
-      //let resGrade = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/${gradeId}`);
+      //let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
+      let resRecord = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/all`);
+      let resGrade = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/${gradeId}`);
 
       
-      //setRecord(resRecord.data);
-      //setGrade(resGrade.data);
-      setCourse(resCourse.data.data);
+      setRecord(resRecord.data);
+      setGrade(resGrade.data);
+      //setCourse(resCourse.data.data);
 
       setIsLoaded(true);
-      setRole(resCourse.data.role);
-      //setMaxValue(parseInt(resGrade.data.point));
+      //setRole(resCourse.data.role);
+      /*setMaxValue(parseInt(resGrade.data.point));
 
-      /*if (resRecord.data) {
+      if (resRecord.data) {
         //Set date string
         setModifiedDate(resRecord.data.publishedDate.split('T')[0]);
       }*/
@@ -123,13 +133,37 @@ export default function GradeDetail() {
     return (
       <div>
         <Box sx={{ width: '100%' }}>
-          {
-            role === 'student' ?
-            <StudentPage course={course} ></StudentPage>
-            : <TeacherPage course={course} ></TeacherPage>
-          }
+          <AppBar course={course} role={role}></AppBar>
+          <Box
+            sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: '100%' }}
+          >
+            <Tabs
+              orientation="vertical"
+              variant="scrollable"
+              value={value}
+              onChange={handleChange}
+              aria-label="Vertical tabs student"
+              sx={{ borderRight: 1, borderColor: 'divider' }}
+            >
+              {record.map((item) => ( 
+                <Tab label={`Student ${item.studentId}`} {...a11yProps(item.id)} sx={{height: 60}} />
+              ))}
+            </Tabs>
+
+            {record.map((item, index) => ( 
+              <TabPanel value={value} index={index} record={item} grade={grade}></TabPanel>
+            ))}
+          </Box>
+          
         </Box>
       </div>
     );
   }
+}
+
+function a11yProps(index) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
 }

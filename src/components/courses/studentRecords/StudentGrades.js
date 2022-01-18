@@ -397,6 +397,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                         onCellEditCommit={onCellChange}
                         {...csvData}
                         onCellClick={handleCellClick}
+                        onColumnHeaderDoubleClick={handleHeaderClick}
                         components={{
                             Toolbar: CustomToolbar,
                         }}
