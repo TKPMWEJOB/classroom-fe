@@ -28,6 +28,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import Badge from '@mui/material/Badge';
 
 import TabContext from '@mui/lab/TabContext';
 //import TabPanel from '@mui/lab/TabPanel';
@@ -143,15 +144,22 @@ export default function TeacherGradeDetail({course}) {
               value={value}
               onChange={handleChange}
               aria-label="Vertical tabs student"
-              sx={{ borderRight: 1, borderColor: 'divider' }}
+              sx={{ borderRight: 1, borderColor: 'divider', width: 200 }}
             >
               {record.map((item) => ( 
-                <Tab label={`Student ${item.studentId}`} {...a11yProps(item.id)} sx={{height: 60}} />
+                item.GradeReview.status === "requesting" ?
+                  <Tab label= {<Badge badgeContent=" " color="primary">
+                    <Box sx={{ ml: 2, mr: 2 }}>
+                        {`${item.studentId}`}
+                    </Box>
+                  </Badge>} {...a11yProps(item.id)} sx={{height: 60}} 
+                  />
+                : <Tab label={`${item.studentId}`} {...a11yProps(item.id)} sx={{height: 60}} />
               ))}
             </Tabs>
 
             {record.map((item, index) => ( 
-              <TabPanel value={value} index={index} record={item} grade={grade}></TabPanel>
+              <TabPanel value={value} index={index} record={item} setRecord={setRecord} grade={grade}></TabPanel>
             ))}
           </Box>
           
