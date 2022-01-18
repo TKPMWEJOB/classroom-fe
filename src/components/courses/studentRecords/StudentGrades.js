@@ -167,6 +167,7 @@ export default function StudentGrades({ gradeStructure, role }) {
                 {
                     field: 'studentId', minWidth: 150, headerName: 'Student ID',
                     renderCell: (params) => {
+                                    console.log(params)
                         return (
                             <Stack
                                 width={150}
@@ -176,9 +177,11 @@ export default function StudentGrades({ gradeStructure, role }) {
                                 className={classes.root}
                             >
                                 {
-                                    params.row.userId ?
-                                        <Link href={`/user/${params.row.userId}`} >{params.value}</Link> :
-                                        params.value
+                                    params.row.userId ? 
+                                        (params.row.isMapping ?
+                                            <Link href={`/user/${params.row.userId}`} >{params.value}</Link> 
+                                        : params.value)
+                                    : params.value
                                 }
                             </Stack>
                         );

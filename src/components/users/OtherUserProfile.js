@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Redirect } from 'react-router';
 import '../../assets/css/style.css';
 
 import {
@@ -19,7 +20,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import axios from "axios";
 
 import { blue } from '@mui/material/colors';
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { UserContext } from '../../contexts/UserContext';
 
 
@@ -55,21 +56,25 @@ function OtherUserProfile() {
   const [user, setUser] = useState(null);
   const {userInfo, setUserInfo} = useContext(UserContext);
 	const { id } = useParams();
-  
+  let history = useHistory();
+
   useEffect( async() => {
     try {
       let result = await axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`);
       console.log(result);
+      if (result.data.id === userInfo.info.id)
+      {
+        history.push("/user");
+      }
       setUser(result.data);
       setIsLoaded(true);
     } catch(error) {
-      setIsLoaded(true);
       setError(error);
     }
   }, []);
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}: {error.response.data.message}</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
   } else {
