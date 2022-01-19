@@ -21,7 +21,7 @@ import * as Yup from 'yup';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
-export default function CommentField({ comment, setComment, user, course }) {
+export default function CommentField({ comment, setComment, user }) {
   const [loading, setLoading] = React.useState(false);
   const [maxValue, setMaxValue] = useState(0);
   //const [grade, setGrade] = useState(null);
@@ -90,20 +90,10 @@ export default function CommentField({ comment, setComment, user, course }) {
             <ListItem> 
               <Box>
                 <Stack direction="row" spacing={1} justifyContent="flex-start" alignItems="center">
-                  {item.senderId===user.id ? 
-                    <>
-                      <Avatar {...stringAvatar(`${user.lastName} ${user.firstName}`)} />
-                      <Typography variant="body1" gutterBottom component="div">
-                        {`${user.lastName} ${user.firstName}`}
-                      </Typography>
-                    </>
-                    : <>
-                      <Avatar {...stringAvatar(`${course.owner.lastName} ${course.owner.firstName}`)} />
-                      <Typography variant="body1" gutterBottom component="div">
-                        {`${course.owner.lastName} ${course.owner.firstName}`}
-                      </Typography>
-                    </>
-                  }
+                  <Avatar {...stringAvatar(`${item.User.lastName} ${item.User.firstName}`)} />
+                    <Typography variant="body1" gutterBottom component="div">
+                      {`${item.User.lastName} ${item.User.firstName}`}
+                    </Typography>
                   
                   <Typography variant="body2" gutterBottom component="div" sx={{ color: '#757575'}}>
                     {item.createdAt.split('T')[0]}
