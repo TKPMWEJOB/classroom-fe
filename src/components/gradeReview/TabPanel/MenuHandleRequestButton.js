@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Typography from '@mui/material/Typography';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -73,9 +74,12 @@ export default function CustomizedMenus({ onClick }) {
         variant="contained"
         disableElevation
         onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
+        endIcon={<KeyboardArrowDownIcon sx={{ height: 22, width: 22 }}/>}
       >
-        Handle review request
+        <Typography variant="body1" gutterBottom component="div" sx={{ mt: 0.5, fontWeight: 'Medium', fontSize: '24' }}>
+          Handle review request
+        </Typography>
+        
       </Button>
       <StyledMenu
         id="demo-customized-menu"

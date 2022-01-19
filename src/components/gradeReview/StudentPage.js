@@ -9,9 +9,6 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import TabContext from '@mui/lab/TabContext';
-import TabPanel from '@mui/lab/TabPanel';
-//import { isTeacher, isStudent, isOwner } from '../utils/Role'
 import { LinearProgress } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Avatar from '@mui/material/Avatar';
@@ -24,12 +21,11 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import CommentField from "./Comment/CommentField"
+import CommentField from "./Comment/CommentField";
 
 export default function StudentGradeDetail({course}) {
   const [loading, setLoading] = React.useState(false);
@@ -39,18 +35,15 @@ export default function StudentGradeDetail({course}) {
   const [record, setRecord] = useState(null);
   const [comment, setComment] = useState(null);
   const [user, setUser] = useState(null);
-  //const [course, setCourse] = useState([]);
   const [modifiedDate, setModifiedDate] = useState('');
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   const [role, setRole] = useState('');
   const { id, gradeId } = useParams();
   const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
   
   useEffect(async () => {
     try {
-      //let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
       let resRecord = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/student`);
       let resGrade = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/${gradeId}`);
       let resComment = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/comment/student`);
@@ -168,7 +161,7 @@ export default function StudentGradeDetail({course}) {
                           </Typography>
                         </Button>
                         : "" }
-                        <CommentField comment={comment} setComment={setComment} user={user} course={course} />
+                        <CommentField comment={comment} setComment={setComment} user={user}/>
                       </Stack>
                     </Box>
                   </Paper>

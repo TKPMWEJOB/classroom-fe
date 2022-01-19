@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Box from '@mui/material/Box';
@@ -17,16 +17,20 @@ import * as Yup from 'yup';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
-export default function CommentField({ comment, setComment, user }) {
+export default function TeacherCommentField({ record, setRecord, user }) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(true);
+
   const { id, gradeId } = useParams();
   const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
   const InitialValues = {
-    comment: ''
+    comment: '',
+    recordId: record.id
   }
+
+  console.log(record.GradeComments);
 
   const validationSchema = Yup.object().shape({
     comment: Yup.string()
@@ -37,9 +41,10 @@ export default function CommentField({ comment, setComment, user }) {
   const handleSubmit = async(e) => {
     setLoading(true);
     try {
-      const newCommentList = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/comment/student-comment`, e);
+      const newCommentList = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/comment/teacher-comment`, e);
+      //console.log(newCommentList.data);
       if (newCommentList.data) {
-        setComment(newCommentList.data);
+        setRecord(newCommentList.data);
       }
       handleOpenSuccessSnack(true);
       handleSetMsgSnack("Send Successfully");
@@ -62,20 +67,23 @@ export default function CommentField({ comment, setComment, user }) {
   } else {
     return (
       <Box>
-        {comment.length > 0 ? <Typography variant="h6" gutterBottom component="div" sx={{ mt: 3, fontWeight: 'Medium' }}>
+        {record.GradeComments.length > 0 ? <Typography variant="h6" gutterBottom component="div" sx={{ mt: 3, fontWeight: 'Medium' }}>
           List comment
         </Typography> : ''}
-        {comment.length > 0 ? <Divider sx={{ mt: 1, background: '#1e88e5' }}/> : ''}
-        <List sx={{
-          width: '100%',
-          maxWidth: 360,
-          bgcolor: 'background.paper',
-          position: 'relative',
-          overflow: 'auto',
-          maxHeight: 300,
-          '& ul': { padding: 0 },
-        }}>
-          {comment.map((item) => ( 
+        {record.GradeComments.length > 0 ? <Divider sx={{ mt: 1, background: '#1e88e5' }}/> : ''}
+        <List 
+          sx={{
+            mt: 1,
+            mb: -1,
+            width: '100%',
+            maxWidth: 360,
+            bgcolor: 'background.paper',
+            position: 'relative',
+            overflow: 'auto',
+            maxHeight: 270,
+            '& ul': { padding: 0 },
+          }}>
+          {record.GradeComments.map((item) => ( 
             <ListItem> 
               <Box>
                 <Stack direction="row" spacing={1} justifyContent="flex-start" alignItems="center">
@@ -96,13 +104,13 @@ export default function CommentField({ comment, setComment, user }) {
           ))}
         </List>
         
-        <Divider sx={{ mt: 2, background: '#1e88e5' }}/>
-        <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ mt: 2 }}>
-          <Avatar {...stringAvatar(`${user.lastName} ${user.firstName}`)} />
+        { record.GradeComments.length > 0 || record.GradeReview.status === "requesting" ? <Divider sx={{ mt: 2, background: '#1e88e5' }}/> : ""}
+        <Stack direction="row" justifyContent="center" alignItems="flex-start" spacing={2} sx={{ mt: 2, mb: 2 }}>
+          <Avatar {...stringAvatar(`${user.lastName} ${user.firstName}`)} sx={{ mt: 1 }}/>
           <Formik initialValues={InitialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {(props) => (
             <Form noValidate>
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={0.5}>
                 <Field as={TextField}
                   id="comment"
                   name="comment"
@@ -116,6 +124,7 @@ export default function CommentField({ comment, setComment, user }) {
                   type="submit"
                   variant="contained"
                   color="primary"
+                  sx={{ height: 54, width: 54 }}
                 >
                   <SendIcon />
                 </IconButton>

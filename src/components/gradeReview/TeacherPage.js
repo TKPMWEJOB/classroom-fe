@@ -1,56 +1,24 @@
 import AppBar from './AppBar/StudentAppBar';
 import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-//import { isTeacher, isStudent, isOwner } from '../utils/Role'
 import { LinearProgress } from '@mui/material';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
-import RateReviewIcon from '@mui/icons-material/RateReview';
-import SendIcon from '@mui/icons-material/Send';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { SnackbarContext } from "../../contexts/SnackbarContext";
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import Badge from '@mui/material/Badge';
 
-import TabContext from '@mui/lab/TabContext';
-//import TabPanel from '@mui/lab/TabPanel';
 import TabPanel from './TabPanel/StudentPanel';
-import TabList from '@mui/lab/TabList';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 export default function TeacherGradeDetail({course}) {
-  const [loading, setLoading] = React.useState(false);
-  const [maxValue, setMaxValue] = useState(0);
-  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const [grade, setGrade] = useState(null);
   const [record, setRecord] = useState(null);
-  //const [course, setCourse] = useState([]);
-  const [modifiedDate, setModifiedDate] = useState('');
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
   const [role, setRole] = useState('');
   const { id, gradeId } = useParams();
-  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -62,12 +30,13 @@ export default function TeacherGradeDetail({course}) {
       //let resCourse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}`);
       let resRecord = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grades/${gradeId}/all`);
       let resGrade = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${id}/grade-structure/${gradeId}`);
+      let resUser = await axios.get(`${process.env.REACT_APP_API_URL}/user`);
 
       
       setRecord(resRecord.data);
       setGrade(resGrade.data);
-
-      console.log(resRecord.data);
+      setUser(resUser.data);
+      //console.log(resUser.data);
 
 
       setIsLoaded(true);
@@ -116,7 +85,7 @@ export default function TeacherGradeDetail({course}) {
             </Tabs>
 
             {record.map((item, index) => ( 
-              <TabPanel value={value} index={index} record={item} setRecord={setRecord} grade={grade}></TabPanel>
+              <TabPanel value={value} index={index} record={item} setRecord={setRecord} grade={grade} user={user}></TabPanel>
             ))}
           </Box>
           

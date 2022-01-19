@@ -1,55 +1,24 @@
 import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import axios from "axios";
 import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-//import { isTeacher, isStudent, isOwner } from '../utils/Role'
-import { LinearProgress } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
-import RateReviewIcon from '@mui/icons-material/RateReview';
-import SendIcon from '@mui/icons-material/Send';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { SnackbarContext } from "../../../contexts/SnackbarContext";
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import MenuHandleRequestButton from './MenuHandleRequestButton';
 import ResolveRequestDialog from './ResolveRequestDialog'
+import TeacherCommentField from "../Comment/TeacherComment";
 
-import TabContext from '@mui/lab/TabContext';
-//import TabPanel from '@mui/lab/TabPanel';
-import TabList from '@mui/lab/TabList';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
-export default function TabPanel({ value, index, record, setRecord, grade }) {
+export default function TabPanel({ value, index, record, setRecord, grade, user }) {
   const [student, setStudent] = useState(null);
   const [option, setOption] = useState(-1);
   const [openDialog, setOpenDialog] = useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [maxValue, setMaxValue] = useState(0);
-  const [open, setOpen] = useState(false);
-  //const [course, setCourse] = useState([]);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const tokenLocal = JSON.parse(localStorage.getItem("token"))?.jwtToken;
-  const [role, setRole] = useState('');
-  const { id, gradeId } = useParams();
-  const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
 
   useEffect(async () => {
     try {
@@ -78,7 +47,7 @@ export default function TabPanel({ value, index, record, setRecord, grade }) {
         <Box sx={{ p: 3, width: 1300 }}>
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={5} sx={{ mt: 1, mb: 1, p: 2 }}>
-              <Grid item xs={9}>
+              <Grid item xs={8}>
                 <Stack direction="row" spacing={2}>
                   <Avatar sx={{ bgcolor: '#1e88e5' }}>
                     <AssignmentIcon />
@@ -133,10 +102,19 @@ export default function TabPanel({ value, index, record, setRecord, grade }) {
               </Grid>
               <Grid item xs>
                 <Paper elevation={2} sx={{ p: 2 }}> 
-                  {record.GradeReview.status === "requesting" ?
-                    <MenuHandleRequestButton onClick={handleOpenDialogMenu}/>
-                    : "Coming soon"
-                  }
+                  <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={0}
+                  >
+                    {record.GradeReview.status === "requesting" ?
+                      <MenuHandleRequestButton onClick={handleOpenDialogMenu}/>
+                      : ""
+                    }
+                    <TeacherCommentField record={record} setRecord={setRecord} user={user}/>
+                  </Stack>
+                  
                 </Paper>
               </Grid>
             </Grid>
