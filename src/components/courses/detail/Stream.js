@@ -1,11 +1,15 @@
+import { useContext } from 'react';
 import { Grid, Button, Paper } from "@mui/material";
 import Banner from "./Banner";
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import LinkIcon from '@mui/icons-material/Link'
+import { SnackbarContext } from '../../../contexts/SnackbarContext';
 
 export default function Stream({ course, role, gradeStructure }) {
+	const { handleOpenErrorSnack, handleOpenSuccessSnack, handleSetMsgSnack } = useContext(SnackbarContext);
+
 	const copyHandle = async () => {
 		if (!course.invitationId) {
 			alert("No invitation link found!")
@@ -13,6 +17,8 @@ export default function Stream({ course, role, gradeStructure }) {
 		else {
 			const invitationLink = `${process.env.REACT_APP_CLIENT_URL}/invitation/${course.invitationId}`;
 			navigator.clipboard.writeText(invitationLink);
+			handleSetMsgSnack("Invite link copied!");
+			handleOpenSuccessSnack(true);
 		}
 	}
 	return (
