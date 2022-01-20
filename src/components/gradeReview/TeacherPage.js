@@ -12,9 +12,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 export default function TeacherGradeDetail({course}) {
-  const [user, setUser] = useState(null);
-  const [grade, setGrade] = useState(null);
-  const [record, setRecord] = useState(null);
+  const [user, setUser] = useState({});
+  const [grade, setGrade] = useState([]);
+  const [record, setRecord] = useState({});
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [role, setRole] = useState('');
@@ -36,7 +36,9 @@ export default function TeacherGradeDetail({course}) {
       setRecord(resRecord.data);
       setGrade(resGrade.data);
       setUser(resUser.data);
-      //console.log(resUser.data);
+      // console.log(resUser.data);
+      // console.log(resRecord.data);
+      // console.log(resGrade.data);
 
 
       setIsLoaded(true);
@@ -73,7 +75,7 @@ export default function TeacherGradeDetail({course}) {
               sx={{ borderRight: 1, borderColor: 'divider', width: 200 }}
             >
               {record.map((item) => ( 
-                item.GradeReview.status === "requesting" ?
+                item.GradeReview?.status === "requesting" ?
                   <Tab label= {<Badge badgeContent=" " color="primary">
                     <Box sx={{ ml: 2, mr: 2 }}>
                         {`${item.studentId}`}

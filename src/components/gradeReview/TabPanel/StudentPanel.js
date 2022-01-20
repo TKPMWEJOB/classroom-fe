@@ -68,11 +68,11 @@ export default function TabPanel({ value, index, record, setRecord, grade, user 
                     </Typography>
 
                     <Typography variant="body1" gutterBottom component="div" sx={{ color: '#757575'}}>
-                      {record.publish? `Published` : `Unpublish`}
+                      {record?.publish? `Published` : `Unpublish`}
                     </Typography>
 
             
-                    {record.GradeReview.status === "requesting" ? 
+                    {record.GradeReview?.status === "requesting" ? 
                       <>
                         <Divider sx={{ mt: 5, background: '#1e88e5' }}/>
 
@@ -108,7 +108,7 @@ export default function TabPanel({ value, index, record, setRecord, grade, user 
                     alignItems="center"
                     spacing={0}
                   >
-                    {record.GradeReview.status === "requesting" ?
+                    {record.GradeReview?.status === "requesting" ?
                       <MenuHandleRequestButton onClick={handleOpenDialogMenu}/>
                       : ""
                     }

@@ -104,7 +104,7 @@ export default function TeacherCommentField({ record, setRecord, user }) {
           ))}
         </List>
         
-        { record.GradeComments.length > 0 || record.GradeReview.status === "requesting" ? <Divider sx={{ mt: 2, background: '#1e88e5' }}/> : ""}
+        { record.GradeComments.length > 0 || record.GradeReview?.status === "requesting" ? <Divider sx={{ mt: 2, background: '#1e88e5' }}/> : ""}
         <Stack direction="row" justifyContent="center" alignItems="flex-start" spacing={2} sx={{ mt: 2, mb: 2 }}>
           <Avatar {...stringAvatar(`${user.lastName} ${user.firstName}`)} sx={{ mt: 1 }}/>
           <Formik initialValues={InitialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
